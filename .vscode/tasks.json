@@ -2,18 +2,19 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "shell",
-			"command": [
-				"haxe",
-				"-D",
-				"source-map-content",
-				"build-js.hxml"
+			"label": "Build",
+			"type": "hxml",
+			"file": "build-js.hxml",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
 			],
 			"group": {
 				"kind": "build",
-				"isDefault": true
+				"isDefault": true,
 			},
-			"label": "haxe: shell command"
 		},
 		{
 			"label": "Serve dev version",
@@ -26,14 +27,16 @@
 			},
 			"runOptions": {
 				"runOn": "folderOpen"
-			}
+			},
+			"isBackground": true
 		},
 		{
 			"label": "Open Chrome",
 			"type": "shell",
-			"command": "start chrome -ArgumentList --autoplay-policy=no-user-gesture-required,--user-data-dir=C:\\chrome-dev-profile-hexislands,http://localhost:8000/",
+			// This will fail in Gitpod, but that's fine for now.
+			"command": "start chrome -ArgumentList --autoplay-policy=no-user-gesture-required,--disk-cache-dir=null,--user-data-dir=C:\\chrome-dev-ldjam,http://localhost:8000/,--auto-open-devtools-for-tabs",
 			"presentation": {
-				"reveal": "always",
+				"reveal": "never",
 				"panel": "new"
 			},
 			"runOptions": {
