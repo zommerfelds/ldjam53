@@ -47,7 +47,7 @@ class FlyingRes extends BatchElement {
 class BlackHole extends Object {
 	public function new(x:Float, y:Float, ?parent:Object) {
 		super(parent);
-		final anim = new Anim([Tiles.TILE_HOLE_FRAME1, Tiles.TILE_HOLE_FRAME2, Tiles.TILE_HOLE_FRAME3], 15, this);
+		new Anim([Tiles.TILE_HOLE_FRAME1, Tiles.TILE_HOLE_FRAME2, Tiles.TILE_HOLE_FRAME3], 15, this);
 		this.x = x;
 		this.y = y;
 
@@ -88,6 +88,24 @@ class Planet extends Bitmap {
 	}
 }
 
+class Nebula extends BatchElement {
+	public function new(x:Float, y:Float, ?parent:Object) {
+		super(Tiles.randNebula());
+		this.x = x;
+		this.y = y;
+		this.rotation = Math.random() * Math.PI * 2;
+		Tiles.spriteBatch.add(this);
+
+		final backgound = new BatchElement(t);
+		backgound.x = x;
+		backgound.y = y;
+		backgound.scale = 1.2;
+		backgound.rotation = Math.random() * Math.PI * 2;
+		backgound.alpha = 0.3;
+		Tiles.spriteBatch.add(backgound);
+	}
+}
+
 class Tiles {
 	public static var TILE_RES1:Tile;
 	public static var TILE_RES2:Tile;
@@ -99,12 +117,15 @@ class Tiles {
 	public static var TILE_HOLE_FRAME1:Tile;
 	public static var TILE_HOLE_FRAME2:Tile;
 	public static var TILE_HOLE_FRAME3:Tile;
+	public static var TILE_NEBULA1:Tile;
+	public static var TILE_NEBULA2:Tile;
 
 	public static var spriteBatch:SpriteBatch;
 
 	public static function init(parent) {
 		final tiles = Res.tiles.toTile();
 		spriteBatch = new SpriteBatch(tiles, parent);
+		spriteBatch.hasRotationScale = true;
 		TILE_RES1 = tiles.sub(0, 0, 8, 8, -4, -4);
 		TILE_RES2 = tiles.sub(0, 8, 8, 8, -4, -4);
 		TILE_RES3 = tiles.sub(8, 0, 8, 8, -4, -4);
@@ -115,6 +136,8 @@ class Tiles {
 		TILE_HOLE_FRAME1 = tiles.sub(48 + 32 * 0, 0, 32, 32, -16, -16);
 		TILE_HOLE_FRAME2 = tiles.sub(48 + 32 * 1, 0, 32, 32, -16, -16);
 		TILE_HOLE_FRAME3 = tiles.sub(48 + 32 * 2, 0, 32, 32, -16, -16);
+		TILE_NEBULA1 = tiles.sub(16, 16, 16, 16, -8, -8);
+		TILE_NEBULA2 = tiles.sub(32, 16, 16, 16, -8, -8);
 	}
 
 	public static function resTile(res:ResType):Tile {
@@ -124,6 +147,11 @@ class Tiles {
 			case Res3: Tiles.TILE_RES3;
 			case Res4: Tiles.TILE_RES4;
 		};
+	}
+
+	public static function randNebula():Tile {
+		final tile = [TILE_NEBULA1, TILE_NEBULA2][Std.random(2)].clone();
+		return tile;
 	}
 }
 
@@ -135,6 +163,7 @@ class PlayView extends GameState {
 	final blackHoles:Array<BlackHole> = [];
 	var flyingRes:Array<FlyingRes> = [];
 	final planets:Array<Planet> = [];
+	final nebulas:Array<Nebula> = [];
 	final ldtkLevel:LdtkProject.LdtkProject_Level;
 
 	final level:Int;
@@ -143,7 +172,6 @@ class PlayView extends GameState {
 		super();
 		this.level = level;
 		this.ldtkLevel = Ldtk.proj.levels[level];
-
 	}
 
 	override function init() {
@@ -160,6 +188,10 @@ class PlayView extends GameState {
 		}
 		for (planet in ldtkLevel.l_Entities.all_Planet) {
 			planets.push(new Planet(planet.pixelX, planet.pixelY, planet.f_ResType, this));
+		}
+
+		for (nebula in ldtkLevel.l_IntGrid.autoTiles) {
+			nebulas.push(new Nebula(nebula.renderX + 8, nebula.renderY + 8, this));
 		}
 
 		final letterBox = new Graphics(this);
@@ -182,6 +214,7 @@ class PlayView extends GameState {
 	override function update(dt:Float) {
 		updateCannons(dt);
 		updateFlyingRes(dt);
+		updateNebula(dt);
 	}
 
 	function updateCannons(dt:Float) {
@@ -234,6 +267,11 @@ class PlayView extends GameState {
 				return true;
 			}
 		}
+		for (nebula in nebulas) {
+			if (Utils.toPoint(nebula).distance(Utils.toPoint(res)) < 12) {
+				return true;
+			}
+		}
 		for (planet in planets) {
 			if (Utils.toPoint(planet).distance(Utils.toPoint(res)) < 10) {
 				return true;
@@ -248,5 +286,11 @@ class PlayView extends GameState {
 		final dir = Utils.direction(cannon.rotation);
 		final pos = new Point(cannon.x, cannon.y).add(dir.multiply(10));
 		flyingRes.push(new FlyingRes(pos.x, pos.y, dir.multiply(START_VEL), cannon.res, this));
+	}
+
+	function updateNebula(dt:Float) {
+		for (nebula in nebulas) {
+			nebula.alpha = hxd.Math.clamp(nebula.alpha + 0.05 * (Math.random() - 0.5), 0.5, 1.0);
+		}
 	}
 }
