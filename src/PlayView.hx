@@ -205,6 +205,8 @@ class PlayView extends GameState {
 
 	final level:Int;
 	var progressText:Text;
+	var progressFlow:Flow;
+	var complete = false;
 
 	public function new(level:Int) {
 		super();
@@ -244,6 +246,7 @@ class PlayView extends GameState {
 			f.verticalAlign = Middle;
 			f.horizontalAlign = Middle;
 			f.enableInteractive = true;
+			f.interactive.cursor = Button;
 			f.interactive.onClick = e -> {
 				App.instance.switchState(new MapView());
 			}
@@ -251,15 +254,14 @@ class PlayView extends GameState {
 			t.text = "Back";
 		}
 		{
-			final f = new Flow(this);
-			f.x = 50;
-			f.padding = 5;
-			f.paddingTop = 1;
-			f.backgroundTile = Tile.fromColor(0x334230);
-			f.verticalAlign = Middle;
-			f.horizontalAlign = Middle;
-			f.enableInteractive = true;
-			progressText = new Text(hxd.res.DefaultFont.get(), f);
+			progressFlow = new Flow(this);
+			progressFlow.x = 60;
+			progressFlow.padding = 5;
+			progressFlow.paddingTop = 1;
+			progressFlow.backgroundTile = Tile.fromColor(0x334230);
+			progressFlow.verticalAlign = Middle;
+			progressFlow.horizontalAlign = Middle;
+			progressText = new Text(hxd.res.DefaultFont.get(), progressFlow);
 		}
 
 		// TODO: use Mask instead https://heaps.io/samples/mask.html
@@ -290,7 +292,23 @@ class PlayView extends GameState {
 			planet.deliveryProgress = hxd.Math.clamp(planet.deliveryProgress - dt * 0.1, 0.0, 1.1);
 			totalProgress += hxd.Math.clamp(planet.deliveryProgress, 0, 1) / planets.length;
 		}
-		progressText.text = "Delivery progress: " + Math.floor(totalProgress * 100) + "%";
+
+		if (!complete) {
+			if (totalProgress > 0.999) {
+				progressText.text = "Delivery progress: 100% - Mission complete";
+				complete = true;
+				if (App.getUnlockedLevel() == level) {
+					App.setUnlockedLevel(level + 1);
+				}
+
+				Utils.tween(progressFlow, 0.5, {scaleX: 1.2, scaleY: 1.2, x: progressFlow.x - 10})
+					.ease(Sine.easeInOut)
+					.reflect()
+					.repeat();
+			} else {
+				progressText.text = "Delivery progress: " + Math.floor(totalProgress * 100) + "%";
+			}
+		}
 	}
 
 	function updateCannons(dt:Float) {

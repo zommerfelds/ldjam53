@@ -20,14 +20,14 @@ class MapView extends GameState {
 		final subtitle = new Text(hxd.res.DefaultFont.get(), this);
 		subtitle.text = "Black Hole Manipulation Delivery System";
 		subtitle.textAlign = Center;
-        subtitle.scale(1.073);
+		subtitle.scale(1.073);
 		subtitle.x = 256;
 		subtitle.y = 120;
 
 		final version = new Text(hxd.res.DefaultFont.get(), this);
 		version.text = "version: " + hxd.Res.version.entry.getText();
 		version.textAlign = Center;
-        version.scale(0.7);
+		version.scale(0.7);
 		version.x = 256;
 		version.y = 480;
 
@@ -40,24 +40,27 @@ class MapView extends GameState {
 			f.horizontalAlign = Middle;
 			f.enableInteractive = true;
 			f.interactive.onClick = e -> {
-                HerbalTeaApp.toggleFullScreen();
-
+				HerbalTeaApp.toggleFullScreen();
 			}
+            f.interactive.cursor = Button;
 			final t = new Text(hxd.res.DefaultFont.get(), f);
 			t.text = "Toggle fullscreen";
 		}
 
 		final sprites = new SpriteBatch(null, this);
 
-
 		var x = 115;
 		var y = 200;
+		final unlockedLvl = App.getUnlockedLevel();
 		for (level in Ldtk.proj.levels) {
+            final unlocked = unlockedLvl >= level.arrayIndex;
+
 			final e = new BatchElement(Res.galaxy.toTile());
-            final rand = new Rand(level.arrayIndex);
+			final rand = new Rand(level.arrayIndex);
 			e.r = rand.rand() + 0.5;
 			e.g = rand.rand() + 0.5;
 			e.b = rand.rand() + 0.5;
+            e.a = unlocked ? 1.0 : 0.4;
 			e.x = x;
 			e.y = y;
 			sprites.add(e);
@@ -66,12 +69,15 @@ class MapView extends GameState {
 			label.textAlign = Center;
 			label.x = x + 32;
 			label.y = y + 50;
+            label.alpha = unlocked ? 1.0 : 0.4;
 
-			final i = new Interactive(64, 70, this);
-			i.x = x;
-			i.y = y;
-			i.onClick = e -> {
-				App.instance.switchState(new PlayView(level.arrayIndex));
+			if (unlocked) {
+				final i = new Interactive(64, 70, this);
+				i.x = x;
+				i.y = y;
+				i.onClick = e -> {
+					App.instance.switchState(new PlayView(level.arrayIndex));
+				}
 			}
 
 			x += 70;

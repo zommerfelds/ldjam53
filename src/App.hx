@@ -24,11 +24,11 @@ class App extends HerbalTeaApp {
 	}
 
 	// TODO: move this to HerbalTeaApp
-	public static function loadHighScore():Int {
-		return hxd.Save.load({highscore: 0}).highscore;
+	public static function getUnlockedLevel():Int {
+		return hxd.Save.load({unlockedLevel: 0}).unlockedLevel;
 	}
 
-	public static function writeHighScore(highscore:Int) {
-		hxd.Save.save({highscore: highscore});
+	public static function setUnlockedLevel(level:Int) {
+		hxd.Save.save({unlockedLevel: level});
 	}
 }
