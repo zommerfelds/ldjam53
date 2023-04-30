@@ -245,7 +245,7 @@ class PlayView extends GameState {
 			f.horizontalAlign = Middle;
 			f.enableInteractive = true;
 			f.interactive.onClick = e -> {
-				App.instance.switchState(new MenuView());
+				App.instance.switchState(new MapView());
 			}
 			final t = new Text(hxd.res.DefaultFont.get(), f);
 			t.text = "Back";
