@@ -1,10 +1,8 @@
-package;
-
 import h3d.shader.ScreenShader;
 
 class StarsShader extends ScreenShader {
 	static var SRC = {
-        // Based on https://www.shadertoy.com/view/flcSz2
+		// Based on https://www.shadertoy.com/view/flcSz2
 		@param var texture:Sampler2D;
 		@param var time:Float;
 		function rand(st:Vec2):Float {
@@ -30,9 +28,8 @@ class StarsShader extends ScreenShader {
 			return color + p(st);
 		}
 		function fragment() {
-
-            final st = output.position.xy;
-            st *= 352.0 / 2;
+			final st = output.position.xy;
+			st *= 352.0 / 2;
 
 			pixelColor = vec4(stars(st), 1.0);
 		}
