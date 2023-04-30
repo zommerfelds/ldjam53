@@ -1,3 +1,4 @@
+import hxd.Rand;
 import haxe.Timer;
 import h2d.filter.Shader;
 import h2d.filter.Glow;
@@ -186,7 +187,9 @@ class PlayView extends GameState {
 	override function init() {
 		this.scaleMode = LetterBox(GAME_WIDTH, GAME_HEIGHT);
 		final background = new Bitmap(Tile.fromColor(0x000000, GAME_WIDTH, GAME_HEIGHT), this);
-		// background.filter = new Noise
+
+		final rand = new Rand(level);
+		starsShader.color.set(rand.rand() * 0.4, rand.rand() * 0.4, rand.rand() * 0.4);
 		background.filter = new Shader(starsShader);
 
 		Tiles.init(this);

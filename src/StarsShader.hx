@@ -5,6 +5,7 @@ class StarsShader extends ScreenShader {
 		// Based on https://www.shadertoy.com/view/flcSz2
 		@param var texture:Sampler2D;
 		@param var time:Float;
+		@param var color:Vec3 = vec3(0.1);
 		function rand(st:Vec2):Float {
 			final r = fract(sin(st) * 2.7644437);
 			return fract(r.y * 276.44437 + r.x);
@@ -15,17 +16,16 @@ class StarsShader extends ScreenShader {
 		}
 		function avg(st:Vec2, a:Float):Vec3 {
 			final A = vec2(0.0, a);
-			final COLOR = vec3(0.1, 0.0, 0.2);
-			return COLOR * (p(st) + p(st + A) + p(st + A.yx) + p(st - A) + p(st - A.yx));
+			return color * (p(st) + p(st + A) + p(st + A.yx) + p(st - A) + p(st - A.yx));
 		}
 		function stars(st:Vec2):Vec3 {
-			final color = vec3(0.0);
+			final c = vec3(0.0);
 			var i = 5;
 			while (i > 0) {
-				color += mix(color, avg(st, i), 1.5);
+				c += mix(c, avg(st, i), 1.5);
 				i--;
 			}
-			return color + p(st);
+			return c + p(st);
 		}
 		function fragment() {
 			final st = output.position.xy;

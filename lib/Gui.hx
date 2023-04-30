@@ -27,7 +27,7 @@ class Text extends h2d.HtmlText {
 		super(font, parent);
 		this.text = text;
 		this.scale(size * 4.0);
-		smooth = true;
+		// smooth = true;
 		textColor = 0xffffffff;
 
 		// Reduce space between lines. This may need to change depending on the font.

@@ -11,7 +11,7 @@ class MenuView extends GameState {
 		centeringFlow.verticalSpacing = Gui.scaleAsInt(50);
 
 		new Gui.Text("Wellcome to...", centeringFlow, 0.8);
-		new Gui.Text("Yet Another Game!", centeringFlow);
+		new Gui.Text("B.H.M.D.S. - Black Hole Manipulation Delivery System", centeringFlow);
 
 		centeringFlow.addSpacing(Gui.scaleAsInt(100));
 
@@ -23,7 +23,7 @@ class MenuView extends GameState {
 			App.instance.switchState(new PlayView(0));
 		}, Gui.Colors.BLUE, 0.8);
 
-		new Gui.Text("Highscore: " + App.loadHighScore(), centeringFlow, 0.8);
+		// new Gui.Text("Highscore: " + App.loadHighScore(), centeringFlow, 0.8);
 
 		centeringFlow.addSpacing(Gui.scaleAsInt(100));
 
