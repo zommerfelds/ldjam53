@@ -103,4 +103,8 @@ class Utils {
 		toObj.scaleY = fromObj.scaleY;
 		toObj.rotation = fromObj.rotation;
 	}
+
+	public static function direction(angle:Float) {
+		return new Point(Math.cos(angle), Math.sin(angle));
+	}
 }

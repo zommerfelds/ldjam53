@@ -1,164 +1,177 @@
+import h2d.SpriteBatch;
 import h2d.col.Point;
+import h2d.Interactive;
+import h2d.Scene;
+import h2d.Object;
+import h2d.Anim;
+import h2d.Tile;
+import hxd.Res;
+import h2d.Bitmap;
 
-enum State {
-	WaitingForTouch;
-	Playing;
-	MissedBall;
-	Dead;
+enum ResType {
+	Res1;
+	Res2;
+	Res3;
+	Res4;
+}
+
+class Cannon extends Bitmap {
+	public var timeSinceLastFired:Float = 0.0;
+	public final res:ResType;
+
+	public function new(x:Float, y:Float, rotation:Float, res:ResType, ?parent) {
+		super(Tiles.TILE_CANNON, parent);
+		this.x = x;
+		this.y = y;
+		this.rotation = rotation;
+		this.res = res;
+	}
+}
+
+class FlyingRes extends BatchElement {
+	public final vel:Point;
+	public var timeAlive:Float = 0.0;
+
+	public function new(x:Float, y:Float, vel:Point, res:ResType, ?parent) {
+		final tile = switch (res) {
+			case Res1: Tiles.TILE_RES1;
+			case Res2: Tiles.TILE_RES1;
+			case Res3: Tiles.TILE_RES1;
+			case Res4: Tiles.TILE_RES1;
+		}
+		super(tile);
+		this.x = x;
+		this.y = y;
+		this.vel = vel;
+		Tiles.spriteBatch.add(this);
+	}
+}
+
+class BlackHole extends Object {
+	public function new(x:Float, y:Float, ?parent) {
+		super(parent);
+		final anim = new Anim([Tiles.TILE_HOLE_FRAME1, Tiles.TILE_HOLE_FRAME2, Tiles.TILE_HOLE_FRAME3], 15, this);
+		this.x = x;
+		this.y = y;
+
+		final interactive = new Interactive(32, 32, this);
+		interactive.x = -16;
+		interactive.y = -16;
+		interactive.onPush = e -> {
+			getScene().startCapture(e2 -> {
+				if (e2.kind == ERelease) {
+					getScene().stopCapture();
+					return;
+				}
+				this.x = e2.relX;
+				this.y = e2.relY;
+			});
+		};
+	}
+}
+
+class Tiles {
+	public static var TILE_RES1:Tile;
+	public static var TILE_RES2:Tile;
+	public static var TILE_RES3:Tile;
+	public static var TILE_RES4:Tile;
+	public static var TILE_PLANET:Tile;
+	public static var TILE_CANNON:Tile;
+	public static var TILE_HOLE_FRAME1:Tile;
+	public static var TILE_HOLE_FRAME2:Tile;
+	public static var TILE_HOLE_FRAME3:Tile;
+
+	public static var spriteBatch:SpriteBatch;
+
+	public static function init(parent) {
+		final tiles = Res.tiles.toTile();
+		spriteBatch = new SpriteBatch(tiles, parent);
+		TILE_RES1 = tiles.sub(0, 0, 8, 8, -4, -4);
+		TILE_RES2 = tiles.sub(0, 8, 8, 8, -4, -4);
+		TILE_RES3 = tiles.sub(8, 0, 8, 8, -4, -4);
+		TILE_RES4 = tiles.sub(8, 8, 8, 8, -4, -4);
+		TILE_PLANET = tiles.sub(16, 0, 16, 16, -8, -8);
+		TILE_CANNON = tiles.sub(32, 0, 16, 16, -8, -8);
+		TILE_HOLE_FRAME1 = tiles.sub(48 + 32 * 0, 0, 32, 32, -16, -16);
+		TILE_HOLE_FRAME2 = tiles.sub(48 + 32 * 1, 0, 32, 32, -16, -16);
+		TILE_HOLE_FRAME3 = tiles.sub(48 + 32 * 2, 0, 32, 32, -16, -16);
+	}
 }
 
 class PlayView extends GameState {
-	final playWidth = 9;
-	final playHeight = 16;
+	static final GAME_WIDTH = 256;
+	static final GAME_HEIGHT = 256;
 
-	final gameArea = new h2d.Graphics();
-
-	final paddle = new h2d.Graphics();
-	final paddleWidth = 2;
-	final paddleHeight = 0.5;
-
-	final ball = new h2d.Graphics();
-	final ballSize = 0.5;
-	var ballVel = new Point();
-
-	final wallSize = 0.5;
-
-	var state = WaitingForTouch;
-
-	final pointsText = new Gui.Text("");
-	var points = 0;
-
-	final resetText = new Gui.Text("");
-	final resetInteractive = new h2d.Interactive(0, 0);
+	final cannons:Array<Cannon> = [];
+	final blackHoles:Array<BlackHole> = [];
+	var flyingRes:Array<FlyingRes> = [];
 
 	override function init() {
-		if (height / width > playHeight / playWidth) {
-			// Width is limiting factor
-			gameArea.scale(width / playWidth);
-			gameArea.y = (height - playHeight * gameArea.scaleY) / 2;
-		} else {
-			// Height is limiting factor
-			gameArea.scale(height / playHeight);
-			gameArea.x = (width - playWidth * gameArea.scaleX) / 2;
-		}
-		gameArea.beginFill(0x330000);
-		gameArea.drawRect(0, 0, playWidth, playHeight);
-		addChild(gameArea);
+		this.scaleMode = LetterBox(GAME_WIDTH, GAME_HEIGHT);
+		new Bitmap(Tile.fromColor(0x322b2b, GAME_WIDTH, GAME_HEIGHT), this);
 
-		final wall = new h2d.Graphics(gameArea);
-		wall.beginFill(0xffffff);
-		wall.drawRect(0, 0, playWidth, wallSize);
+		Tiles.init(this);
 
-		paddle.beginFill(0xffffff);
-		paddle.drawRect(-paddleWidth / 2, 0, paddleWidth, paddleHeight);
-		paddle.y = playHeight * 0.8;
-		gameArea.addChild(paddle);
+		cannons.push(new Cannon(40, 30, 0.5, Res1, this));
 
-		ball.beginFill(0xffffff);
-		ball.drawRect(-ballSize / 2, -ballSize / 2, ballSize, ballSize);
-		gameArea.addChild(ball);
-
-		pointsText.x = width * 0.5;
-		pointsText.y = width * 0.02 + gameArea.y + wallSize * gameArea.scaleY;
-		pointsText.textAlign = Center;
-		this.addChild(pointsText);
-
-		resetText.text = "reset";
-		resetText.x = width - resetText.getBounds().width - width * 0.05;
-		resetText.y = width * 0.02 + gameArea.y + wallSize * gameArea.scaleY;
-		this.addChild(resetText);
-		resetInteractive.width = resetText.getBounds().width;
-		resetInteractive.height = resetText.getBounds().height;
-		resetInteractive.onClick = e -> {
-			setupGame();
-		};
-		resetText.addChild(resetInteractive);
-
-		final backText = new Gui.Text("&lt;-", this);
-		backText.x = width * 0.05;
-		backText.y = width * 0.02 + gameArea.y + wallSize * gameArea.scaleY;
-		final backInteractive = new h2d.Interactive(backText.getBounds().width, backText.getBounds().height, backText);
-		backInteractive.onClick = e -> {
-			App.instance.switchState(new MenuView());
-		};
-
-		setupGame();
+		blackHoles.push(new BlackHole(100, 100, this));
+		blackHoles.push(new BlackHole(90, 150, this));
 
 		addEventListener(onEvent);
-
-		final manager = hxd.snd.Manager.get();
-		manager.masterVolume = 0.5;
-		manager.masterChannelGroup.addEffect(new hxd.snd.effect.Reverb(hxd.snd.effect.ReverbPreset.DRUGGED));
-		manager.masterChannelGroup.addEffect(new hxd.snd.effect.Pitch(0.5));
-	}
-
-	function setupGame() {
-		resetText.visible = false;
-		points = 0;
-		paddle.x = playWidth / 2;
-		ball.x = paddle.x;
-		ball.y = paddle.y - ballSize / 2;
-		state = WaitingForTouch;
 	}
 
 	function onEvent(event:hxd.Event) {
 		switch (event.kind) {
 			case EPush:
-				if (state == WaitingForTouch) {
-					state = Playing;
-					setRandomBallVel();
-					hxd.Res.start.play();
-				}
 			default:
 		}
-		paddle.x = (event.relX - gameArea.x) / gameArea.scaleX;
-	}
-
-	function setRandomBallVel() {
-		ballVel = new Point(0, -(10 + points));
-		ballVel.rotate((Math.random() - 0.5) * Math.PI * 0.8);
 	}
 
 	override function update(dt:Float) {
-		pointsText.text = "" + points;
+		updateCannons(dt);
+		updateFlyingRes(dt);
+	}
 
-		if (state == WaitingForTouch || state == Dead)
-			return;
-
-		ball.x += ballVel.x * dt;
-		ball.y += ballVel.y * dt;
-
-		if (ball.x - ballSize * 0.5 < 0) {
-			ball.x = ballSize * 0.5;
-			ballVel.x *= -1;
-			final s = hxd.Res.blip.play();
-		}
-		if (ball.x + ballSize * 0.5 > playWidth) {
-			ball.x = playWidth - ballSize * 0.5;
-			ballVel.x *= -1;
-			hxd.Res.blip.play();
-		}
-		if (ball.y - ballSize * 0.5 < wallSize) {
-			ball.y = wallSize + ballSize * 0.5;
-			ballVel.y *= -1;
-			points += 1;
-			if (App.loadHighScore() < points) {
-				App.writeHighScore(points);
-			}
-			hxd.Res.blip.play();
-		}
-		if (ball.y + ballSize * 0.5 > paddle.y) {
-			if (state == Playing && ball.x + ballSize > paddle.x - paddleWidth / 2 && ball.x - ballSize < paddle.x + paddleWidth / 2) {
-				ball.y = paddle.y - ballSize * 0.5;
-				setRandomBallVel();
-				hxd.Res.blip.play();
-			} else {
-				state = MissedBall;
+	function updateCannons(dt:Float) {
+		for (cannon in cannons) {
+			cannon.timeSinceLastFired += dt;
+			if (cannon.timeSinceLastFired > 0.3) {
+				fire(cannon);
 			}
 		}
-		if (ball.y - ballSize * 0.5 > playHeight) {
-			state = Dead;
-			resetText.visible = true;
+	}
+
+	function updateFlyingRes(dt:Float) {
+		final MARGIN = 20;
+		var removed = false;
+		for (res in flyingRes) {
+			res.timeAlive += dt;
+			res.alpha = hxd.Math.clamp(5 - res.timeAlive * 0.5);
+			final pos = new Point(res.x, res.y);
+			for (blackHole in blackHoles) {
+				final b = new Point(blackHole.x, blackHole.y);
+				final d = b.sub(pos);
+				final g = d.normalized().multiply(10000.0 / d.length());
+				res.vel.x = res.vel.x + g.x * dt;
+				res.vel.y = res.vel.y + g.y * dt;
+			}
+			res.x += res.vel.x * dt;
+			res.y += res.vel.y * dt;
+			if (res.x < -MARGIN || res.x > GAME_WIDTH + MARGIN || res.y < -MARGIN || res.y > GAME_HEIGHT + MARGIN || res.alpha <= 0.0) {
+				res.remove();
+				removed = true;
+			}
 		}
+		if (removed) {
+			flyingRes = flyingRes.filter(r -> r.batch != null);
+		}
+	}
+
+	function fire(cannon:Cannon) {
+		final START_VEL = 80.0;
+		cannon.timeSinceLastFired = 0;
+		final dir = Utils.direction(cannon.rotation);
+		final pos = new Point(cannon.x, cannon.y).add(dir.multiply(8));
+		flyingRes.push(new FlyingRes(pos.x, pos.y, dir.multiply(START_VEL), cannon.res, this));
 	}
 }
