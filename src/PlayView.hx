@@ -1,3 +1,6 @@
+import h2d.Flow;
+import h2d.Text;
+import motion.easing.Sine;
 import hxd.Rand;
 import haxe.Timer;
 import h2d.filter.Shader;
@@ -85,14 +88,35 @@ class Planet extends Bitmap {
 		this.res = res;
 
 		final bubble = new Bitmap(Tiles.TILE_SPEECH_BUBBLE, this);
-		bubble.x = 16;
-		bubble.y = -16;
+		bubble.x = 8;
+		bubble.y = -8;
 
 		final res = new Bitmap(Tiles.resTile(res), bubble);
 		res.x = 1;
 		res.y = -1;
 
 		filter = new Glow(0x69ff96, 1, 5, 0.6, 1, true);
+
+		bubble.scale(0);
+		function tween() {
+			return Utils.tween(bubble, 0.7, {
+				x: 16,
+				y: -16,
+				scaleX: 1,
+				scaleY: 1
+			}, false).ease(Sine.easeIn).onComplete(() -> {
+				Utils.tween(bubble, 0.7, {
+					x: 8,
+					y: -8,
+					scaleX: 0,
+					scaleY: 0
+				}, false)
+					.ease(Sine.easeIn)
+					.delay(2.0)
+					.onComplete(() -> tween().delay(2.0));
+			});
+		}
+		tween();
 	}
 }
 
@@ -206,6 +230,21 @@ class PlayView extends GameState {
 
 		for (nebula in ldtkLevel.l_IntGrid.autoTiles) {
 			nebulas.push(new Nebula(nebula.renderX + 8, nebula.renderY + 8, this));
+		}
+
+		{
+			final f = new Flow(this);
+			f.padding = 5;
+			f.paddingTop = 1;
+			f.backgroundTile = Tile.fromColor(0x494949);
+			f.verticalAlign = Middle;
+			f.horizontalAlign = Middle;
+			f.enableInteractive = true;
+			f.interactive.onClick = e -> {
+				App.instance.switchState(new MenuView());
+			}
+			final t = new Text(hxd.res.DefaultFont.get(), f);
+			t.text = "Back";
 		}
 
 		// TODO: use Mask instead https://heaps.io/samples/mask.html
