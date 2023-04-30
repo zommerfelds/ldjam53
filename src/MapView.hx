@@ -1,3 +1,4 @@
+import motion.easing.Cubic;
 import h2d.Tile;
 import h2d.Flow;
 import h2d.Interactive;
@@ -31,6 +32,20 @@ class MapView extends GameState {
 		version.x = 256;
 		version.y = 480;
 
+		final unlockedLvl = App.getUnlockedLevel();
+		if (unlockedLvl == 8) {
+			final complete = new Text(hxd.res.DefaultFont.get(), this);
+			complete.text = "Congratulations for beating the game!";
+			complete.textAlign = Center;
+			complete.textColor = 0x86adb9;
+			complete.x = 256;
+			complete.y = 410;
+			Utils.tween(complete, 2.0, {scaleX: 1.2, scaleY: 1.2})
+				.ease(Cubic.easeInOut)
+				.reflect()
+				.repeat();
+		}
+
 		{
 			final f = new Flow(this);
 			f.padding = 5;
@@ -42,25 +57,24 @@ class MapView extends GameState {
 			f.interactive.onClick = e -> {
 				HerbalTeaApp.toggleFullScreen();
 			}
-            f.interactive.cursor = Button;
+			f.interactive.cursor = Button;
 			final t = new Text(hxd.res.DefaultFont.get(), f);
 			t.text = "Toggle fullscreen";
 		}
 
 		final sprites = new SpriteBatch(null, this);
 
-		var x = 115;
+		var x = 120;
 		var y = 200;
-		final unlockedLvl = App.getUnlockedLevel();
 		for (level in Ldtk.proj.levels) {
-            final unlocked = unlockedLvl >= level.arrayIndex;
+			final unlocked = unlockedLvl >= level.arrayIndex;
 
 			final e = new BatchElement(Res.galaxy.toTile());
 			final rand = new Rand(level.arrayIndex);
 			e.r = rand.rand() + 0.5;
 			e.g = rand.rand() + 0.5;
 			e.b = rand.rand() + 0.5;
-            e.a = unlocked ? 1.0 : 0.4;
+			e.a = unlocked ? 1.0 : 0.4;
 			e.x = x;
 			e.y = y;
 			sprites.add(e);
@@ -69,7 +83,7 @@ class MapView extends GameState {
 			label.textAlign = Center;
 			label.x = x + 32;
 			label.y = y + 50;
-            label.alpha = unlocked ? 1.0 : 0.4;
+			label.alpha = unlocked ? 1.0 : 0.4;
 
 			if (unlocked) {
 				final i = new Interactive(64, 70, this);
@@ -83,7 +97,7 @@ class MapView extends GameState {
 			x += 70;
 			if (x > 350) {
 				y += 100;
-				x = 115;
+				x = 120;
 			}
 		}
 	}
