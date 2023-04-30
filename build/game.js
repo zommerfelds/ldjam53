@@ -389,9 +389,6 @@ App.__name__ = "App";
 App.main = function() {
 	App.instance = new App();
 };
-App.loadHighScore = function() {
-	return hxd_Save.load({ highscore : 0}).highscore;
-};
 App.__super__ = HerbalTeaApp;
 App.prototype = $extend(HerbalTeaApp.prototype,{
 	onload: function() {
@@ -3682,7 +3679,6 @@ var Text = function(text,parent,size,addDefaultShadow) {
 	this.scaleX *= v;
 	this.posChanged = true;
 	this.scaleY *= v;
-	this.smooth = true;
 	this.set_textColor(-1);
 	this.set_lineSpacing(-font.lineHeight * 0.2);
 	if(addDefaultShadow) {
@@ -4794,7 +4790,7 @@ MenuView.prototype = $extend(GameState.prototype,{
 		centeringFlow.set_layout(h2d_FlowLayout.Vertical);
 		centeringFlow.set_verticalSpacing(Gui.scaleAsInt(50));
 		new Text("Wellcome to...",centeringFlow,0.8);
-		new Text("Yet Another Game!",centeringFlow);
+		new Text("B.H.M.D.S. - Black Hole Manipulation Delivery System",centeringFlow);
 		centeringFlow.addSpacing(Gui.scaleAsInt(100));
 		new TextButton(centeringFlow,"Toggle fullscreen",function() {
 			HerbalTeaApp.toggleFullScreen();
@@ -4803,7 +4799,6 @@ MenuView.prototype = $extend(GameState.prototype,{
 		new TextButton(centeringFlow,"Start game",function() {
 			App.instance.switchState(new PlayView(0));
 		},Colors.BLUE,null,0.8);
-		new Text("Highscore: " + App.loadHighScore(),centeringFlow,0.8);
 		centeringFlow.addSpacing(Gui.scaleAsInt(100));
 		new Text("version: " + hxd_Res.get_loader().loadCache("version.txt",hxd_res_Resource).entry.getText(),centeringFlow,0.5);
 	}
@@ -5055,7 +5050,32 @@ PlayView.__super__ = GameState;
 PlayView.prototype = $extend(GameState.prototype,{
 	init: function() {
 		this.set_scaleMode(h2d_ScaleMode.LetterBox(PlayView.GAME_WIDTH,PlayView.GAME_HEIGHT));
-		new h2d_Bitmap(h2d_Tile.fromColor(0,PlayView.GAME_WIDTH,PlayView.GAME_HEIGHT),this).set_filter(new h2d_filter_Shader(this.starsShader));
+		var background = new h2d_Bitmap(h2d_Tile.fromColor(0,PlayView.GAME_WIDTH,PlayView.GAME_HEIGHT),this);
+		var rand = new hxd_Rand(this.level);
+		var _this = this.starsShader.color__;
+		rand.seed = 36969 * (rand.seed & 65535) + (rand.seed >> 16);
+		rand.seed2 = 18000 * (rand.seed2 & 65535) + (rand.seed2 >> 16);
+		var x = (((rand.seed << 16) + rand.seed2 | 0) & 1073741823) % 10007 / 10007.0 * 0.4;
+		rand.seed = 36969 * (rand.seed & 65535) + (rand.seed >> 16);
+		rand.seed2 = 18000 * (rand.seed2 & 65535) + (rand.seed2 >> 16);
+		var y = (((rand.seed << 16) + rand.seed2 | 0) & 1073741823) % 10007 / 10007.0 * 0.4;
+		rand.seed = 36969 * (rand.seed & 65535) + (rand.seed >> 16);
+		rand.seed2 = 18000 * (rand.seed2 & 65535) + (rand.seed2 >> 16);
+		var z = (((rand.seed << 16) + rand.seed2 | 0) & 1073741823) % 10007 / 10007.0 * 0.4;
+		if(z == null) {
+			z = 0.;
+		}
+		if(y == null) {
+			y = 0.;
+		}
+		if(x == null) {
+			x = 0.;
+		}
+		_this.x = x;
+		_this.y = y;
+		_this.z = z;
+		_this.w = 1.;
+		background.set_filter(new h2d_filter_Shader(this.starsShader));
 		Tiles.init(this);
 		var _g = 0;
 		var _this = this.ldtkLevel;
@@ -5370,21 +5390,6 @@ Reflect.compareMethods = function(f1,f2) {
 		return false;
 	}
 };
-Reflect.isObject = function(v) {
-	if(v == null) {
-		return false;
-	}
-	var t = typeof(v);
-	if(!(t == "string" || t == "object" && v.__enum__ == null)) {
-		if(t == "function") {
-			return (v.__name__ || v.__ename__) != null;
-		} else {
-			return false;
-		}
-	} else {
-		return true;
-	}
-};
 Reflect.isEnumValue = function(v) {
 	if(v != null) {
 		return v.__enum__ != null;
@@ -5534,6 +5539,7 @@ h3d_shader_ScreenShader.prototype = $extend(hxsl_Shader.prototype,{
 	,__properties__: {set_flipY:"set_flipY",get_flipY:"get_flipY"}
 });
 var StarsShader = function() {
+	this.color__ = new h3d_Vector(0.1,0.1,0.1);
 	this.time__ = 0;
 	h3d_shader_ScreenShader.call(this);
 };
@@ -5553,6 +5559,12 @@ StarsShader.prototype = $extend(h3d_shader_ScreenShader.prototype,{
 	,set_time: function(_v) {
 		return this.time__ = _v;
 	}
+	,get_color: function() {
+		return this.color__;
+	}
+	,set_color: function(_v) {
+		return this.color__ = _v;
+	}
 	,updateConstants: function(globals) {
 		this.constBits = 0;
 		this.updateConstantsFinal(globals);
@@ -5565,6 +5577,8 @@ StarsShader.prototype = $extend(h3d_shader_ScreenShader.prototype,{
 			return this.texture__;
 		case 2:
 			return this.time__;
+		case 3:
+			return this.color__;
 		default:
 		}
 		return null;
@@ -5580,7 +5594,7 @@ StarsShader.prototype = $extend(h3d_shader_ScreenShader.prototype,{
 		return 0.;
 	}
 	,__class__: StarsShader
-	,__properties__: $extend(h3d_shader_ScreenShader.prototype.__properties__,{set_time:"set_time",get_time:"get_time",set_texture:"set_texture",get_texture:"get_texture"})
+	,__properties__: $extend(h3d_shader_ScreenShader.prototype.__properties__,{set_color:"set_color",get_color:"get_color",set_time:"set_time",get_time:"get_time",set_texture:"set_texture",get_texture:"get_texture"})
 });
 var Std = function() { };
 $hxClasses["Std"] = Std;
@@ -28271,6 +28285,7 @@ haxe_Exception.prototype = $extend(Error.prototype,{
 	,__class__: haxe_Exception
 	,__properties__: {get_native:"get_native",get_message:"get_message"}
 });
+var haxe_Int32 = {};
 var haxe_Log = function() { };
 $hxClasses["haxe.Log"] = haxe_Log;
 haxe_Log.__name__ = "haxe.Log";
@@ -29261,104 +29276,6 @@ haxe_crypto_Md5.prototype = {
 		return [a,b,c,d];
 	}
 	,__class__: haxe_crypto_Md5
-};
-var haxe_crypto_Sha1 = function() {
-};
-$hxClasses["haxe.crypto.Sha1"] = haxe_crypto_Sha1;
-haxe_crypto_Sha1.__name__ = "haxe.crypto.Sha1";
-haxe_crypto_Sha1.encode = function(s) {
-	var sh = new haxe_crypto_Sha1();
-	return sh.hex(sh.doEncode(haxe_crypto_Sha1.str2blks(s)));
-};
-haxe_crypto_Sha1.str2blks = function(s) {
-	var s1 = haxe_io_Bytes.ofString(s);
-	var nblk = (s1.length + 8 >> 6) + 1;
-	var blks = [];
-	var _g = 0;
-	var _g1 = nblk * 16;
-	while(_g < _g1) blks[_g++] = 0;
-	var _g = 0;
-	var _g1 = s1.length;
-	while(_g < _g1) {
-		var i = _g++;
-		blks[i >> 2] |= s1.b[i] << 24 - ((i & 3) << 3);
-	}
-	var i = s1.length;
-	blks[i >> 2] |= 128 << 24 - ((i & 3) << 3);
-	blks[nblk * 16 - 1] = s1.length * 8;
-	return blks;
-};
-haxe_crypto_Sha1.prototype = {
-	doEncode: function(x) {
-		var w = [];
-		var a = 1732584193;
-		var b = -271733879;
-		var c = -1732584194;
-		var d = 271733878;
-		var e = -1009589776;
-		var i = 0;
-		while(i < x.length) {
-			var olda = a;
-			var oldb = b;
-			var oldc = c;
-			var oldd = d;
-			var olde = e;
-			var j = 0;
-			while(j < 80) {
-				if(j < 16) {
-					w[j] = x[i + j];
-				} else {
-					var num = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
-					w[j] = num << 1 | num >>> 31;
-				}
-				var t = (a << 5 | a >>> 27) + this.ft(j,b,c,d) + e + w[j];
-				e = d;
-				d = c;
-				c = b << 30 | b >>> 2;
-				b = a;
-				a = t + this.kt(j);
-				++j;
-			}
-			a += olda;
-			b += oldb;
-			c += oldc;
-			d += oldd;
-			e += olde;
-			i += 16;
-		}
-		return [a,b,c,d,e];
-	}
-	,ft: function(t,b,c,d) {
-		if(t < 20) {
-			return b & c | ~b & d;
-		}
-		if(t < 40) {
-			return b ^ c ^ d;
-		}
-		if(t < 60) {
-			return b & c | b & d | c & d;
-		}
-		return b ^ c ^ d;
-	}
-	,kt: function(t) {
-		if(t < 20) {
-			return 1518500249;
-		}
-		if(t < 40) {
-			return 1859775393;
-		}
-		if(t < 60) {
-			return -1894007588;
-		}
-		return -899497514;
-	}
-	,hex: function(a) {
-		var str = "";
-		var _g = 0;
-		while(_g < a.length) str += StringTools.hex(a[_g++],8);
-		return str.toLowerCase();
-	}
-	,__class__: haxe_crypto_Sha1
 };
 var haxe_ds_ArraySort = function() { };
 $hxClasses["haxe.ds.ArraySort"] = haxe_ds_ArraySort;
@@ -32079,6 +31996,42 @@ hxd_Pixels.prototype = {
 	,__class__: hxd_Pixels
 	,__properties__: {set_innerFormat:"set_innerFormat"}
 };
+var hxd_Rand = function(seed) {
+	this.init(seed);
+};
+$hxClasses["hxd.Rand"] = hxd_Rand;
+hxd_Rand.__name__ = "hxd.Rand";
+hxd_Rand.hash = function(n,seed) {
+	if(seed == null) {
+		seed = 5381;
+	}
+	var n1 = n;
+	n1 = haxe_Int32._mul(n1,-862048943);
+	n1 = n1 << 15 | n1 >>> 17;
+	n1 = haxe_Int32._mul(n1,461845907);
+	var h = seed;
+	h ^= n1;
+	h = h << 13 | h >>> 19;
+	h = haxe_Int32._mul(h,5) + (-430675100) | 0;
+	h ^= h >> 16;
+	h = haxe_Int32._mul(h,-2048144789);
+	h ^= h >> 13;
+	h = haxe_Int32._mul(h,-1028477387);
+	return h ^= h >> 16;
+};
+hxd_Rand.prototype = {
+	init: function(seed) {
+		this.seed = seed;
+		this.seed2 = hxd_Rand.hash(seed);
+		if(this.seed == 0) {
+			this.seed = 1;
+		}
+		if(this.seed2 == 0) {
+			this.seed2 = 1;
+		}
+	}
+	,__class__: hxd_Rand
+};
 var hxd_Res = function() { };
 $hxClasses["hxd.Res"] = hxd_Res;
 hxd_Res.__name__ = "hxd.Res";
@@ -32095,54 +32048,6 @@ hxd_Res.get_loader = function() {
 };
 hxd_Res.set_loader = function(l) {
 	return hxd_res_Loader.currentInstance = l;
-};
-var hxd_Save = function() { };
-$hxClasses["hxd.Save"] = hxd_Save;
-hxd_Save.__name__ = "hxd.Save";
-hxd_Save.makeCRC = function(data) {
-	return HxOverrides.substr(haxe_crypto_Sha1.encode(data + haxe_crypto_Sha1.encode(data + hxd_Save.SALT)),4,32);
-};
-hxd_Save.loadData = function(data,checkSum,defValue) {
-	if(checkSum) {
-		if(HxOverrides.cca(data,data.length - 33) != 35) {
-			throw haxe_Exception.thrown("Missing CRC");
-		}
-		var crc = HxOverrides.substr(data,data.length - 32,null);
-		data = HxOverrides.substr(data,0,-33);
-		if(hxd_Save.makeCRC(data) != crc) {
-			throw haxe_Exception.thrown("Invalid CRC");
-		}
-	}
-	var obj = haxe_Unserializer.run(data);
-	if(defValue != null && Reflect.isObject(obj) && Reflect.isObject(defValue)) {
-		var _g = 0;
-		var _g1 = Reflect.fields(defValue);
-		while(_g < _g1.length) {
-			var f = _g1[_g];
-			++_g;
-			if(Object.prototype.hasOwnProperty.call(obj,f)) {
-				continue;
-			}
-			obj[f] = Reflect.field(defValue,f);
-		}
-	}
-	return obj;
-};
-hxd_Save.load = function(defValue,name,checkSum) {
-	if(checkSum == null) {
-		checkSum = false;
-	}
-	if(name == null) {
-		name = "save";
-	}
-	try {
-		return hxd_Save.loadData(hxd_Save.readSaveData(name),checkSum,defValue);
-	} catch( _g ) {
-		return defValue;
-	}
-};
-hxd_Save.readSaveData = function(name) {
-	return window.localStorage.getItem(name);
 };
 var hxd_SceneEvents = function($window) {
 	this.defaultCursor = hxd_Cursor.Default;
@@ -49266,7 +49171,7 @@ Ldtk.validated = Ldtk.validate();
 PlayView.GAME_WIDTH = 512;
 PlayView.GAME_HEIGHT = 512;
 h3d_shader_ScreenShader.SRC = "HXSLF2gzZC5zaGFkZXIuU2NyZWVuU2hhZGVyBwEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACghfX2luaXRfXw4GAAALBnZlcnRleA4GAAACAgoAAAUCBgQCBwUMAggFDAUMBgQCCQUKAgMFCgUKAAALAAAFAQYEAgYFDAkDKg4ECgICBQoAAAMGAQoCAgUKBAADAgQDAwEDAAAAAAAAAAADAQMAAAAAAADwPwMFDAUMAA";
-StarsShader.SRC = "HXSLC1N0YXJzU2hhZGVyDgEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACgd0ZXh0dXJlCgIAAAsEdGltZQMCAAAMCF9faW5pdF9fDgYAAA0GdmVydGV4DgYAAA4EcmFuZA4GAAAPAXAOBgAAEANhdmcOBgAAEQVzdGFycw4GAAASCGZyYWdtZW50DgYAAAcCDAAABQIGBAIHBQwCCAUMBQwGBAIJBQoCAwUKBQoAAA0AAAUBBgQCBgUMCQMqDgQKAgIFCgAAAwYBCgICBQoEAAMCBAMDAQMAAAAAAAAAAAMBAwAAAAAAAPA/AwUMBQwAAw4BEwJzdAUKBAAAAwUCCBQBcgUKBAAACQMTDgEGAQkDAg4BAhMFCgUKAQPeEJmolB0GQAMFCgUKAA0JAxMOAQYABgEKAhQFCgQAAwEDLZW3IxxHcUADAwoCFAUKAAADAwMAAAMPARUCc3QFCgQAAAMFAggWAXIDBAAACQIODgEJAxEOAQIVBQoFCgMADQYAAQN7FK5H4XqEPwMGAQkDGg4DAQPXo3A9CtfvPwMBAwAAAAAAAPA/AwIWAwMJAxYOAgEDAAAAAAAAAAADCQMCDgEGAAYBAhYDAQMAAAAAINDgQAMDAgsDAwMDAwMAAAMQAhcCc3QFCgQAABgBYQMEAAAFCwUDCBkBQQUKBAAACQMoDgIBAwAAAAAAAAAAAwIYAwUKAAgaBUNPTE9SBQsEAAAJAykOAwEDmpmZmZmZuT8DAQMAAAAAAAAAAAMBA5qZmZmZmck/AwULAA0GAQIaBQsEBgAGAAYABgAJAg8OAQIXBQoDCQIPDgEGAAIXBQoCGQUKBQoDAwkCDw4BBgACFwUKCgIZBQoFAAUKBQoDAwkCDw4BBgMCFwUKAhkFCgUKAwMJAg8OAQYDAhcFCgoCGQUKBQAFCgUKAwMDBQsAAAMRARsCc3QFCgQAAAULBQQIHAVjb2xvcgULBAAACQMpDgEBAwAAAAAAAAAAAwULAAgdAWkBBAAAAQIFAAAAAQAUBgcCHQEBAgAAAAABAgUCBoACHAULCQMYDgMCHAULCQIQDgICGwUKCQMmDgECHQEDBQsBAwAAAAAAAPg/AwULBQsGgwIdAQECAQAAAAEAAAEADQYAAhwFCwkCDw4BAhsFCgMFCwAAARIAAAUDCB4Cc3QFCgQAAAoCBgUMEQAFCgAGgQIeBQoGAgEDAAAAAAAAgEADAQMAAAAAAAAAQAMDBQoGBAIIBQwJAyoOAgkCEQ4BAh4FCgULAQMAAAAAAADwPwMFDAUMAA";
+StarsShader.SRC = "HXSLC1N0YXJzU2hhZGVyDwEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACgd0ZXh0dXJlCgIAAAsEdGltZQMCAAAMBWNvbG9yBQsCAAANCF9faW5pdF9fDgYAAA4GdmVydGV4DgYAAA8EcmFuZA4GAAAQAXAOBgAAEQNhdmcOBgAAEgVzdGFycw4GAAATCGZyYWdtZW50DgYAAAcCDQAABQIGBAIHBQwCCAUMBQwGBAIJBQoCAwUKBQoAAA4AAAUBBgQCBgUMCQMqDgQKAgIFCgAAAwYBCgICBQoEAAMCBAMDAQMAAAAAAAAAAAMBAwAAAAAAAPA/AwUMBQwAAw8BFAJzdAUKBAAAAwUCCBUBcgUKBAAACQMTDgEGAQkDAg4BAhQFCgUKAQPeEJmolB0GQAMFCgUKAA0JAxMOAQYABgEKAhUFCgQAAwEDLZW3IxxHcUADAwoCFQUKAAADAwMAAAMQARYCc3QFCgQAAAMFAggXAXIDBAAACQIPDgEJAxEOAQIWBQoFCgMADQYAAQN7FK5H4XqEPwMGAQkDGg4DAQPXo3A9CtfvPwMBAwAAAAAAAPA/AwIXAwMJAxYOAgEDAAAAAAAAAAADCQMCDgEGAAYBAhcDAQMAAAAAINDgQAMDAgsDAwMDAwMAAAMRAhgCc3QFCgQAABkBYQMEAAAFCwUCCBoBQQUKBAAACQMoDgIBAwAAAAAAAAAAAwIZAwUKAA0GAQIMBQsEBgAGAAYABgAJAhAOAQIYBQoDCQIQDgEGAAIYBQoCGgUKBQoDAwkCEA4BBgACGAUKCgIaBQoFAAUKBQoDAwkCEA4BBgMCGAUKAhoFCgUKAwMJAhAOAQYDAhgFCgoCGgUKBQAFCgUKAwMDBQsAAAMSARsCc3QFCgQAAAULBQQIHAFjBQsEAAAJAykOAQEDAAAAAAAAAAADBQsACB0BaQEEAAABAgUAAAABABQGBwIdAQECAAAAAAECBQIGgAIcBQsJAxgOAwIcBQsJAhEOAgIbBQoJAyYOAQIdAQMFCwEDAAAAAAAA+D8DBQsFCwaDAh0BAQIBAAAAAQAAAQANBgACHAULCQIQDgECGwUKAwULAAABEwAABQMIHgJzdAUKBAAACgIGBQwRAAUKAAaBAh4FCgYCAQMAAAAAAACAQAMBAwAAAAAAAABAAwMFCgYEAggFDAkDKg4CCQISDgECHgUKBQsBAwAAAAAAAPA/AwUMBQwA";
 Xml.Element = 0;
 Xml.PCData = 1;
 Xml.CData = 2;
@@ -49360,6 +49265,9 @@ h3d_shader_VertexColorAlpha.SRC = "HXSLG2gzZC5zaGFkZXIuVmVydGV4Q29sb3JBbHBoYQQBB
 h3d_shader_VolumeDecal.SRC = "HXSLFmgzZC5zaGFkZXIuVm9sdW1lRGVjYWwYAQZjYW1lcmENAQoCBHZpZXcHAAEAAwRwcm9qBwABAAQIcG9zaXRpb24FCwABAAUIcHJvakZsaXADAAEABghwcm9qRGlhZwULAAEABwh2aWV3UHJvagcAAQAID2ludmVyc2VWaWV3UHJvagcAAQAJBXpOZWFyAwABAAoEekZhcgMAAQALA2RpcgULAwEAAAAADAZnbG9iYWwNAgQNBHRpbWUDAAwADglwaXhlbFNpemUFCgAMAA8JbW9kZWxWaWV3BwAMAQMQEG1vZGVsVmlld0ludmVyc2UHAAwBAwAAABEFaW5wdXQNAwISCHBvc2l0aW9uBQsBEQATBm5vcm1hbAULAREAAQAAFAZvdXRwdXQNBAUVCHBvc2l0aW9uBQwEFAAWBWNvbG9yBQwEFAAXBWRlcHRoAwQUABgGbm9ybWFsBQsEFAAZCXdvcmxkRGlzdAMEFAAEAAAaEHJlbGF0aXZlUG9zaXRpb24FCwQAABsTdHJhbnNmb3JtZWRQb3NpdGlvbgULBAAAHBhwaXhlbFRyYW5zZm9ybWVkUG9zaXRpb24FCwQAAB0RdHJhbnNmb3JtZWROb3JtYWwFCwQAAB4RcHJvamVjdGVkUG9zaXRpb24FDAQAAB8KcGl4ZWxDb2xvcgUMBAAAIAVkZXB0aAMEAAAhCHNjcmVlblVWBQoEAAAiCXNwZWNQb3dlcgMEAAAjCXNwZWNDb2xvcgULBAAAJAl3b3JsZERpc3QDBAAAJQhkZXB0aE1hcBEBAAAAJgVzY2FsZQUKAgAAJwZub3JtYWwFCwIAACgHdGFuZ2VudAULAgAAKQppc0NlbnRlcmVkAgIAAQAAAAAAKgxjYWxjdWxhdGVkVVYFCgQAACsSdHJhbnNmb3JtZWRUYW5nZW50BQwEAAAsDl9faW5pdF9fdmVydGV4DgYAAC0IZnJhZ21lbnQOBgAAAgIsAAAFAgYEAh0FCwkDHw4BBAYBAicFCwkDMg4BAg8HBgULBQsFCwULBgQCKwUMCQMqDgIJAx8OAQQGAQIoBQsJAzIOAQIPBwYFCwULBQsBAwAAAAAAAPA/AwUMBQwAAS0AAAUJCC4GbWF0cml4BwQAAAYBAggHAhAHBwAILwlzY3JlZW5Qb3MFCgQAAAYCCgIeBQwRAAUKCgIeBQwMAAMFCgAIMANydXYFDAQAAAkDKg4DAi8FCgkDPw4CAiURAQkDOg4BAi8FCgUKAwEDAAAAAAAA8D8DBQwACDEEd3BvcwUMBAAABgECMAUMAi4HBQwACDIEcHBvcwUMBAAABgECMAUMAggHBQwABgQCHAULBgIKAjIFDJIABQsKAjIFDAwAAwULBQsGBAIqBQoGAQImBQoEBgIKAjEFDBEABQoKAjEFDAwAAwUKBQoFCgUKCwIpAgaAAioFCgEDAAAAAAAA4D8DBQoAAAsGCQkDFQ4CCQMVDgIKAioFCgAAAwoCKgUKBAADAwkDFQ4CBgMBAwAAAAAAAPA/AwoCKgUKAAADAwYDAQMAAAAAAADwPwMKAioFCgQAAwMDAwEDAAAAAAAAAAADAgwAAAAA";
 haxe_EntryPoint.pending = [];
 haxe_EntryPoint.threadCount = 0;
+haxe_Int32._mul = Math.imul != null ? Math.imul : function(a,b) {
+	return a * (b & 65535) + (a * (b >>> 16) << 16 | 0) | 0;
+};
 haxe_Unserializer.DEFAULT_RESOLVER = new haxe__$Unserializer_DefaultResolver();
 haxe_Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe_crypto_Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -49395,7 +49303,6 @@ hxd_Charset.complementChars = (function($this) {
 hxd_Key.initDone = false;
 hxd_Key.keyPressed = [];
 hxd_Key.ALLOW_KEY_REPEAT = false;
-hxd_Save.SALT = "s*al!t";
 hxd_Timer.wantedFPS = 60.;
 hxd_Timer.maxDeltaTime = 0.5;
 hxd_Timer.smoothFactor = 0.95;
