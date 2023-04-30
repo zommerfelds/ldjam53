@@ -29,7 +29,7 @@ class StarsShader extends ScreenShader {
 		}
 		function fragment() {
 			final st = output.position.xy;
-			st *= 352.0 / 2;
+			st *= 512.0 / 2;
 
 			pixelColor = vec4(stars(st), 1.0);
 		}

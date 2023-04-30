@@ -164,8 +164,8 @@ class Tiles {
 }
 
 class PlayView extends GameState {
-	public static final GAME_WIDTH = 352;
-	public static final GAME_HEIGHT = 352;
+	public static final GAME_WIDTH = 512;
+	public static final GAME_HEIGHT = 512;
 
 	final cannons:Array<Cannon> = [];
 	final blackHoles:Array<BlackHole> = [];
