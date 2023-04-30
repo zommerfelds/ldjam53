@@ -4962,15 +4962,30 @@ var Planet = function(x,y,res,parent) {
 	this.res = res;
 	var bubble = new h2d_Bitmap(Tiles.TILE_SPEECH_BUBBLE,this);
 	bubble.posChanged = true;
-	bubble.x = 16;
+	bubble.x = 8;
 	bubble.posChanged = true;
-	bubble.y = -16;
+	bubble.y = -8;
 	var res1 = new h2d_Bitmap(Tiles.resTile(res),bubble);
 	res1.posChanged = true;
 	res1.x = 1;
 	res1.posChanged = true;
 	res1.y = -1;
 	this.set_filter(new h2d_filter_Glow(6946710,1,5,0.6,1,true));
+	var v = bubble.scaleX * 0;
+	bubble.posChanged = true;
+	bubble.scaleX = v;
+	var v = bubble.scaleY * 0;
+	bubble.posChanged = true;
+	bubble.scaleY = v;
+	var tween = null;
+	tween = function() {
+		return Utils.tween(bubble,0.7,{ x : 16, y : -16, scaleX : 1, scaleY : 1},false).ease(motion_easing_Sine.easeIn).onComplete(function() {
+			return Utils.tween(bubble,0.7,{ x : 8, y : -8, scaleX : 0, scaleY : 0},false).ease(motion_easing_Sine.easeIn).delay(2.0).onComplete(function() {
+				return tween().delay(2.0);
+			});
+		});
+	};
+	tween();
 };
 $hxClasses["Planet"] = Planet;
 Planet.__name__ = "Planet";
@@ -5113,6 +5128,17 @@ PlayView.prototype = $extend(GameState.prototype,{
 			++_g;
 			this.nebulas.push(new Nebula(nebula.renderX + 8,nebula.renderY + 8,this));
 		}
+		var f = new h2d_Flow(this);
+		f.set_padding(5);
+		f.set_paddingTop(1);
+		f.set_backgroundTile(h2d_Tile.fromColor(4802889));
+		f.set_verticalAlign(h2d_FlowAlign.Middle);
+		f.set_horizontalAlign(h2d_FlowAlign.Middle);
+		f.set_enableInteractive(true);
+		f.interactive.onClick = function(e) {
+			App.instance.switchState(new MenuView());
+		};
+		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Back");
 		var letterBox = new h2d_Graphics(this);
 		letterBox.beginFill(0);
 		letterBox.drawRect(0,-100,PlayView.GAME_WIDTH,100);
@@ -5842,6 +5868,23 @@ Utils.floatToStr = function(n,prec) {
 };
 Utils.toPoint = function(p) {
 	return new h2d_col_Point(p.x,p.y);
+};
+Utils.posUpdated = function(obj) {
+	obj.posChanged = true;
+	obj.x = obj.x;
+};
+Utils.tween = function(obj,time,properties,overwrite,after) {
+	if(overwrite == null) {
+		overwrite = true;
+	}
+	if(after != null) {
+		motion_Actuate.timer(time).onComplete(after);
+	}
+	return motion_Actuate.tween(obj,time,properties,overwrite).onUpdate(function() {
+		Utils.posUpdated(obj);
+	}).onComplete(function() {
+		Utils.posUpdated(obj);
+	});
 };
 Utils.direction = function(angle) {
 	return new h2d_col_Point(Math.cos(angle),Math.sin(angle));
@@ -9208,6 +9251,13 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 		}
 		return this.needReflow = v;
 	}
+	,set_padding: function(v) {
+		this.set_paddingLeft(v);
+		this.set_paddingTop(v);
+		this.set_paddingRight(v);
+		this.set_paddingBottom(v);
+		return v;
+	}
 	,set_scrollPosY: function(v) {
 		if(this.needReflow) {
 			this.reflow();
@@ -10532,7 +10582,7 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 	,onAfterReflow: function() {
 	}
 	,__class__: h2d_Flow
-	,__properties__: $extend(h2d_Object.prototype.__properties__,{set_scrollPosY:"set_scrollPosY",set_fillHeight:"set_fillHeight",set_fillWidth:"set_fillWidth",set_layout:"set_layout",get_outerHeight:"get_outerHeight",get_outerWidth:"get_outerWidth",get_innerHeight:"get_innerHeight",get_innerWidth:"get_innerWidth",set_backgroundTile:"set_backgroundTile",set_enableInteractive:"set_enableInteractive",set_verticalSpacing:"set_verticalSpacing",set_paddingBottom:"set_paddingBottom",set_paddingTop:"set_paddingTop",set_paddingRight:"set_paddingRight",set_paddingLeft:"set_paddingLeft",set_maxWidth:"set_maxWidth",set_minHeight:"set_minHeight",set_verticalAlign:"set_verticalAlign",set_horizontalAlign:"set_horizontalAlign",set_needReflow:"set_needReflow"})
+	,__properties__: $extend(h2d_Object.prototype.__properties__,{set_scrollPosY:"set_scrollPosY",set_fillHeight:"set_fillHeight",set_fillWidth:"set_fillWidth",set_layout:"set_layout",get_outerHeight:"get_outerHeight",get_outerWidth:"get_outerWidth",get_innerHeight:"get_innerHeight",get_innerWidth:"get_innerWidth",set_backgroundTile:"set_backgroundTile",set_enableInteractive:"set_enableInteractive",set_verticalSpacing:"set_verticalSpacing",set_paddingBottom:"set_paddingBottom",set_paddingTop:"set_paddingTop",set_paddingRight:"set_paddingRight",set_paddingLeft:"set_paddingLeft",set_padding:"set_padding",set_maxWidth:"set_maxWidth",set_minHeight:"set_minHeight",set_verticalAlign:"set_verticalAlign",set_horizontalAlign:"set_horizontalAlign",set_needReflow:"set_needReflow"})
 });
 var h2d_Kerning = function(c,o) {
 	this.prevChar = c;
@@ -44787,6 +44837,9 @@ js_Boot.__downcastCheck = function(o,cl) {
 		return true;
 	}
 };
+js_Boot.__implements = function(o,iface) {
+	return js_Boot.__interfLoop(js_Boot.getClass(o),iface);
+};
 js_Boot.__cast = function(o,t) {
 	if(o == null || js_Boot.__instanceof(o,t)) {
 		return o;
@@ -48284,6 +48337,9 @@ var motion_actuators_IGenericActuator = function() { };
 $hxClasses["motion.actuators.IGenericActuator"] = motion_actuators_IGenericActuator;
 motion_actuators_IGenericActuator.__name__ = "motion.actuators.IGenericActuator";
 motion_actuators_IGenericActuator.__isInterface__ = true;
+motion_actuators_IGenericActuator.prototype = {
+	__class__: motion_actuators_IGenericActuator
+};
 var motion_actuators_GenericActuator = function(target,duration,properties) {
 	this._autoVisible = true;
 	this._delay = 0;
@@ -48841,6 +48897,88 @@ motion_easing_Expo.__name__ = "motion.easing.Expo";
 var motion_Actuate = function() { };
 $hxClasses["motion.Actuate"] = motion_Actuate;
 motion_Actuate.__name__ = "motion.Actuate";
+motion_Actuate.apply = function(target,properties,customActuator) {
+	motion_Actuate.stop(target,properties);
+	if(customActuator == null) {
+		customActuator = motion_Actuate.defaultActuator;
+	}
+	var actuator = Type.createInstance(customActuator,[target,0,properties]);
+	actuator.apply();
+	return actuator;
+};
+motion_Actuate.getLibrary = function(target,allowCreation) {
+	if(allowCreation == null) {
+		allowCreation = true;
+	}
+	if(motion_Actuate.targetLibraries.h.__keys__[target.__id__] == null && allowCreation) {
+		motion_Actuate.targetLibraries.set(target,[]);
+	}
+	return motion_Actuate.targetLibraries.h[target.__id__];
+};
+motion_Actuate.stop = function(target,properties,complete,sendEvent) {
+	if(sendEvent == null) {
+		sendEvent = true;
+	}
+	if(complete == null) {
+		complete = false;
+	}
+	if(target != null) {
+		if(js_Boot.__implements(target,motion_actuators_IGenericActuator)) {
+			target.stop(null,complete,sendEvent);
+		} else {
+			var library = motion_Actuate.getLibrary(target,false);
+			if(library != null) {
+				if(typeof(properties) == "string") {
+					var temp = { };
+					temp[properties] = null;
+					properties = temp;
+				} else if(((properties) instanceof Array)) {
+					var temp = { };
+					var _g = 0;
+					var _g1 = js_Boot.__cast(properties , Array);
+					while(_g < _g1.length) temp[_g1[_g++]] = null;
+					properties = temp;
+				}
+				var i = library.length - 1;
+				while(i >= 0) {
+					library[i].stop(properties,complete,sendEvent);
+					--i;
+				}
+			}
+		}
+	}
+};
+motion_Actuate.timer = function(duration,customActuator) {
+	return motion_Actuate.tween(new motion__$Actuate_TweenTimer(0),duration,new motion__$Actuate_TweenTimer(1),false,customActuator);
+};
+motion_Actuate.tween = function(target,duration,properties,overwrite,customActuator) {
+	if(overwrite == null) {
+		overwrite = true;
+	}
+	if(target != null) {
+		if(duration > 0) {
+			if(customActuator == null) {
+				customActuator = motion_Actuate.defaultActuator;
+			}
+			var actuator = Type.createInstance(customActuator,[target,duration,properties]);
+			var library = motion_Actuate.getLibrary(actuator.target);
+			if(overwrite) {
+				var i = library.length - 1;
+				while(i >= 0) {
+					library[i].stop(actuator.properties,false,false);
+					--i;
+				}
+				library = motion_Actuate.getLibrary(actuator.target);
+			}
+			library.push(actuator);
+			actuator.move();
+			return actuator;
+		} else {
+			return motion_Actuate.apply(target,properties,customActuator);
+		}
+	}
+	return null;
+};
 motion_Actuate.unload = function(actuator) {
 	var target = actuator.target;
 	if(motion_Actuate.targetLibraries.h.__keys__[target.__id__] != null) {
@@ -48849,6 +48987,14 @@ motion_Actuate.unload = function(actuator) {
 			motion_Actuate.targetLibraries.remove(target);
 		}
 	}
+};
+var motion__$Actuate_TweenTimer = function(progress) {
+	this.progress = progress;
+};
+$hxClasses["motion._Actuate.TweenTimer"] = motion__$Actuate_TweenTimer;
+motion__$Actuate_TweenTimer.__name__ = "motion._Actuate.TweenTimer";
+motion__$Actuate_TweenTimer.prototype = {
+	__class__: motion__$Actuate_TweenTimer
 };
 var motion_IComponentPath = function() { };
 $hxClasses["motion.IComponentPath"] = motion_IComponentPath;
@@ -49114,6 +49260,20 @@ motion_actuators_PropertyPathDetails.__super__ = motion_actuators_PropertyDetail
 motion_actuators_PropertyPathDetails.prototype = $extend(motion_actuators_PropertyDetails.prototype,{
 	__class__: motion_actuators_PropertyPathDetails
 });
+var motion_easing__$Sine_SineEaseIn = function() {
+};
+$hxClasses["motion.easing._Sine.SineEaseIn"] = motion_easing__$Sine_SineEaseIn;
+motion_easing__$Sine_SineEaseIn.__name__ = "motion.easing._Sine.SineEaseIn";
+motion_easing__$Sine_SineEaseIn.__interfaces__ = [motion_easing_IEasing];
+motion_easing__$Sine_SineEaseIn.prototype = {
+	calculate: function(k) {
+		return 1 - Math.cos(k * (Math.PI / 2));
+	}
+	,__class__: motion_easing__$Sine_SineEaseIn
+};
+var motion_easing_Sine = function() { };
+$hxClasses["motion.easing.Sine"] = motion_easing_Sine;
+motion_easing_Sine.__name__ = "motion.easing.Sine";
 function $getIterator(o) { if( o instanceof Array ) return new haxe_iterators_ArrayIterator(o); else return o.iterator(); }
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $global.$haxeUID++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = m.bind(o); o.hx__closures__[m.__id__] = f; } return f; }
 $global.$haxeUID |= 0;
@@ -49410,8 +49570,10 @@ motion_actuators_SimpleActuator.actuators = [];
 motion_actuators_SimpleActuator.actuatorsLength = 0;
 motion_actuators_SimpleActuator.addedEvent = false;
 motion_easing_Expo.easeOut = new motion_easing__$Expo_ExpoEaseOut();
+motion_Actuate.defaultActuator = motion_actuators_SimpleActuator;
 motion_Actuate.defaultEase = motion_easing_Expo.easeOut;
 motion_Actuate.targetLibraries = new haxe_ds_ObjectMap();
+motion_easing_Sine.easeIn = new motion_easing__$Sine_SineEaseIn();
 {
 	App.main();
 	haxe_EntryPoint.run();
