@@ -1,3 +1,4 @@
+import hxd.Key;
 import h2d.Flow;
 import h2d.Text;
 import motion.easing.Sine;
@@ -264,6 +265,52 @@ class PlayView extends GameState {
 			progressText = new Text(hxd.res.DefaultFont.get(), progressFlow);
 		}
 
+		if (level == 0) {
+			final tut = new Object(this);
+			tut.alpha = 0.0;
+
+			final t1 = new Text(hxd.res.DefaultFont.get(), tut);
+			t1.text = "Click to move this black hole";
+			t1.x = 300;
+			t1.y = 100;
+			t1.textAlign = MultilineCenter;
+			t1.maxWidth = 120;
+
+			final gr = new Graphics(tut);
+			gr.lineStyle(1, 0xffffff);
+			gr.moveTo(350, 140);
+			gr.lineTo(348, 175);
+
+			Utils.tween(tut, 2.0, {alpha:1.0}).delay(4);
+
+			final initialPos = Utils.toPoint(blackHoles[0]);
+
+			var f = null;
+			f = new FuncObject(() -> {
+				if (!Utils.toPoint(blackHoles[0]).equals(initialPos)) {
+					f.remove();
+					Utils.tween(tut, 2.0, {alpha: 0.0});
+
+					final tut2 = new Object(this);
+					tut2.alpha = 0.0;
+
+					final t = new Text(hxd.res.DefaultFont.get(), tut2);
+					t.text = "Adjust the trajectory until all red packets can reach the planet";
+					t.x = 80;
+					t.y = 400;
+					t.textAlign = MultilineCenter;
+					t.maxWidth = 150;
+
+					final gr = new Graphics(t);
+					gr.lineStyle(1, 0xffffff);
+					gr.moveTo(75, -2);
+					gr.lineTo(150, -130);
+
+					Utils.tween(tut2, 2.0, {alpha: 1.0}).delay(1);
+				}
+			}, gr);
+		}
+
 		// TODO: use Mask instead https://heaps.io/samples/mask.html
 		final letterBox = new Graphics(this);
 		letterBox.beginFill(0x000000);
@@ -271,15 +318,6 @@ class PlayView extends GameState {
 		letterBox.drawRect(0, GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT + 100);
 		letterBox.drawRect(-100, 0, 100, GAME_HEIGHT);
 		letterBox.drawRect(GAME_WIDTH, 0, 100, GAME_HEIGHT);
-
-		addEventListener(onEvent);
-	}
-
-	function onEvent(event:hxd.Event) {
-		switch (event.kind) {
-			case EPush:
-			default:
-		}
 	}
 
 	override function update(dt:Float) {
