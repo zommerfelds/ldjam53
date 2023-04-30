@@ -403,9 +403,6 @@ App.prototype = $extend(HerbalTeaApp.prototype,{
 			case "map":
 				view = new MapView();
 				break;
-			case "menu":
-				view = new MenuView();
-				break;
 			case "play":
 				view = new PlayView(params.get("level") == null ? 0 : Std.parseInt(params.get("level")));
 				break;
@@ -2123,1750 +2120,6 @@ GameState.prototype = $extend(h2d_Scene.prototype,{
 	}
 	,__class__: GameState
 });
-var Gui = function() { };
-$hxClasses["Gui"] = Gui;
-Gui.__name__ = "Gui";
-Gui.scale = function(multiplier) {
-	if(multiplier == null) {
-		multiplier = 1.0;
-	}
-	var normWidth = hxd_Window.getInstance().get_width();
-	if(hxd_Window.getInstance().get_width() / hxd_Window.getInstance().get_height() > 0.5625) {
-		normWidth = 0.5625 * hxd_Window.getInstance().get_height();
-	}
-	return normWidth / 600 * multiplier;
-};
-Gui.scaleAsInt = function(multiplier) {
-	if(multiplier == null) {
-		multiplier = 1.0;
-	}
-	return Gui.scale(multiplier) | 0;
-};
-var h2d_Drawable = function(parent) {
-	h2d_Object.call(this,parent);
-	this.color = new h3d_Vector(1,1,1,1);
-};
-$hxClasses["h2d.Drawable"] = h2d_Drawable;
-h2d_Drawable.__name__ = "h2d.Drawable";
-h2d_Drawable.__super__ = h2d_Object;
-h2d_Drawable.prototype = $extend(h2d_Object.prototype,{
-	drawFiltered: function(ctx,tile) {
-		var old = this.shaders;
-		this.shaders = null;
-		h2d_Object.prototype.drawFiltered.call(this,ctx,tile);
-		this.shaders = old;
-	}
-	,addShader: function(s) {
-		if(s == null) {
-			throw haxe_Exception.thrown("Can't add null shader");
-		}
-		this.shaders = hxsl_ShaderList.addSort(s,this.shaders);
-		return s;
-	}
-	,removeShader: function(s) {
-		var prev = null;
-		var cur = this.shaders;
-		while(cur != null) {
-			if(cur.s == s) {
-				if(prev == null) {
-					this.shaders = cur.next;
-				} else {
-					prev.next = cur.next;
-				}
-				return true;
-			}
-			prev = cur;
-			cur = cur.next;
-		}
-		return false;
-	}
-	,emitTile: function(ctx,tile) {
-		if(tile == null) {
-			tile = new h2d_Tile(null,0,0,5,5);
-		}
-		if(!ctx.drawTile(this,tile)) {
-			return;
-		}
-	}
-	,__class__: h2d_Drawable
-});
-var h2d_Text = function(font,parent) {
-	this.realMaxWidth = -1;
-	this.constraintWidth = -1;
-	this.lineBreak = true;
-	this.lineSpacing = 0;
-	this.letterSpacing = 0;
-	h2d_Drawable.call(this,parent);
-	this.set_font(font);
-	this.set_textAlign(h2d_Align.Left);
-	this.set_text("");
-	this.currentText = "";
-	this.set_textColor(16777215);
-};
-$hxClasses["h2d.Text"] = h2d_Text;
-h2d_Text.__name__ = "h2d.Text";
-h2d_Text.__super__ = h2d_Drawable;
-h2d_Text.prototype = $extend(h2d_Drawable.prototype,{
-	set_font: function(font) {
-		if(this.font == font) {
-			return font;
-		}
-		this.font = font;
-		if(font != null) {
-			var _g = font.type;
-			switch(_g._hx_index) {
-			case 0:
-				if(this.sdfShader != null) {
-					this.removeShader(this.sdfShader);
-					this.sdfShader = null;
-				}
-				break;
-			case 1:
-				var _g1 = _g.smoothing;
-				if(this.sdfShader == null) {
-					this.sdfShader = new h3d_shader_SignedDistanceField();
-					this.addShader(this.sdfShader);
-				}
-				if(this.smooth == null) {
-					this.smooth = true;
-				}
-				this.sdfShader.alphaCutoff__ = _g.alphaCutoff;
-				this.sdfShader.smoothing__ = _g1;
-				var _this = this.sdfShader;
-				_this.constModified = true;
-				_this.channel__ = _g.channel;
-				var _this = this.sdfShader;
-				_this.constModified = true;
-				_this.autoSmoothing__ = _g1 == -1;
-				break;
-			}
-		}
-		if(this.glyphs != null) {
-			var _this = this.glyphs;
-			if(_this != null && _this.parent != null) {
-				_this.parent.removeChild(_this);
-			}
-		}
-		this.glyphs = new h2d_TileGroup(font == null ? null : font.tile,this);
-		this.glyphs.set_visible(false);
-		this.rebuild();
-		return font;
-	}
-	,set_textAlign: function(a) {
-		if(this.textAlign == a) {
-			return a;
-		}
-		this.textAlign = a;
-		this.rebuild();
-		return a;
-	}
-	,set_lineSpacing: function(s) {
-		if(this.lineSpacing == s) {
-			return s;
-		}
-		this.lineSpacing = s;
-		this.rebuild();
-		return s;
-	}
-	,constraintSize: function(width,height) {
-		this.constraintWidth = width;
-		this.updateConstraint();
-	}
-	,onAdd: function() {
-		h2d_Drawable.prototype.onAdd.call(this);
-		this.rebuild();
-	}
-	,sync: function(ctx) {
-		h2d_Drawable.prototype.sync.call(this,ctx);
-		if(this.textChanged && this.text != this.currentText) {
-			this.textChanged = false;
-			this.currentText = this.text;
-			this.calcDone = false;
-			this.needsRebuild = true;
-		}
-		if(this.needsRebuild) {
-			this.initGlyphs(this.currentText);
-		}
-	}
-	,draw: function(ctx) {
-		if(this.glyphs == null) {
-			this.emitTile(ctx,h2d_Tile.fromColor(16711935,16,16));
-			return;
-		}
-		if(this.textChanged && this.text != this.currentText) {
-			this.textChanged = false;
-			this.currentText = this.text;
-			this.calcDone = false;
-			this.needsRebuild = true;
-		}
-		if(this.needsRebuild) {
-			this.initGlyphs(this.currentText);
-		}
-		if(this.dropShadow != null) {
-			var oldX = this.absX;
-			var oldY = this.absY;
-			this.absX += this.dropShadow.dx * this.matA + this.dropShadow.dy * this.matC;
-			this.absY += this.dropShadow.dx * this.matB + this.dropShadow.dy * this.matD;
-			var oldR = this.color.x;
-			var oldG = this.color.y;
-			var oldB = this.color.z;
-			var oldA = this.color.w;
-			var _this = this.color;
-			var c = this.dropShadow.color;
-			_this.x = (c >> 16 & 255) / 255;
-			_this.y = (c >> 8 & 255) / 255;
-			_this.z = (c & 255) / 255;
-			_this.w = (c >>> 24) / 255;
-			this.color.w = this.dropShadow.alpha * oldA;
-			this.glyphs.drawWith(ctx,this);
-			this.absX = oldX;
-			this.absY = oldY;
-			var _this = this.color;
-			var x = oldR;
-			var y = oldG;
-			var z = oldB;
-			var w = oldA;
-			if(oldA == null) {
-				w = 1.;
-			}
-			if(oldB == null) {
-				z = 0.;
-			}
-			if(oldG == null) {
-				y = 0.;
-			}
-			if(oldR == null) {
-				x = 0.;
-			}
-			_this.x = x;
-			_this.y = y;
-			_this.z = z;
-			_this.w = w;
-		}
-		this.glyphs.drawWith(ctx,this);
-	}
-	,set_text: function(t) {
-		var t1 = t == null ? "null" : t;
-		if(t1 == this.text) {
-			return t1;
-		}
-		this.text = t1;
-		this.textChanged = true;
-		this.validateText();
-		if(this.parentContainer != null) {
-			this.parentContainer.contentChanged(this);
-		}
-		return t1;
-	}
-	,validateText: function() {
-	}
-	,rebuild: function() {
-		this.calcDone = false;
-		this.needsRebuild = true;
-		if(this.parentContainer != null) {
-			this.parentContainer.contentChanged(this);
-		}
-	}
-	,splitRawText: function(text,leftMargin,afterData,font,sizes,prevChar) {
-		if(prevChar == null) {
-			prevChar = -1;
-		}
-		if(afterData == null) {
-			afterData = 0.;
-		}
-		if(leftMargin == null) {
-			leftMargin = 0.;
-		}
-		var maxWidth = this.realMaxWidth;
-		if(maxWidth < 0) {
-			if(sizes == null) {
-				return text;
-			} else {
-				maxWidth = Infinity;
-			}
-		}
-		if(font == null) {
-			font = this.font;
-		}
-		var lines = [];
-		var restPos = 0;
-		var x = leftMargin;
-		var _g = 0;
-		var _g1 = text.length;
-		while(_g < _g1) {
-			var i = _g++;
-			var cc = HxOverrides.cca(text,i);
-			var c = font.glyphs.h[cc];
-			if(c == null) {
-				c = font.charset.resolveChar(cc,font.glyphs);
-				if(c == null) {
-					c = cc == 13 || cc == 10 ? font.nullChar : font.defaultChar;
-				}
-			}
-			var e = c;
-			var newline = cc == 10;
-			var esize = e.width + e.getKerningOffset(prevChar);
-			var nc = HxOverrides.cca(text,i + 1);
-			if(font.charset.isBreakChar(cc) && (nc == null || !font.charset.isComplementChar(nc))) {
-				if(lines.length == 0 && leftMargin > 0 && x > maxWidth) {
-					lines.push("");
-					if(sizes != null) {
-						sizes.push(leftMargin);
-					}
-					x -= leftMargin;
-				}
-				var size = x + esize + this.letterSpacing;
-				var k = i + 1;
-				var max = text.length;
-				var prevChar1 = prevChar;
-				var breakFound = false;
-				while(size <= maxWidth && k < max) {
-					var cc1 = HxOverrides.cca(text,k++);
-					if(this.lineBreak && (font.charset.isSpace(cc1) || cc1 == 10)) {
-						breakFound = true;
-						break;
-					}
-					var c1 = font.glyphs.h[cc1];
-					if(c1 == null) {
-						c1 = font.charset.resolveChar(cc1,font.glyphs);
-						if(c1 == null) {
-							c1 = cc1 == 13 || cc1 == 10 ? font.nullChar : font.defaultChar;
-						}
-					}
-					var e1 = c1;
-					size += e1.width + this.letterSpacing + e1.getKerningOffset(prevChar1);
-					prevChar1 = cc1;
-					var nc1 = HxOverrides.cca(text,k + 1);
-					if(font.charset.isBreakChar(cc1) && (nc1 == null || !font.charset.isComplementChar(nc1))) {
-						break;
-					}
-				}
-				if(this.lineBreak && (size > maxWidth || !breakFound && size + afterData > maxWidth)) {
-					newline = true;
-					if(font.charset.isSpace(cc)) {
-						lines.push(HxOverrides.substr(text,restPos,i - restPos));
-						e = null;
-					} else {
-						lines.push(HxOverrides.substr(text,restPos,i + 1 - restPos));
-					}
-					restPos = i + 1;
-				}
-			}
-			if(e != null && cc != 10) {
-				x += esize + this.letterSpacing;
-			}
-			if(newline) {
-				if(sizes != null) {
-					sizes.push(x);
-				}
-				x = 0;
-				prevChar = -1;
-			} else {
-				prevChar = cc;
-			}
-		}
-		if(restPos < text.length) {
-			if(lines.length == 0 && leftMargin > 0 && x + afterData - this.letterSpacing > maxWidth) {
-				lines.push("");
-				if(sizes != null) {
-					sizes.push(leftMargin);
-				}
-				x -= leftMargin;
-			}
-			lines.push(HxOverrides.substr(text,restPos,text.length - restPos));
-			if(sizes != null) {
-				sizes.push(x);
-			}
-		}
-		return lines.join("\n");
-	}
-	,initGlyphs: function(text,rebuild) {
-		if(rebuild == null) {
-			rebuild = true;
-		}
-		if(rebuild) {
-			this.glyphs.clear();
-		}
-		var x = 0.;
-		var y = 0.;
-		var xMax = 0.;
-		var xMin = 0.;
-		var yMin = 0.;
-		var prevChar = -1;
-		var linei = 0;
-		var align = this.textAlign;
-		var lines = [];
-		var dl = this.font.lineHeight + this.lineSpacing;
-		var t = this.splitRawText(text,0,0,null,lines);
-		var _g = 0;
-		while(_g < lines.length) {
-			var lw = lines[_g];
-			++_g;
-			if(lw > x) {
-				x = lw;
-			}
-		}
-		this.calcWidth = x;
-		switch(align._hx_index) {
-		case 0:
-			x = 0;
-			break;
-		case 1:case 2:case 3:case 4:
-			var max = align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(this.calcWidth) : this.realMaxWidth < 0 ? 0 : Math.ceil(this.realMaxWidth);
-			var k = align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1;
-			var _g = 0;
-			var _g1 = lines.length;
-			while(_g < _g1) {
-				var i = _g++;
-				lines[i] = Math.floor((max - lines[i]) * k);
-			}
-			x = lines[0];
-			xMin = x;
-			break;
-		}
-		var _g = 0;
-		var _g1 = t.length;
-		while(_g < _g1) {
-			var cc = HxOverrides.cca(t,_g++);
-			var _this = this.font;
-			var c = _this.glyphs.h[cc];
-			if(c == null) {
-				c = _this.charset.resolveChar(cc,_this.glyphs);
-				if(c == null) {
-					c = cc == 13 || cc == 10 ? _this.nullChar : _this.defaultChar;
-				}
-			}
-			var e = c;
-			var offs = e.getKerningOffset(prevChar);
-			var esize = e.width + offs;
-			if(cc == 10) {
-				if(x > xMax) {
-					xMax = x;
-				}
-				switch(align._hx_index) {
-				case 0:
-					x = 0;
-					break;
-				case 1:case 2:case 3:case 4:
-					x = lines[++linei];
-					if(x < xMin) {
-						xMin = x;
-					}
-					break;
-				}
-				y += dl;
-				prevChar = -1;
-			} else {
-				if(e != null) {
-					if(rebuild) {
-						var _this1 = this.glyphs;
-						_this1.content.add(x + offs,y,_this1.curColor.x,_this1.curColor.y,_this1.curColor.z,_this1.curColor.w,e.t);
-					}
-					if(y == 0 && e.t.dy < yMin) {
-						yMin = e.t.dy;
-					}
-					x += esize + this.letterSpacing;
-				}
-				prevChar = cc;
-			}
-		}
-		if(x > xMax) {
-			xMax = x;
-		}
-		this.calcXMin = xMin;
-		this.calcYMin = yMin;
-		this.calcWidth = xMax - xMin;
-		this.calcHeight = y + this.font.lineHeight;
-		this.calcSizeHeight = y + (this.font.baseLine > 0 ? this.font.baseLine : this.font.lineHeight);
-		this.calcDone = true;
-		if(rebuild) {
-			this.needsRebuild = false;
-		}
-	}
-	,set_maxWidth: function(w) {
-		if(this.maxWidth == w) {
-			return w;
-		}
-		this.maxWidth = w;
-		this.updateConstraint();
-		return w;
-	}
-	,updateConstraint: function() {
-		var old = this.realMaxWidth;
-		if(this.maxWidth == null) {
-			this.realMaxWidth = this.constraintWidth;
-		} else if(this.constraintWidth < 0) {
-			this.realMaxWidth = this.maxWidth;
-		} else {
-			var a = this.maxWidth;
-			var b = this.constraintWidth;
-			this.realMaxWidth = a > b ? b : a;
-		}
-		if(this.realMaxWidth != old) {
-			this.rebuild();
-		}
-	}
-	,set_textColor: function(c) {
-		if(this.textColor == c) {
-			return c;
-		}
-		this.textColor = c;
-		var a = this.color.w;
-		var _this = this.color;
-		_this.x = (c >> 16 & 255) / 255;
-		_this.y = (c >> 8 & 255) / 255;
-		_this.z = (c & 255) / 255;
-		_this.w = (c >>> 24) / 255;
-		this.color.w = a;
-		return c;
-	}
-	,getBoundsRec: function(relativeTo,out,forSize) {
-		h2d_Drawable.prototype.getBoundsRec.call(this,relativeTo,out,forSize);
-		if(this.textChanged && this.text != this.currentText) {
-			this.textChanged = false;
-			this.currentText = this.text;
-			this.calcDone = false;
-			this.needsRebuild = true;
-		}
-		if(!this.calcDone) {
-			this.initGlyphs(this.text,this.needsRebuild);
-		}
-		var x;
-		var y;
-		var w;
-		var h;
-		if(forSize) {
-			x = this.calcXMin;
-			y = 0.;
-			w = this.calcWidth;
-			h = this.calcSizeHeight;
-		} else {
-			x = this.calcXMin;
-			y = this.calcYMin;
-			w = this.calcWidth;
-			h = this.calcHeight - this.calcYMin;
-		}
-		this.addBounds(relativeTo,out,x,y,w,h);
-	}
-	,__class__: h2d_Text
-	,__properties__: $extend(h2d_Drawable.prototype.__properties__,{set_lineSpacing:"set_lineSpacing",set_textAlign:"set_textAlign",set_maxWidth:"set_maxWidth",set_textColor:"set_textColor",set_text:"set_text",set_font:"set_font"})
-});
-var h2d_HtmlText = function(font,parent) {
-	this.elements = [];
-	this.imageVerticalAlign = h2d_ImageVerticalAlign.Bottom;
-	this.lineHeightMode = h2d_LineHeightMode.Accurate;
-	this.imageSpacing = 1;
-	this.condenseWhite = true;
-	h2d_Text.call(this,font,parent);
-};
-$hxClasses["h2d.HtmlText"] = h2d_HtmlText;
-h2d_HtmlText.__name__ = "h2d.HtmlText";
-h2d_HtmlText.defaultLoadImage = function(url) {
-	return null;
-};
-h2d_HtmlText.defaultLoadFont = function(name) {
-	return null;
-};
-h2d_HtmlText.defaultFormatText = function(text) {
-	return text;
-};
-h2d_HtmlText.__super__ = h2d_Text;
-h2d_HtmlText.prototype = $extend(h2d_Text.prototype,{
-	draw: function(ctx) {
-		if(this.dropShadow != null) {
-			var oldX = this.absX;
-			var oldY = this.absY;
-			this.absX += this.dropShadow.dx * this.matA + this.dropShadow.dy * this.matC;
-			this.absY += this.dropShadow.dx * this.matB + this.dropShadow.dy * this.matD;
-			if(this.dropMatrix == null) {
-				this.dropMatrix = new h3d_shader_ColorMatrix();
-			}
-			this.addShader(this.dropMatrix);
-			var m = this.dropMatrix.matrix__;
-			m.zero();
-			m._41 = (this.dropShadow.color >> 16 & 255) / 255;
-			m._42 = (this.dropShadow.color >> 8 & 255) / 255;
-			m._43 = (this.dropShadow.color & 255) / 255;
-			m._44 = this.dropShadow.alpha;
-			this.glyphs.drawWith(ctx,this);
-			this.removeShader(this.dropMatrix);
-			this.absX = oldX;
-			this.absY = oldY;
-		} else {
-			this.dropMatrix = null;
-		}
-		this.glyphs.drawWith(ctx,this);
-	}
-	,loadImage: function(url) {
-		return h2d_HtmlText.defaultLoadImage(url);
-	}
-	,loadFont: function(name) {
-		var f = h2d_HtmlText.defaultLoadFont(name);
-		if(f == null) {
-			return this.font;
-		} else {
-			return f;
-		}
-	}
-	,onHyperlink: function(url) {
-	}
-	,formatText: function(text) {
-		return h2d_HtmlText.defaultFormatText(text);
-	}
-	,set_text: function(t) {
-		h2d_Text.prototype.set_text.call(this,this.formatText(t));
-		return t;
-	}
-	,parseText: function(text) {
-		try {
-			return Xml.parse(text);
-		} catch( _g ) {
-			throw haxe_Exception.thrown("Could not parse " + text + " (" + Std.string(haxe_Exception.caught(_g).unwrap()) + ")");
-		}
-	}
-	,validateText: function() {
-		this.textXml = this.parseText(this.text);
-		this.validateNodes(this.textXml);
-	}
-	,validateNodes: function(xml) {
-		switch(xml.nodeType) {
-		case 0:
-			if(xml.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element but found " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
-			}
-			switch(xml.nodeName.toLowerCase()) {
-			case "b":case "bold":
-				this.loadFont("bold");
-				break;
-			case "font":
-				if(xml.exists("face")) {
-					this.loadFont(xml.get("face"));
-				}
-				break;
-			case "img":
-				this.loadImage(xml.get("src"));
-				break;
-			case "i":case "italic":
-				this.loadFont("italic");
-				break;
-			}
-			if(xml.nodeType != Xml.Document && xml.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
-			}
-			var _this = xml.children;
-			var _g_current = 0;
-			while(_g_current < _this.length) this.validateNodes(_this[_g_current++]);
-			break;
-		case 6:
-			if(xml.nodeType != Xml.Document && xml.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
-			}
-			var _this = xml.children;
-			var _g_current = 0;
-			while(_g_current < _this.length) this.validateNodes(_this[_g_current++]);
-			break;
-		default:
-		}
-	}
-	,initGlyphs: function(text,rebuild) {
-		if(rebuild == null) {
-			rebuild = true;
-		}
-		if(rebuild) {
-			this.glyphs.clear();
-			var _g = 0;
-			var _g1 = this.elements;
-			while(_g < _g1.length) {
-				var e = _g1[_g];
-				++_g;
-				if(e != null && e.parent != null) {
-					e.parent.removeChild(e);
-				}
-			}
-			this.elements = [];
-		}
-		this.glyphs.setDefaultColor(this.textColor);
-		var doc;
-		if(this.textXml == null) {
-			doc = this.parseText(text);
-		} else {
-			doc = this.textXml;
-		}
-		this.yPos = 0;
-		this.xMax = 0;
-		this.xMin = Infinity;
-		this.sizePos = 0;
-		this.calcYMin = 0;
-		var metrics = [{ width : 0, height : this.font.lineHeight, baseLine : this.font.baseLine}];
-		this.prevChar = -1;
-		this.newLine = true;
-		var splitNode = { node : null, pos : 0, font : this.font, prevChar : -1, width : 0, height : 0, baseLine : 0};
-		if(doc.nodeType != Xml.Document && doc.nodeType != Xml.Element) {
-			throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (doc.nodeType == null ? "null" : XmlType.toString(doc.nodeType)));
-		}
-		var _this = doc.children;
-		var _g_current = 0;
-		while(_g_current < _this.length) this.buildSizes(_this[_g_current++],this.font,metrics,splitNode);
-		var max = 0.;
-		var _g = 0;
-		while(_g < metrics.length) {
-			var info = metrics[_g];
-			++_g;
-			if(info.width > max) {
-				max = info.width;
-			}
-		}
-		this.calcWidth = max;
-		this.prevChar = -1;
-		this.newLine = true;
-		var align = this.textAlign;
-		var size = metrics[0].width;
-		switch(align._hx_index) {
-		case 0:
-			this.xPos = 0;
-			if(this.xMin > 0) {
-				this.xMin = 0;
-			}
-			break;
-		case 1:case 2:case 3:case 4:
-			this.xPos = Math.floor(((align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(this.calcWidth) : this.calcWidth < 0 ? 0 : Math.ceil(this.realMaxWidth)) - size) * (align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1));
-			if(this.xPos < this.xMin) {
-				this.xMin = this.xPos;
-			}
-			break;
-		}
-		if(doc.nodeType != Xml.Document && doc.nodeType != Xml.Element) {
-			throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (doc.nodeType == null ? "null" : XmlType.toString(doc.nodeType)));
-		}
-		var _this = doc.children;
-		var _g2_current = 0;
-		while(_g2_current < _this.length) this.addNode(_this[_g2_current++],this.font,this.textAlign,rebuild,metrics);
-		if(this.xPos > this.xMax) {
-			this.xMax = this.xPos;
-		}
-		this.textXml = null;
-		var y = this.yPos;
-		this.calcXMin = this.xMin;
-		this.calcWidth = this.xMax - this.xMin;
-		this.calcHeight = y + metrics[this.sizePos].height;
-		this.calcSizeHeight = y + metrics[this.sizePos].baseLine;
-		this.calcDone = true;
-		if(rebuild) {
-			this.needsRebuild = false;
-		}
-	}
-	,buildSizes: function(e,font,metrics,splitNode) {
-		var _gthis = this;
-		var wordSplit = function() {
-			var fnt = splitNode.font;
-			var _this = splitNode.node;
-			if(_this.nodeType == Xml.Document || _this.nodeType == Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, unexpected " + (_this.nodeType == null ? "null" : XmlType.toString(_this.nodeType)));
-			}
-			var str = _this.nodeValue;
-			var info = metrics[metrics.length - 1];
-			var w = info.width;
-			var cc = HxOverrides.cca(str,splitNode.pos);
-			info.width = splitNode.width;
-			info.height = splitNode.height;
-			info.baseLine = splitNode.baseLine;
-			var c = fnt.glyphs.h[cc];
-			if(c == null) {
-				c = fnt.charset.resolveChar(cc,fnt.glyphs);
-				if(c == null) {
-					c = cc == 13 || cc == 10 ? fnt.nullChar : fnt.defaultChar;
-				}
-			}
-			var char = c;
-			if(_gthis.lineBreak && fnt.charset.isSpace(cc)) {
-				w -= splitNode.width + _gthis.letterSpacing + char.width + char.getKerningOffset(splitNode.prevChar);
-				var _this = splitNode.node;
-				var v = HxOverrides.substr(str,0,splitNode.pos) + "\n" + HxOverrides.substr(str,splitNode.pos + 1,null);
-				if(_this.nodeType == Xml.Document || _this.nodeType == Xml.Element) {
-					throw haxe_Exception.thrown("Bad node type, unexpected " + (_this.nodeType == null ? "null" : XmlType.toString(_this.nodeType)));
-				}
-				_this.nodeValue = v;
-			} else {
-				w -= splitNode.width + _gthis.letterSpacing + char.getKerningOffset(splitNode.prevChar);
-				var _this = splitNode.node;
-				var v = HxOverrides.substr(str,0,splitNode.pos + 1) + "\n" + HxOverrides.substr(str,splitNode.pos + 1,null);
-				if(_this.nodeType == Xml.Document || _this.nodeType == Xml.Element) {
-					throw haxe_Exception.thrown("Bad node type, unexpected " + (_this.nodeType == null ? "null" : XmlType.toString(_this.nodeType)));
-				}
-				_this.nodeValue = v;
-			}
-			splitNode.node = null;
-			return w;
-		};
-		if(e.nodeType == Xml.Element) {
-			if(e.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element but found " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-			}
-			var nodeName = e.nodeName.toLowerCase();
-			switch(nodeName) {
-			case "b":case "bold":
-				font = this.loadFont("bold");
-				break;
-			case "br":
-				var fontInfo = _gthis.lineHeightMode == h2d_LineHeightMode.Constant ? _gthis.font : font;
-				metrics.push({ width : 0, height : fontInfo.lineHeight, baseLine : fontInfo.baseLine});
-				splitNode.node = null;
-				_gthis.newLine = true;
-				_gthis.prevChar = -1;
-				break;
-			case "font":
-				var a = e.attributes();
-				while(a.hasNext()) {
-					var a1 = a.next();
-					var v = e.get(a1);
-					if(a1.toLowerCase() == "face") {
-						font = this.loadFont(v);
-					}
-				}
-				break;
-			case "img":
-				var i = this.loadImage(e.get("src"));
-				if(i == null) {
-					i = h2d_Tile.fromColor(16711935,8,8);
-				}
-				var size = metrics[metrics.length - 1].width + i.width + this.imageSpacing;
-				if(this.realMaxWidth >= 0 && size > this.realMaxWidth && metrics[metrics.length - 1].width > 0) {
-					if(splitNode.node != null) {
-						size = wordSplit() + i.width + this.imageSpacing;
-						var info = metrics[metrics.length - 1];
-						if(this.lineHeightMode._hx_index == 0) {
-							var grow = i.height - i.dy - info.baseLine;
-							var h = info.height;
-							var bl = info.baseLine;
-							if(grow > 0) {
-								h += grow;
-								bl += grow;
-							}
-							metrics.push({ width : size, height : Math.max(h,bl + i.dy), baseLine : bl});
-						} else {
-							metrics.push({ width : size, height : info.height, baseLine : info.baseLine});
-						}
-					}
-				} else {
-					var info = metrics[metrics.length - 1];
-					info.width = size;
-					if(this.lineHeightMode == h2d_LineHeightMode.Accurate) {
-						var grow = i.height - i.dy - info.baseLine;
-						if(grow > 0) {
-							switch(this.imageVerticalAlign._hx_index) {
-							case 0:
-								info.height += grow;
-								break;
-							case 1:
-								info.baseLine += grow;
-								info.height += grow;
-								break;
-							case 2:
-								info.height += grow;
-								info.baseLine += grow / 2 | 0;
-								break;
-							}
-						}
-						grow = info.baseLine + i.dy;
-						if(info.height < grow) {
-							info.height = grow;
-						}
-					}
-				}
-				this.newLine = false;
-				this.prevChar = -1;
-				break;
-			case "i":case "italic":
-				font = this.loadFont("italic");
-				break;
-			case "p":
-				if(!this.newLine) {
-					var fontInfo = _gthis.lineHeightMode == h2d_LineHeightMode.Constant ? _gthis.font : font;
-					metrics.push({ width : 0, height : fontInfo.lineHeight, baseLine : fontInfo.baseLine});
-					splitNode.node = null;
-					_gthis.newLine = true;
-					_gthis.prevChar = -1;
-				}
-				break;
-			default:
-			}
-			if(e.nodeType != Xml.Document && e.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-			}
-			var _this = e.children;
-			var _g_current = 0;
-			while(_g_current < _this.length) this.buildSizes(_this[_g_current++],font,metrics,splitNode);
-			if(nodeName == "p") {
-				if(!this.newLine) {
-					var fontInfo = _gthis.lineHeightMode == h2d_LineHeightMode.Constant ? _gthis.font : font;
-					metrics.push({ width : 0, height : fontInfo.lineHeight, baseLine : fontInfo.baseLine});
-					splitNode.node = null;
-					_gthis.newLine = true;
-					_gthis.prevChar = -1;
-				}
-			}
-		} else {
-			if(e.nodeType == Xml.Document || e.nodeType == Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, unexpected " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-			}
-			if(e.nodeValue.length != 0) {
-				this.newLine = false;
-				if(e.nodeType == Xml.Document || e.nodeType == Xml.Element) {
-					throw haxe_Exception.thrown("Bad node type, unexpected " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-				}
-				var text = this.htmlToText(e.nodeValue);
-				var fontInfo = _gthis.lineHeightMode == h2d_LineHeightMode.Constant ? _gthis.font : font;
-				var info = metrics.pop();
-				var leftMargin = info.width;
-				var maxWidth = this.realMaxWidth < 0 ? Infinity : this.realMaxWidth;
-				var textSplit = [];
-				var restPos = 0;
-				var x = leftMargin;
-				var breakChars = 0;
-				var _g = 0;
-				var _g1 = text.length;
-				while(_g < _g1) {
-					var i = _g++;
-					var cc = HxOverrides.cca(text,i);
-					var c = font.glyphs.h[cc];
-					if(c == null) {
-						c = font.charset.resolveChar(cc,font.glyphs);
-						if(c == null) {
-							c = cc == 13 || cc == 10 ? font.nullChar : font.defaultChar;
-						}
-					}
-					var g = c;
-					var newline = cc == 10;
-					var esize = g.width + g.getKerningOffset(this.prevChar);
-					var nc = HxOverrides.cca(text,i + 1);
-					if(font.charset.isBreakChar(cc) && (nc == null || !font.charset.isComplementChar(nc))) {
-						if(x > maxWidth && textSplit.length == 0 && splitNode.node != null) {
-							metrics.push({ width : x, height : info.height, baseLine : info.baseLine});
-							x = wordSplit();
-						}
-						var size = x + esize + this.letterSpacing;
-						var k = i + 1;
-						var max = text.length;
-						var prevChar = cc;
-						while(size <= maxWidth && k < max) {
-							var cc1 = HxOverrides.cca(text,k++);
-							if(this.lineBreak && (font.charset.isSpace(cc1) || cc1 == 10)) {
-								break;
-							}
-							var c1 = font.glyphs.h[cc1];
-							if(c1 == null) {
-								c1 = font.charset.resolveChar(cc1,font.glyphs);
-								if(c1 == null) {
-									c1 = cc1 == 13 || cc1 == 10 ? font.nullChar : font.defaultChar;
-								}
-							}
-							var e1 = c1;
-							size += e1.width + this.letterSpacing + e1.getKerningOffset(prevChar);
-							prevChar = cc1;
-							var nc1 = HxOverrides.cca(text,k);
-							if(font.charset.isBreakChar(cc1) && (nc1 == null || !font.charset.isComplementChar(nc1))) {
-								break;
-							}
-						}
-						if(this.lineBreak && size > maxWidth && i != max - 1) {
-							newline = true;
-							if(font.charset.isSpace(cc)) {
-								textSplit.push(HxOverrides.substr(text,restPos,i - restPos));
-								g = null;
-							} else {
-								textSplit.push(HxOverrides.substr(text,restPos,i + 1 - restPos));
-								++breakChars;
-							}
-							splitNode.node = null;
-							restPos = i + 1;
-						} else {
-							splitNode.node = e;
-							splitNode.pos = i + breakChars;
-							splitNode.prevChar = this.prevChar;
-							splitNode.width = x;
-							splitNode.height = info.height;
-							splitNode.baseLine = info.baseLine;
-							splitNode.font = font;
-						}
-					}
-					if(g != null && cc != 10) {
-						x += esize + this.letterSpacing;
-					}
-					if(newline) {
-						metrics.push({ width : x, height : info.height, baseLine : info.baseLine});
-						info.height = fontInfo.lineHeight;
-						info.baseLine = fontInfo.baseLine;
-						x = 0;
-						this.prevChar = -1;
-						this.newLine = true;
-					} else {
-						this.prevChar = cc;
-						this.newLine = false;
-					}
-				}
-				if(restPos < text.length) {
-					if(x > maxWidth) {
-						if(splitNode.node != null && splitNode.node != e) {
-							metrics.push({ width : x, height : info.height, baseLine : info.baseLine});
-							x = wordSplit();
-						}
-					}
-					textSplit.push(HxOverrides.substr(text,restPos,null));
-					metrics.push({ width : x, height : info.height, baseLine : info.baseLine});
-				}
-				if(this.newLine || metrics.length == 0) {
-					metrics.push({ width : 0, height : fontInfo.lineHeight, baseLine : fontInfo.baseLine});
-					textSplit.push("");
-				}
-				var v = textSplit.join("\n");
-				if(e.nodeType == Xml.Document || e.nodeType == Xml.Element) {
-					throw haxe_Exception.thrown("Bad node type, unexpected " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-				}
-				e.nodeValue = v;
-			}
-		}
-	}
-	,htmlToText: function(t) {
-		if(this.condenseWhite) {
-			t = t.replace(h2d_HtmlText.REG_SPACES.r," ");
-		}
-		return t;
-	}
-	,addNode: function(e,font,align,rebuild,metrics) {
-		var _gthis = this;
-		if(e.nodeType == Xml.Element) {
-			var prevColor = null;
-			var prevGlyphs = null;
-			var oldAlign = align;
-			if(e.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element but found " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-			}
-			var nodeName = e.nodeName.toLowerCase();
-			switch(nodeName) {
-			case "a":
-				if(e.exists("href")) {
-					if(_gthis.aInteractive != null) {
-						_gthis.aInteractive.width = _gthis.xPos - _gthis.aInteractive.x;
-						_gthis.aInteractive = null;
-					}
-					if(this.aHrefs == null) {
-						this.aHrefs = [];
-					}
-					this.aHrefs.push(e.get("href"));
-					if(!(_gthis.aHrefs == null || _gthis.aHrefs.length == 0)) {
-						_gthis.aInteractive = new h2d_Interactive(0,metrics[_gthis.sizePos].height,_gthis);
-						var href = _gthis.aHrefs[_gthis.aHrefs.length - 1];
-						_gthis.aInteractive.onClick = function(event) {
-							_gthis.onHyperlink(href);
-						};
-						var _this = _gthis.aInteractive;
-						var v = _gthis.xPos;
-						_this.posChanged = true;
-						_this.x = v;
-						var _this = _gthis.aInteractive;
-						var v = _gthis.yPos;
-						_this.posChanged = true;
-						_this.y = v;
-						_gthis.elements.push(_gthis.aInteractive);
-					}
-				}
-				break;
-			case "b":case "bold":
-				font = _gthis.loadFont("bold");
-				prevGlyphs = _gthis.glyphs;
-				var prev = _gthis.glyphs;
-				_gthis.glyphs = new h2d_TileGroup(font == null ? null : font.tile,_gthis);
-				if(font != null) {
-					var _g = font.type;
-					if(_g._hx_index == 1) {
-						var _g1 = _g.smoothing;
-						var shader = new h3d_shader_SignedDistanceField();
-						shader.constModified = true;
-						shader.channel__ = _g.channel;
-						shader.alphaCutoff__ = _g.alphaCutoff;
-						shader.smoothing__ = _g1;
-						shader.constModified = true;
-						shader.autoSmoothing__ = _g1 == -1;
-						_gthis.glyphs.smooth = _gthis.smooth;
-						_gthis.glyphs.addShader(shader);
-					}
-				}
-				var _this = _gthis.glyphs.curColor;
-				var v = prev.curColor;
-				_this.x = v.x;
-				_this.y = v.y;
-				_this.z = v.z;
-				_this.w = v.w;
-				_gthis.elements.push(_gthis.glyphs);
-				break;
-			case "br":
-				if(_gthis.aInteractive != null) {
-					_gthis.aInteractive.width = _gthis.xPos - _gthis.aInteractive.x;
-					_gthis.aInteractive = null;
-				}
-				if(_gthis.xPos > _gthis.xMax) {
-					_gthis.xMax = _gthis.xPos;
-				}
-				_gthis.yPos += metrics[_gthis.sizePos].height + _gthis.lineSpacing;
-				var size = metrics[++_gthis.sizePos].width;
-				switch(align._hx_index) {
-				case 0:
-					_gthis.xPos = 0;
-					if(_gthis.xMin > 0) {
-						_gthis.xMin = 0;
-					}
-					break;
-				case 1:case 2:case 3:case 4:
-					_gthis.xPos = Math.floor(((align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(_gthis.calcWidth) : _gthis.calcWidth < 0 ? 0 : Math.ceil(_gthis.realMaxWidth)) - size) * (align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1));
-					if(_gthis.xPos < _gthis.xMin) {
-						_gthis.xMin = _gthis.xPos;
-					}
-					break;
-				}
-				if(!(_gthis.aHrefs == null || _gthis.aHrefs.length == 0)) {
-					_gthis.aInteractive = new h2d_Interactive(0,metrics[_gthis.sizePos].height,_gthis);
-					var href1 = _gthis.aHrefs[_gthis.aHrefs.length - 1];
-					_gthis.aInteractive.onClick = function(event) {
-						_gthis.onHyperlink(href1);
-					};
-					var _this = _gthis.aInteractive;
-					var v = _gthis.xPos;
-					_this.posChanged = true;
-					_this.x = v;
-					var _this = _gthis.aInteractive;
-					var v = _gthis.yPos;
-					_this.posChanged = true;
-					_this.y = v;
-					_gthis.elements.push(_gthis.aInteractive);
-				}
-				this.newLine = true;
-				this.prevChar = -1;
-				break;
-			case "font":
-				var a = e.attributes();
-				while(a.hasNext()) {
-					var a1 = a.next();
-					var v = e.get(a1);
-					switch(a1.toLowerCase()) {
-					case "color":
-						if(prevColor == null) {
-							var _this = this.glyphs.curColor;
-							prevColor = new h3d_Vector(_this.x,_this.y,_this.z,_this.w);
-						}
-						if(HxOverrides.cca(v,0) == 35 && v.length == 4) {
-							v = "#" + v.charAt(1) + v.charAt(1) + v.charAt(2) + v.charAt(2) + v.charAt(3) + v.charAt(3);
-						}
-						this.glyphs.setDefaultColor(Std.parseInt("0x" + HxOverrides.substr(v,1,null)));
-						break;
-					case "face":
-						font = _gthis.loadFont(v);
-						if(prevGlyphs == null) {
-							prevGlyphs = _gthis.glyphs;
-						}
-						var prev = _gthis.glyphs;
-						_gthis.glyphs = new h2d_TileGroup(font == null ? null : font.tile,_gthis);
-						if(font != null) {
-							var _g = font.type;
-							if(_g._hx_index == 1) {
-								var _g1 = _g.smoothing;
-								var shader = new h3d_shader_SignedDistanceField();
-								shader.constModified = true;
-								shader.channel__ = _g.channel;
-								shader.alphaCutoff__ = _g.alphaCutoff;
-								shader.smoothing__ = _g1;
-								shader.constModified = true;
-								shader.autoSmoothing__ = _g1 == -1;
-								_gthis.glyphs.smooth = _gthis.smooth;
-								_gthis.glyphs.addShader(shader);
-							}
-						}
-						var _this1 = _gthis.glyphs.curColor;
-						var v1 = prev.curColor;
-						_this1.x = v1.x;
-						_this1.y = v1.y;
-						_this1.z = v1.z;
-						_this1.w = v1.w;
-						_gthis.elements.push(_gthis.glyphs);
-						break;
-					case "opacity":
-						if(prevColor == null) {
-							var _this2 = this.glyphs.curColor;
-							prevColor = new h3d_Vector(_this2.x,_this2.y,_this2.z,_this2.w);
-						}
-						this.glyphs.curColor.w *= parseFloat(v);
-						break;
-					default:
-					}
-				}
-				break;
-			case "img":
-				var i = this.loadImage(e.get("src"));
-				if(i == null) {
-					i = h2d_Tile.fromColor(16711935,8,8);
-				}
-				var py = this.yPos;
-				switch(this.imageVerticalAlign._hx_index) {
-				case 0:
-					break;
-				case 1:
-					py += metrics[this.sizePos].baseLine - i.height;
-					break;
-				case 2:
-					py += metrics[this.sizePos].baseLine - i.height / 2;
-					break;
-				}
-				if(py + i.dy < this.calcYMin) {
-					this.calcYMin = py + i.dy;
-				}
-				if(rebuild) {
-					var b = new h2d_Bitmap(i,this);
-					b.posChanged = true;
-					b.x = this.xPos;
-					b.posChanged = true;
-					b.y = py;
-					this.elements.push(b);
-				}
-				this.newLine = false;
-				this.prevChar = -1;
-				this.xPos += i.width + this.imageSpacing;
-				break;
-			case "i":case "italic":
-				font = _gthis.loadFont("italic");
-				prevGlyphs = _gthis.glyphs;
-				var prev = _gthis.glyphs;
-				_gthis.glyphs = new h2d_TileGroup(font == null ? null : font.tile,_gthis);
-				if(font != null) {
-					var _g = font.type;
-					if(_g._hx_index == 1) {
-						var _g1 = _g.smoothing;
-						var shader = new h3d_shader_SignedDistanceField();
-						shader.constModified = true;
-						shader.channel__ = _g.channel;
-						shader.alphaCutoff__ = _g.alphaCutoff;
-						shader.smoothing__ = _g1;
-						shader.constModified = true;
-						shader.autoSmoothing__ = _g1 == -1;
-						_gthis.glyphs.smooth = _gthis.smooth;
-						_gthis.glyphs.addShader(shader);
-					}
-				}
-				var _this = _gthis.glyphs.curColor;
-				var v = prev.curColor;
-				_this.x = v.x;
-				_this.y = v.y;
-				_this.z = v.z;
-				_this.w = v.w;
-				_gthis.elements.push(_gthis.glyphs);
-				break;
-			case "p":
-				var a = e.attributes();
-				while(a.hasNext()) {
-					var a1 = a.next();
-					if(a1.toLowerCase() == "align") {
-						var v = e.get(a1);
-						if(v != null) {
-							switch(v.toLowerCase()) {
-							case "center":
-								align = h2d_Align.Center;
-								break;
-							case "left":
-								align = h2d_Align.Left;
-								break;
-							case "multiline-center":
-								align = h2d_Align.MultilineCenter;
-								break;
-							case "multiline-right":
-								align = h2d_Align.MultilineRight;
-								break;
-							case "right":
-								align = h2d_Align.Right;
-								break;
-							}
-						}
-					}
-				}
-				if(!this.newLine) {
-					if(_gthis.aInteractive != null) {
-						_gthis.aInteractive.width = _gthis.xPos - _gthis.aInteractive.x;
-						_gthis.aInteractive = null;
-					}
-					if(_gthis.xPos > _gthis.xMax) {
-						_gthis.xMax = _gthis.xPos;
-					}
-					_gthis.yPos += metrics[_gthis.sizePos].height + _gthis.lineSpacing;
-					var size = metrics[++_gthis.sizePos].width;
-					switch(align._hx_index) {
-					case 0:
-						_gthis.xPos = 0;
-						if(_gthis.xMin > 0) {
-							_gthis.xMin = 0;
-						}
-						break;
-					case 1:case 2:case 3:case 4:
-						_gthis.xPos = Math.floor(((align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(_gthis.calcWidth) : _gthis.calcWidth < 0 ? 0 : Math.ceil(_gthis.realMaxWidth)) - size) * (align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1));
-						if(_gthis.xPos < _gthis.xMin) {
-							_gthis.xMin = _gthis.xPos;
-						}
-						break;
-					}
-					if(!(_gthis.aHrefs == null || _gthis.aHrefs.length == 0)) {
-						_gthis.aInteractive = new h2d_Interactive(0,metrics[_gthis.sizePos].height,_gthis);
-						var href2 = _gthis.aHrefs[_gthis.aHrefs.length - 1];
-						_gthis.aInteractive.onClick = function(event) {
-							_gthis.onHyperlink(href2);
-						};
-						var _this = _gthis.aInteractive;
-						var v = _gthis.xPos;
-						_this.posChanged = true;
-						_this.x = v;
-						var _this = _gthis.aInteractive;
-						var v = _gthis.yPos;
-						_this.posChanged = true;
-						_this.y = v;
-						_gthis.elements.push(_gthis.aInteractive);
-					}
-					this.newLine = true;
-					this.prevChar = -1;
-				} else {
-					var size = metrics[this.sizePos].width;
-					switch(align._hx_index) {
-					case 0:
-						this.xPos = 0;
-						if(this.xMin > 0) {
-							this.xMin = 0;
-						}
-						break;
-					case 1:case 2:case 3:case 4:
-						this.xPos = Math.floor(((align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(this.calcWidth) : this.calcWidth < 0 ? 0 : Math.ceil(this.realMaxWidth)) - size) * (align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1));
-						if(this.xPos < this.xMin) {
-							this.xMin = this.xPos;
-						}
-						break;
-					}
-				}
-				break;
-			default:
-			}
-			if(e.nodeType != Xml.Document && e.nodeType != Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-			}
-			var _this = e.children;
-			var _g_current = 0;
-			while(_g_current < _this.length) this.addNode(_this[_g_current++],font,align,rebuild,metrics);
-			align = oldAlign;
-			switch(nodeName) {
-			case "a":
-				if(this.aHrefs.length > 0) {
-					if(_gthis.aInteractive != null) {
-						_gthis.aInteractive.width = _gthis.xPos - _gthis.aInteractive.x;
-						_gthis.aInteractive = null;
-					}
-					this.aHrefs.pop();
-					if(!(_gthis.aHrefs == null || _gthis.aHrefs.length == 0)) {
-						_gthis.aInteractive = new h2d_Interactive(0,metrics[_gthis.sizePos].height,_gthis);
-						var href3 = _gthis.aHrefs[_gthis.aHrefs.length - 1];
-						_gthis.aInteractive.onClick = function(event) {
-							_gthis.onHyperlink(href3);
-						};
-						var _this = _gthis.aInteractive;
-						var v = _gthis.xPos;
-						_this.posChanged = true;
-						_this.x = v;
-						var _this = _gthis.aInteractive;
-						var v = _gthis.yPos;
-						_this.posChanged = true;
-						_this.y = v;
-						_gthis.elements.push(_gthis.aInteractive);
-					}
-				}
-				break;
-			case "p":
-				if(this.newLine) {
-					var size = metrics[this.sizePos].width;
-					switch(oldAlign._hx_index) {
-					case 0:
-						this.xPos = 0;
-						if(this.xMin > 0) {
-							this.xMin = 0;
-						}
-						break;
-					case 1:case 2:case 3:case 4:
-						this.xPos = Math.floor(((oldAlign == h2d_Align.MultilineCenter || oldAlign == h2d_Align.MultilineRight ? Math.ceil(this.calcWidth) : this.calcWidth < 0 ? 0 : Math.ceil(this.realMaxWidth)) - size) * (oldAlign == h2d_Align.Center || oldAlign == h2d_Align.MultilineCenter ? 0.5 : 1));
-						if(this.xPos < this.xMin) {
-							this.xMin = this.xPos;
-						}
-						break;
-					}
-				} else if(this.sizePos < metrics.length - 2 || metrics[this.sizePos + 1].width != 0) {
-					if(_gthis.aInteractive != null) {
-						_gthis.aInteractive.width = _gthis.xPos - _gthis.aInteractive.x;
-						_gthis.aInteractive = null;
-					}
-					if(_gthis.xPos > _gthis.xMax) {
-						_gthis.xMax = _gthis.xPos;
-					}
-					_gthis.yPos += metrics[_gthis.sizePos].height + _gthis.lineSpacing;
-					var size = metrics[++_gthis.sizePos].width;
-					switch(oldAlign._hx_index) {
-					case 0:
-						_gthis.xPos = 0;
-						if(_gthis.xMin > 0) {
-							_gthis.xMin = 0;
-						}
-						break;
-					case 1:case 2:case 3:case 4:
-						_gthis.xPos = Math.floor(((oldAlign == h2d_Align.MultilineCenter || oldAlign == h2d_Align.MultilineRight ? Math.ceil(_gthis.calcWidth) : _gthis.calcWidth < 0 ? 0 : Math.ceil(_gthis.realMaxWidth)) - size) * (oldAlign == h2d_Align.Center || oldAlign == h2d_Align.MultilineCenter ? 0.5 : 1));
-						if(_gthis.xPos < _gthis.xMin) {
-							_gthis.xMin = _gthis.xPos;
-						}
-						break;
-					}
-					if(!(_gthis.aHrefs == null || _gthis.aHrefs.length == 0)) {
-						_gthis.aInteractive = new h2d_Interactive(0,metrics[_gthis.sizePos].height,_gthis);
-						var href4 = _gthis.aHrefs[_gthis.aHrefs.length - 1];
-						_gthis.aInteractive.onClick = function(event) {
-							_gthis.onHyperlink(href4);
-						};
-						var _this = _gthis.aInteractive;
-						var v = _gthis.xPos;
-						_this.posChanged = true;
-						_this.x = v;
-						var _this = _gthis.aInteractive;
-						var v = _gthis.yPos;
-						_this.posChanged = true;
-						_this.y = v;
-						_gthis.elements.push(_gthis.aInteractive);
-					}
-					this.newLine = true;
-					this.prevChar = -1;
-				}
-				break;
-			default:
-			}
-			if(prevGlyphs != null) {
-				this.glyphs = prevGlyphs;
-			}
-			if(prevColor != null) {
-				var _this = this.glyphs.curColor;
-				_this.x = prevColor.x;
-				_this.y = prevColor.y;
-				_this.z = prevColor.z;
-				_this.w = prevColor.w;
-			}
-		} else {
-			if(e.nodeType == Xml.Document || e.nodeType == Xml.Element) {
-				throw haxe_Exception.thrown("Bad node type, unexpected " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-			}
-			if(e.nodeValue.length != 0) {
-				this.newLine = false;
-				if(e.nodeType == Xml.Document || e.nodeType == Xml.Element) {
-					throw haxe_Exception.thrown("Bad node type, unexpected " + (e.nodeType == null ? "null" : XmlType.toString(e.nodeType)));
-				}
-				var t = e.nodeValue;
-				var dy = metrics[this.sizePos].baseLine - font.baseLine;
-				var _g = 0;
-				var _g1 = t.length;
-				while(_g < _g1) {
-					var cc = HxOverrides.cca(t,_g++);
-					if(cc == 10) {
-						if(_gthis.aInteractive != null) {
-							_gthis.aInteractive.width = _gthis.xPos - _gthis.aInteractive.x;
-							_gthis.aInteractive = null;
-						}
-						if(_gthis.xPos > _gthis.xMax) {
-							_gthis.xMax = _gthis.xPos;
-						}
-						_gthis.yPos += metrics[_gthis.sizePos].height + _gthis.lineSpacing;
-						var size = metrics[++_gthis.sizePos].width;
-						switch(align._hx_index) {
-						case 0:
-							_gthis.xPos = 0;
-							if(_gthis.xMin > 0) {
-								_gthis.xMin = 0;
-							}
-							break;
-						case 1:case 2:case 3:case 4:
-							_gthis.xPos = Math.floor(((align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(_gthis.calcWidth) : _gthis.calcWidth < 0 ? 0 : Math.ceil(_gthis.realMaxWidth)) - size) * (align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1));
-							if(_gthis.xPos < _gthis.xMin) {
-								_gthis.xMin = _gthis.xPos;
-							}
-							break;
-						}
-						if(!(_gthis.aHrefs == null || _gthis.aHrefs.length == 0)) {
-							_gthis.aInteractive = new h2d_Interactive(0,metrics[_gthis.sizePos].height,_gthis);
-							_gthis.aInteractive.onClick = (function(href) {
-								return function(event) {
-									_gthis.onHyperlink(href[0]);
-								};
-							})([_gthis.aHrefs[_gthis.aHrefs.length - 1]]);
-							var _this = _gthis.aInteractive;
-							var v = _gthis.xPos;
-							_this.posChanged = true;
-							_this.x = v;
-							var _this1 = _gthis.aInteractive;
-							var v1 = _gthis.yPos;
-							_this1.posChanged = true;
-							_this1.y = v1;
-							_gthis.elements.push(_gthis.aInteractive);
-						}
-						dy = metrics[this.sizePos].baseLine - font.baseLine;
-						this.prevChar = -1;
-						continue;
-					} else {
-						var c = font.glyphs.h[cc];
-						if(c == null) {
-							c = font.charset.resolveChar(cc,font.glyphs);
-							if(c == null) {
-								c = cc == 13 || cc == 10 ? font.nullChar : font.defaultChar;
-							}
-						}
-						var fc = c;
-						if(fc != null) {
-							this.xPos += fc.getKerningOffset(this.prevChar);
-							if(rebuild) {
-								var _this2 = this.glyphs;
-								_this2.content.add(this.xPos,this.yPos + dy,_this2.curColor.x,_this2.curColor.y,_this2.curColor.z,_this2.curColor.w,fc.t);
-							}
-							if(this.yPos == 0 && fc.t.dy + dy < this.calcYMin) {
-								this.calcYMin = fc.t.dy + dy;
-							}
-							this.xPos += fc.width + this.letterSpacing;
-						}
-						this.prevChar = cc;
-					}
-				}
-			}
-		}
-	}
-	,set_textColor: function(c) {
-		if(this.textColor == c) {
-			return c;
-		}
-		this.textColor = c;
-		this.rebuild();
-		return c;
-	}
-	,getBoundsRec: function(relativeTo,out,forSize) {
-		if(forSize) {
-			var _g = 0;
-			var _g1 = this.elements;
-			while(_g < _g1.length) {
-				var i = _g1[_g];
-				++_g;
-				if(((i) instanceof h2d_Bitmap)) {
-					i.set_visible(false);
-				}
-			}
-		}
-		h2d_Text.prototype.getBoundsRec.call(this,relativeTo,out,forSize);
-		if(forSize) {
-			var _g = 0;
-			var _g1 = this.elements;
-			while(_g < _g1.length) _g1[_g++].set_visible(true);
-		}
-	}
-	,__class__: h2d_HtmlText
-});
-var Text = function(text,parent,size,addDefaultShadow) {
-	if(addDefaultShadow == null) {
-		addDefaultShadow = false;
-	}
-	if(size == null) {
-		size = 1.0;
-	}
-	var font = hxd_res_DefaultFont.get();
-	h2d_HtmlText.call(this,font,parent);
-	this.set_text(text);
-	var v = size * 4.0;
-	this.posChanged = true;
-	this.scaleX *= v;
-	this.posChanged = true;
-	this.scaleY *= v;
-	this.set_textColor(-1);
-	this.set_lineSpacing(-font.lineHeight * 0.2);
-	if(addDefaultShadow) {
-		this.dropShadow = { dx : Gui.scale(5), dy : Gui.scale(5), color : 0, alpha : 0.5};
-	}
-};
-$hxClasses["Text"] = Text;
-Text.__name__ = "Text";
-Text.__super__ = h2d_HtmlText;
-Text.prototype = $extend(h2d_HtmlText.prototype,{
-	set_text: function(newText) {
-		try {
-			h2d_HtmlText.prototype.set_text.call(this,newText);
-		} catch( _g ) {
-			var _g1 = haxe_Exception.caught(_g);
-			if(((_g1) instanceof haxe_ValueException)) {
-				haxe_Log.trace(_g1,{ fileName : "lib/Gui.hx", lineNumber : 51, className : "Text", methodName : "set_text"});
-				h2d_HtmlText.prototype.set_text.call(this,"PARSE ERROR");
-			} else {
-				throw _g;
-			}
-		}
-		return newText;
-	}
-	,__class__: Text
-});
-var Colors = function() { };
-$hxClasses["Colors"] = Colors;
-Colors.__name__ = "Colors";
-var Button = function(parent,onClickFn,backgroundColor,disableOnClick) {
-	if(disableOnClick == null) {
-		disableOnClick = false;
-	}
-	this.buttonShape = new h2d_Graphics();
-	this.buttonShadow = new h2d_Graphics();
-	this.enabled = true;
-	var _gthis = this;
-	h2d_Object.call(this,parent);
-	if(backgroundColor == null) {
-		backgroundColor = Colors.LIGHT_GREY;
-	}
-	var horizontalPadding = 20 * Gui.scale();
-	var verticalPadding = 20 * Gui.scale();
-	this.shadowOffsetX = 5 * Gui.scale();
-	this.shadowOffsetY = 5 * Gui.scale();
-	var buttonOffsetXPressed = this.shadowOffsetX * 0.5;
-	var buttonOffsetYPressed = this.shadowOffsetY * 0.5;
-	this.addChild(this.buttonShadow);
-	this.addChild(this.buttonShape);
-	var pushed = false;
-	var pushTime = null;
-	this.content = new h2d_Flow(this);
-	this.content.set_enableInteractive(true);
-	var _this = this.content;
-	var v = horizontalPadding | 0;
-	_this.set_paddingLeft(v);
-	_this.set_paddingRight(v);
-	var _this = this.content;
-	var v = verticalPadding | 0;
-	_this.set_paddingTop(v);
-	_this.set_paddingBottom(v);
-	this.content.set_verticalAlign(h2d_FlowAlign.Middle);
-	this.content.interactive.onClick = function(e) {
-		e.propagate = false;
-		if(!_gthis.enabled) {
-			return;
-		}
-		if(disableOnClick) {
-			_gthis.set_enabled(false);
-		}
-		onClickFn();
-	};
-	this.content.interactive.onPush = function(e) {
-		e.propagate = false;
-		if(!_gthis.enabled || pushed) {
-			return;
-		}
-		pushed = true;
-		pushTime = HxOverrides.now() / 1000;
-		var fh = _gthis.buttonShape;
-		var v = fh.x + buttonOffsetXPressed;
-		fh.posChanged = true;
-		fh.x = v;
-		var fh = _gthis.buttonShape;
-		var v = fh.y + buttonOffsetYPressed;
-		fh.posChanged = true;
-		fh.y = v;
-		var fh = _gthis.content;
-		var v = fh.x + buttonOffsetXPressed;
-		fh.posChanged = true;
-		fh.x = v;
-		var fh = _gthis.content;
-		var v = fh.y + buttonOffsetXPressed;
-		fh.posChanged = true;
-		fh.y = v;
-	};
-	var releaseButton = function(e) {
-		e.propagate = false;
-		if(!_gthis.enabled || !pushed) {
-			return;
-		}
-		pushed = false;
-		pushTime = null;
-		var fh = _gthis.buttonShape;
-		var v = fh.x - buttonOffsetXPressed;
-		fh.posChanged = true;
-		fh.x = v;
-		var fh = _gthis.buttonShape;
-		var v = fh.y - buttonOffsetYPressed;
-		fh.posChanged = true;
-		fh.y = v;
-		var fh = _gthis.content;
-		var v = fh.x - buttonOffsetXPressed;
-		fh.posChanged = true;
-		fh.x = v;
-		var fh = _gthis.content;
-		var v = fh.y - buttonOffsetXPressed;
-		fh.posChanged = true;
-		fh.y = v;
-	};
-	this.content.interactive.onRelease = releaseButton;
-	this.content.interactive.onOut = releaseButton;
-	this.set_backgroundColor(backgroundColor);
-};
-$hxClasses["Button"] = Button;
-Button.__name__ = "Button";
-Button.__super__ = h2d_Object;
-Button.prototype = $extend(h2d_Object.prototype,{
-	set_backgroundColor: function(color) {
-		this.backgroundColor = color;
-		this.redrawButton();
-		return this.backgroundColor;
-	}
-	,redrawButton: function() {
-		var w = this.content.get_outerWidth() == 0 ? Gui.scale() * 100 | 0 : this.content.get_outerWidth();
-		var h = this.content.get_outerHeight() == 0 ? Gui.scale() * 100 | 0 : this.content.get_outerHeight();
-		this.buttonShadow.clear();
-		this.buttonShadow.beginFill(0,0.5);
-		this.buttonShadow.drawRoundedRect(0,0,w,h,10 * Gui.scale());
-		var _this = this.buttonShadow;
-		_this.posChanged = true;
-		_this.x = this.shadowOffsetX;
-		var _this = this.buttonShadow;
-		_this.posChanged = true;
-		_this.y = this.shadowOffsetY;
-		this.buttonShape.clear();
-		this.buttonShape.beginFill(this.backgroundColor);
-		this.buttonShape.drawRoundedRect(0,0,w,h,10 * Gui.scale());
-	}
-	,set_enabled: function(enabled) {
-		return this.enabled = enabled;
-	}
-	,__class__: Button
-	,__properties__: $extend(h2d_Object.prototype.__properties__,{set_backgroundColor:"set_backgroundColor",set_enabled:"set_enabled"})
-});
-var TextButton = function(parent,labelText,onClickFn,backgroundColor,disableOnClick,textSize,maxWidth) {
-	if(textSize == null) {
-		textSize = 1.0;
-	}
-	if(disableOnClick == null) {
-		disableOnClick = false;
-	}
-	if(backgroundColor == null) {
-		backgroundColor = 16711680;
-	}
-	Button.call(this,parent,onClickFn,backgroundColor,disableOnClick);
-	this.text = new Text(labelText,this.content,textSize);
-	this.text.set_textAlign(h2d_Align.MultilineCenter);
-	if(maxWidth != null) {
-		this.text.set_maxWidth(maxWidth);
-	}
-	var fh = this.content;
-	fh.set_paddingTop(fh.paddingTop + (this.text.lineSpacing | 0));
-	this.redrawButton();
-};
-$hxClasses["TextButton"] = TextButton;
-TextButton.__name__ = "TextButton";
-TextButton.__super__ = Button;
-TextButton.prototype = $extend(Button.prototype,{
-	set_enabled: function(enabled) {
-		this.text.set_textColor(enabled ? TextButton.BUTTON_TEXT_COLOR_ENABLED : TextButton.BUTTON_TEXT_COLOR_DISABLED);
-		return Button.prototype.set_enabled.call(this,enabled);
-	}
-	,__class__: TextButton
-});
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = "HxOverrides";
@@ -4783,16 +3036,60 @@ MapView.__super__ = GameState;
 MapView.prototype = $extend(GameState.prototype,{
 	init: function() {
 		this.set_scaleMode(h2d_ScaleMode.LetterBox(512,512));
+		var title = new h2d_Text(hxd_res_DefaultFont.get(),this);
+		title.set_text("B.H.M.D.S.");
+		title.set_textAlign(h2d_Align.Center);
+		title.posChanged = true;
+		title.scaleX *= 5;
+		title.posChanged = true;
+		title.scaleY *= 5;
+		title.posChanged = true;
+		title.x = 256;
+		title.posChanged = true;
+		title.y = 50;
+		var subtitle = new h2d_Text(hxd_res_DefaultFont.get(),this);
+		subtitle.set_text("Black Hole Manipulation Delivery System");
+		subtitle.set_textAlign(h2d_Align.Center);
+		subtitle.posChanged = true;
+		subtitle.scaleX *= 1.073;
+		subtitle.posChanged = true;
+		subtitle.scaleY *= 1.073;
+		subtitle.posChanged = true;
+		subtitle.x = 256;
+		subtitle.posChanged = true;
+		subtitle.y = 120;
+		var version = new h2d_Text(hxd_res_DefaultFont.get(),this);
+		version.set_text("version: " + hxd_Res.get_loader().loadCache("version.txt",hxd_res_Resource).entry.getText());
+		version.set_textAlign(h2d_Align.Center);
+		version.posChanged = true;
+		version.scaleX *= 0.7;
+		version.posChanged = true;
+		version.scaleY *= 0.7;
+		version.posChanged = true;
+		version.x = 256;
+		version.posChanged = true;
+		version.y = 480;
+		var f = new h2d_Flow(this);
+		f.set_padding(5);
+		f.set_paddingTop(1);
+		f.set_backgroundTile(h2d_Tile.fromColor(4802889));
+		f.set_verticalAlign(h2d_FlowAlign.Middle);
+		f.set_horizontalAlign(h2d_FlowAlign.Middle);
+		f.set_enableInteractive(true);
+		f.interactive.onClick = function(e) {
+			HerbalTeaApp.toggleFullScreen();
+		};
+		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Toggle fullscreen");
 		var sprites = new h2d_SpriteBatch(null,this);
-		var rand = new hxd_Rand(0);
-		var x = 100;
-		var y = 100;
+		var x = 115;
+		var y = 200;
 		var _g = 0;
 		var _g1 = Ldtk.proj.levels;
 		while(_g < _g1.length) {
 			var level = [_g1[_g]];
 			++_g;
 			var e = new h2d_BatchElement(hxd_Res.get_loader().loadCache("galaxy.png",hxd_res_Image).toTile());
+			var rand = new hxd_Rand(level[0].arrayIndex);
 			rand.seed = 36969 * (rand.seed & 65535) + (rand.seed >> 16);
 			rand.seed2 = 18000 * (rand.seed2 & 65535) + (rand.seed2 >> 16);
 			e.r = (((rand.seed << 16) + rand.seed2 | 0) & 1073741823) % 10007 / 10007.0 + 0.5;
@@ -4825,45 +3122,13 @@ MapView.prototype = $extend(GameState.prototype,{
 			x += 70;
 			if(x > 350) {
 				y += 100;
-				x = 100;
+				x = 115;
 			}
 		}
 	}
 	,__class__: MapView
 });
 Math.__name__ = "Math";
-var MenuView = function() {
-	GameState.call(this);
-};
-$hxClasses["MenuView"] = MenuView;
-MenuView.__name__ = "MenuView";
-MenuView.__super__ = GameState;
-MenuView.prototype = $extend(GameState.prototype,{
-	init: function() {
-		var centeringFlow = new h2d_Flow(this);
-		centeringFlow.set_backgroundTile(h2d_Tile.fromColor(532534));
-		centeringFlow.set_fillWidth(true);
-		centeringFlow.set_fillHeight(true);
-		centeringFlow.set_horizontalAlign(h2d_FlowAlign.Middle);
-		centeringFlow.set_verticalAlign(h2d_FlowAlign.Middle);
-		centeringFlow.set_maxWidth(this.width);
-		centeringFlow.set_layout(h2d_FlowLayout.Vertical);
-		centeringFlow.set_verticalSpacing(Gui.scaleAsInt(50));
-		new Text("Wellcome to...",centeringFlow,0.8);
-		new Text("B.H.M.D.S. - Black Hole Manipulation Delivery System",centeringFlow);
-		centeringFlow.addSpacing(Gui.scaleAsInt(100));
-		new TextButton(centeringFlow,"Toggle fullscreen",function() {
-			HerbalTeaApp.toggleFullScreen();
-			centeringFlow.reflow();
-		},Colors.BLUE,null,0.8);
-		new TextButton(centeringFlow,"Start game",function() {
-			App.instance.switchState(new MapView());
-		},Colors.BLUE,null,0.8);
-		centeringFlow.addSpacing(Gui.scaleAsInt(100));
-		new Text("version: " + hxd_Res.get_loader().loadCache("version.txt",hxd_res_Resource).entry.getText(),centeringFlow,0.5);
-	}
-	,__class__: MenuView
-});
 var ResType = $hxEnums["ResType"] = { __ename__:true,__constructs__:null
 	,Res1: {_hx_name:"Res1",_hx_index:0,__enum__:"ResType",toString:$estr}
 	,Res2: {_hx_name:"Res2",_hx_index:1,__enum__:"ResType",toString:$estr}
@@ -4872,6 +3137,54 @@ var ResType = $hxEnums["ResType"] = { __ename__:true,__constructs__:null
 };
 ResType.__constructs__ = [ResType.Res1,ResType.Res2,ResType.Res3,ResType.Res4];
 ResType.__empty_constructs__ = [ResType.Res1,ResType.Res2,ResType.Res3,ResType.Res4];
+var h2d_Drawable = function(parent) {
+	h2d_Object.call(this,parent);
+	this.color = new h3d_Vector(1,1,1,1);
+};
+$hxClasses["h2d.Drawable"] = h2d_Drawable;
+h2d_Drawable.__name__ = "h2d.Drawable";
+h2d_Drawable.__super__ = h2d_Object;
+h2d_Drawable.prototype = $extend(h2d_Object.prototype,{
+	drawFiltered: function(ctx,tile) {
+		var old = this.shaders;
+		this.shaders = null;
+		h2d_Object.prototype.drawFiltered.call(this,ctx,tile);
+		this.shaders = old;
+	}
+	,addShader: function(s) {
+		if(s == null) {
+			throw haxe_Exception.thrown("Can't add null shader");
+		}
+		this.shaders = hxsl_ShaderList.addSort(s,this.shaders);
+		return s;
+	}
+	,removeShader: function(s) {
+		var prev = null;
+		var cur = this.shaders;
+		while(cur != null) {
+			if(cur.s == s) {
+				if(prev == null) {
+					this.shaders = cur.next;
+				} else {
+					prev.next = cur.next;
+				}
+				return true;
+			}
+			prev = cur;
+			cur = cur.next;
+		}
+		return false;
+	}
+	,emitTile: function(ctx,tile) {
+		if(tile == null) {
+			tile = new h2d_Tile(null,0,0,5,5);
+		}
+		if(!ctx.drawTile(this,tile)) {
+			return;
+		}
+	}
+	,__class__: h2d_Drawable
+});
 var h2d_Bitmap = function(tile,parent) {
 	h2d_Drawable.call(this,parent);
 	this.set_tile(tile);
@@ -9310,13 +7623,6 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 		this.set_needReflow(true);
 		return this.properties[this.getChildIndex(e)];
 	}
-	,set_layout: function(v) {
-		if(this.layout == v) {
-			return v;
-		}
-		this.set_needReflow(true);
-		return this.layout = v == null ? h2d_FlowLayout.Horizontal : v;
-	}
 	,set_horizontalAlign: function(v) {
 		if(this.horizontalAlign == v) {
 			return v;
@@ -9387,18 +7693,6 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 		this.scrollBar.getProperties(this.scrollBarCursor).paddingTop = this.scrollPosY * (this.calculatedHeight - this.scrollBarCursor.minHeight) / (this.contentHeight - this.calculatedHeight) | 0;
 		this.set_needReflow(prev);
 	}
-	,get_outerWidth: function() {
-		if(this.needReflow) {
-			this.reflow();
-		}
-		return Math.ceil(this.calculatedWidth);
-	}
-	,get_outerHeight: function() {
-		if(this.needReflow) {
-			this.reflow();
-		}
-		return Math.ceil(this.calculatedHeight);
-	}
 	,get_innerWidth: function() {
 		if(this.needReflow) {
 			this.reflow();
@@ -9439,20 +7733,6 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 		this.set_needReflow(true);
 		return this.paddingBottom = v;
 	}
-	,set_fillWidth: function(v) {
-		if(this.fillWidth == v) {
-			return v;
-		}
-		this.set_needReflow(true);
-		return this.fillWidth = v;
-	}
-	,set_fillHeight: function(v) {
-		if(this.fillHeight == v) {
-			return v;
-		}
-		this.set_needReflow(true);
-		return this.fillHeight = v;
-	}
 	,constraintSize: function(width,height) {
 		this.constraintWidth = width;
 		this.constraintHeight = height;
@@ -9475,28 +7755,6 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 		this.set_needReflow(true);
 		if(this.parentContainer != null) {
 			this.parentContainer.contentChanged(this);
-		}
-	}
-	,addSpacing: function(v) {
-		var last = this.properties.length - 1;
-		while(last >= 0 && this.properties[last].isAbsolute) --last;
-		switch(this.layout._hx_index) {
-		case 0:
-			if(last >= 0) {
-				this.properties[last].paddingRight += v;
-			} else {
-				this.set_paddingLeft(this.paddingLeft + v);
-			}
-			break;
-		case 1:
-			if(last >= 0) {
-				this.properties[last].paddingBottom += v;
-			} else {
-				this.set_paddingTop(this.paddingTop + v);
-			}
-			break;
-		case 2:
-			break;
 		}
 	}
 	,getBoundsRec: function(relativeTo,out,forSize) {
@@ -9601,14 +7859,6 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 			h2d_Object.prototype.drawRec.call(this,ctx);
 		}
 	}
-	,set_maxWidth: function(w) {
-		if(this.maxWidth == w) {
-			return w;
-		}
-		this.maxWidth = w;
-		this.updateConstraint();
-		return w;
-	}
 	,updateConstraint: function() {
 		var oldW = this.realMaxWidth;
 		var oldH = this.realMaxHeight;
@@ -9675,13 +7925,6 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 		this.minHeight = h;
 		this.updateConstraint();
 		return h;
-	}
-	,set_verticalSpacing: function(s) {
-		if(this.verticalSpacing == s) {
-			return s;
-		}
-		this.set_needReflow(true);
-		return this.verticalSpacing = s;
 	}
 	,set_enableInteractive: function(b) {
 		if(this.enableInteractive == b) {
@@ -10673,7 +8916,7 @@ h2d_Flow.prototype = $extend(h2d_Object.prototype,{
 	,onAfterReflow: function() {
 	}
 	,__class__: h2d_Flow
-	,__properties__: $extend(h2d_Object.prototype.__properties__,{set_scrollPosY:"set_scrollPosY",set_fillHeight:"set_fillHeight",set_fillWidth:"set_fillWidth",set_layout:"set_layout",get_outerHeight:"get_outerHeight",get_outerWidth:"get_outerWidth",get_innerHeight:"get_innerHeight",get_innerWidth:"get_innerWidth",set_backgroundTile:"set_backgroundTile",set_enableInteractive:"set_enableInteractive",set_verticalSpacing:"set_verticalSpacing",set_paddingBottom:"set_paddingBottom",set_paddingTop:"set_paddingTop",set_paddingRight:"set_paddingRight",set_paddingLeft:"set_paddingLeft",set_padding:"set_padding",set_maxWidth:"set_maxWidth",set_minHeight:"set_minHeight",set_verticalAlign:"set_verticalAlign",set_horizontalAlign:"set_horizontalAlign",set_needReflow:"set_needReflow"})
+	,__properties__: $extend(h2d_Object.prototype.__properties__,{set_scrollPosY:"set_scrollPosY",get_innerHeight:"get_innerHeight",get_innerWidth:"get_innerWidth",set_backgroundTile:"set_backgroundTile",set_enableInteractive:"set_enableInteractive",set_paddingBottom:"set_paddingBottom",set_paddingTop:"set_paddingTop",set_paddingRight:"set_paddingRight",set_paddingLeft:"set_paddingLeft",set_padding:"set_padding",set_minHeight:"set_minHeight",set_verticalAlign:"set_verticalAlign",set_horizontalAlign:"set_horizontalAlign",set_needReflow:"set_needReflow"})
 });
 var h2d_Kerning = function(c,o) {
 	this.prevChar = c;
@@ -12127,77 +10370,6 @@ h2d_Graphics.prototype = $extend(h2d_Drawable.prototype,{
 		this.tmpPoints[4].y += 0.01;
 		this.flush();
 	}
-	,drawRoundedRect: function(x,y,w,h,radius,nsegments) {
-		if(nsegments == null) {
-			nsegments = 0;
-		}
-		if(radius <= 0) {
-			this.drawRect(x,y,w,h);
-			return;
-		}
-		x += radius;
-		y += radius;
-		w -= radius * 2;
-		h -= radius * 2;
-		this.flush();
-		if(nsegments == 0) {
-			var f = radius * 1.57079632679489656 / 4;
-			nsegments = Math.ceil(f < 0 ? -f : f);
-		}
-		if(nsegments < 3) {
-			nsegments = 3;
-		}
-		var angle = 1.57079632679489656 / (nsegments - 1);
-		var y1 = y - radius;
-		this.addVertex(x,y1,this.curR,this.curG,this.curB,this.curA,x * this.ma + y1 * this.mc + this.mx,x * this.mb + y1 * this.md + this.my);
-		var x1 = x + w;
-		var y1 = y - radius;
-		this.addVertex(x1,y1,this.curR,this.curG,this.curB,this.curA,x1 * this.ma + y1 * this.mc + this.mx,x1 * this.mb + y1 * this.md + this.my);
-		var x1 = x + w;
-		var _g = 0;
-		var _g1 = nsegments;
-		while(_g < _g1) {
-			var a = _g++ * angle + 4.71238898038469;
-			var x2 = x1 + Math.cos(a) * radius;
-			var y1 = y + Math.sin(a) * radius;
-			this.addVertex(x2,y1,this.curR,this.curG,this.curB,this.curA,x2 * this.ma + y1 * this.mc + this.mx,x2 * this.mb + y1 * this.md + this.my);
-		}
-		var x1 = x + w + radius;
-		var y1 = y + h;
-		this.addVertex(x1,y1,this.curR,this.curG,this.curB,this.curA,x1 * this.ma + y1 * this.mc + this.mx,x1 * this.mb + y1 * this.md + this.my);
-		var x1 = x + w;
-		var y1 = y + h;
-		var _g = 0;
-		var _g1 = nsegments;
-		while(_g < _g1) {
-			var a = _g++ * angle;
-			var x2 = x1 + Math.cos(a) * radius;
-			var y2 = y1 + Math.sin(a) * radius;
-			this.addVertex(x2,y2,this.curR,this.curG,this.curB,this.curA,x2 * this.ma + y2 * this.mc + this.mx,x2 * this.mb + y2 * this.md + this.my);
-		}
-		var y1 = y + h + radius;
-		this.addVertex(x,y1,this.curR,this.curG,this.curB,this.curA,x * this.ma + y1 * this.mc + this.mx,x * this.mb + y1 * this.md + this.my);
-		var y1 = y + h;
-		var _g = 0;
-		var _g1 = nsegments;
-		while(_g < _g1) {
-			var a = _g++ * angle + 1.57079632679489656;
-			var x1 = x + Math.cos(a) * radius;
-			var y2 = y1 + Math.sin(a) * radius;
-			this.addVertex(x1,y2,this.curR,this.curG,this.curB,this.curA,x1 * this.ma + y2 * this.mc + this.mx,x1 * this.mb + y2 * this.md + this.my);
-		}
-		var x1 = x - radius;
-		this.addVertex(x1,y,this.curR,this.curG,this.curB,this.curA,x1 * this.ma + y * this.mc + this.mx,x1 * this.mb + y * this.md + this.my);
-		var _g = 0;
-		var _g1 = nsegments;
-		while(_g < _g1) {
-			var a = _g++ * angle + 3.14159265358979312;
-			var x1 = x + Math.cos(a) * radius;
-			var y1 = y + Math.sin(a) * radius;
-			this.addVertex(x1,y1,this.curR,this.curG,this.curB,this.curA,x1 * this.ma + y1 * this.mc + this.mx,x1 * this.mb + y1 * this.md + this.my);
-		}
-		this.flush();
-	}
 	,addVertex: function(x,y,r,g,b,a,u,v) {
 		if(v == null) {
 			v = 0.;
@@ -12339,20 +10511,451 @@ h2d_Graphics.prototype = $extend(h2d_Drawable.prototype,{
 	}
 	,__class__: h2d_Graphics
 });
-var h2d_LineHeightMode = $hxEnums["h2d.LineHeightMode"] = { __ename__:true,__constructs__:null
-	,Accurate: {_hx_name:"Accurate",_hx_index:0,__enum__:"h2d.LineHeightMode",toString:$estr}
-	,TextOnly: {_hx_name:"TextOnly",_hx_index:1,__enum__:"h2d.LineHeightMode",toString:$estr}
-	,Constant: {_hx_name:"Constant",_hx_index:2,__enum__:"h2d.LineHeightMode",toString:$estr}
+var h2d_Text = function(font,parent) {
+	this.realMaxWidth = -1;
+	this.constraintWidth = -1;
+	this.lineBreak = true;
+	this.lineSpacing = 0;
+	this.letterSpacing = 0;
+	h2d_Drawable.call(this,parent);
+	this.set_font(font);
+	this.set_textAlign(h2d_Align.Left);
+	this.set_text("");
+	this.currentText = "";
+	this.set_textColor(16777215);
 };
-h2d_LineHeightMode.__constructs__ = [h2d_LineHeightMode.Accurate,h2d_LineHeightMode.TextOnly,h2d_LineHeightMode.Constant];
-h2d_LineHeightMode.__empty_constructs__ = [h2d_LineHeightMode.Accurate,h2d_LineHeightMode.TextOnly,h2d_LineHeightMode.Constant];
-var h2d_ImageVerticalAlign = $hxEnums["h2d.ImageVerticalAlign"] = { __ename__:true,__constructs__:null
-	,Top: {_hx_name:"Top",_hx_index:0,__enum__:"h2d.ImageVerticalAlign",toString:$estr}
-	,Bottom: {_hx_name:"Bottom",_hx_index:1,__enum__:"h2d.ImageVerticalAlign",toString:$estr}
-	,Middle: {_hx_name:"Middle",_hx_index:2,__enum__:"h2d.ImageVerticalAlign",toString:$estr}
-};
-h2d_ImageVerticalAlign.__constructs__ = [h2d_ImageVerticalAlign.Top,h2d_ImageVerticalAlign.Bottom,h2d_ImageVerticalAlign.Middle];
-h2d_ImageVerticalAlign.__empty_constructs__ = [h2d_ImageVerticalAlign.Top,h2d_ImageVerticalAlign.Bottom,h2d_ImageVerticalAlign.Middle];
+$hxClasses["h2d.Text"] = h2d_Text;
+h2d_Text.__name__ = "h2d.Text";
+h2d_Text.__super__ = h2d_Drawable;
+h2d_Text.prototype = $extend(h2d_Drawable.prototype,{
+	set_font: function(font) {
+		if(this.font == font) {
+			return font;
+		}
+		this.font = font;
+		if(font != null) {
+			var _g = font.type;
+			switch(_g._hx_index) {
+			case 0:
+				if(this.sdfShader != null) {
+					this.removeShader(this.sdfShader);
+					this.sdfShader = null;
+				}
+				break;
+			case 1:
+				var _g1 = _g.smoothing;
+				if(this.sdfShader == null) {
+					this.sdfShader = new h3d_shader_SignedDistanceField();
+					this.addShader(this.sdfShader);
+				}
+				if(this.smooth == null) {
+					this.smooth = true;
+				}
+				this.sdfShader.alphaCutoff__ = _g.alphaCutoff;
+				this.sdfShader.smoothing__ = _g1;
+				var _this = this.sdfShader;
+				_this.constModified = true;
+				_this.channel__ = _g.channel;
+				var _this = this.sdfShader;
+				_this.constModified = true;
+				_this.autoSmoothing__ = _g1 == -1;
+				break;
+			}
+		}
+		if(this.glyphs != null) {
+			var _this = this.glyphs;
+			if(_this != null && _this.parent != null) {
+				_this.parent.removeChild(_this);
+			}
+		}
+		this.glyphs = new h2d_TileGroup(font == null ? null : font.tile,this);
+		this.glyphs.set_visible(false);
+		this.rebuild();
+		return font;
+	}
+	,set_textAlign: function(a) {
+		if(this.textAlign == a) {
+			return a;
+		}
+		this.textAlign = a;
+		this.rebuild();
+		return a;
+	}
+	,constraintSize: function(width,height) {
+		this.constraintWidth = width;
+		this.updateConstraint();
+	}
+	,onAdd: function() {
+		h2d_Drawable.prototype.onAdd.call(this);
+		this.rebuild();
+	}
+	,sync: function(ctx) {
+		h2d_Drawable.prototype.sync.call(this,ctx);
+		if(this.textChanged && this.text != this.currentText) {
+			this.textChanged = false;
+			this.currentText = this.text;
+			this.calcDone = false;
+			this.needsRebuild = true;
+		}
+		if(this.needsRebuild) {
+			this.initGlyphs(this.currentText);
+		}
+	}
+	,draw: function(ctx) {
+		if(this.glyphs == null) {
+			this.emitTile(ctx,h2d_Tile.fromColor(16711935,16,16));
+			return;
+		}
+		if(this.textChanged && this.text != this.currentText) {
+			this.textChanged = false;
+			this.currentText = this.text;
+			this.calcDone = false;
+			this.needsRebuild = true;
+		}
+		if(this.needsRebuild) {
+			this.initGlyphs(this.currentText);
+		}
+		if(this.dropShadow != null) {
+			var oldX = this.absX;
+			var oldY = this.absY;
+			this.absX += this.dropShadow.dx * this.matA + this.dropShadow.dy * this.matC;
+			this.absY += this.dropShadow.dx * this.matB + this.dropShadow.dy * this.matD;
+			var oldR = this.color.x;
+			var oldG = this.color.y;
+			var oldB = this.color.z;
+			var oldA = this.color.w;
+			var _this = this.color;
+			var c = this.dropShadow.color;
+			_this.x = (c >> 16 & 255) / 255;
+			_this.y = (c >> 8 & 255) / 255;
+			_this.z = (c & 255) / 255;
+			_this.w = (c >>> 24) / 255;
+			this.color.w = this.dropShadow.alpha * oldA;
+			this.glyphs.drawWith(ctx,this);
+			this.absX = oldX;
+			this.absY = oldY;
+			var _this = this.color;
+			var x = oldR;
+			var y = oldG;
+			var z = oldB;
+			var w = oldA;
+			if(oldA == null) {
+				w = 1.;
+			}
+			if(oldB == null) {
+				z = 0.;
+			}
+			if(oldG == null) {
+				y = 0.;
+			}
+			if(oldR == null) {
+				x = 0.;
+			}
+			_this.x = x;
+			_this.y = y;
+			_this.z = z;
+			_this.w = w;
+		}
+		this.glyphs.drawWith(ctx,this);
+	}
+	,set_text: function(t) {
+		var t1 = t == null ? "null" : t;
+		if(t1 == this.text) {
+			return t1;
+		}
+		this.text = t1;
+		this.textChanged = true;
+		this.validateText();
+		if(this.parentContainer != null) {
+			this.parentContainer.contentChanged(this);
+		}
+		return t1;
+	}
+	,validateText: function() {
+	}
+	,rebuild: function() {
+		this.calcDone = false;
+		this.needsRebuild = true;
+		if(this.parentContainer != null) {
+			this.parentContainer.contentChanged(this);
+		}
+	}
+	,splitRawText: function(text,leftMargin,afterData,font,sizes,prevChar) {
+		if(prevChar == null) {
+			prevChar = -1;
+		}
+		if(afterData == null) {
+			afterData = 0.;
+		}
+		if(leftMargin == null) {
+			leftMargin = 0.;
+		}
+		var maxWidth = this.realMaxWidth;
+		if(maxWidth < 0) {
+			if(sizes == null) {
+				return text;
+			} else {
+				maxWidth = Infinity;
+			}
+		}
+		if(font == null) {
+			font = this.font;
+		}
+		var lines = [];
+		var restPos = 0;
+		var x = leftMargin;
+		var _g = 0;
+		var _g1 = text.length;
+		while(_g < _g1) {
+			var i = _g++;
+			var cc = HxOverrides.cca(text,i);
+			var c = font.glyphs.h[cc];
+			if(c == null) {
+				c = font.charset.resolveChar(cc,font.glyphs);
+				if(c == null) {
+					c = cc == 13 || cc == 10 ? font.nullChar : font.defaultChar;
+				}
+			}
+			var e = c;
+			var newline = cc == 10;
+			var esize = e.width + e.getKerningOffset(prevChar);
+			var nc = HxOverrides.cca(text,i + 1);
+			if(font.charset.isBreakChar(cc) && (nc == null || !font.charset.isComplementChar(nc))) {
+				if(lines.length == 0 && leftMargin > 0 && x > maxWidth) {
+					lines.push("");
+					if(sizes != null) {
+						sizes.push(leftMargin);
+					}
+					x -= leftMargin;
+				}
+				var size = x + esize + this.letterSpacing;
+				var k = i + 1;
+				var max = text.length;
+				var prevChar1 = prevChar;
+				var breakFound = false;
+				while(size <= maxWidth && k < max) {
+					var cc1 = HxOverrides.cca(text,k++);
+					if(this.lineBreak && (font.charset.isSpace(cc1) || cc1 == 10)) {
+						breakFound = true;
+						break;
+					}
+					var c1 = font.glyphs.h[cc1];
+					if(c1 == null) {
+						c1 = font.charset.resolveChar(cc1,font.glyphs);
+						if(c1 == null) {
+							c1 = cc1 == 13 || cc1 == 10 ? font.nullChar : font.defaultChar;
+						}
+					}
+					var e1 = c1;
+					size += e1.width + this.letterSpacing + e1.getKerningOffset(prevChar1);
+					prevChar1 = cc1;
+					var nc1 = HxOverrides.cca(text,k + 1);
+					if(font.charset.isBreakChar(cc1) && (nc1 == null || !font.charset.isComplementChar(nc1))) {
+						break;
+					}
+				}
+				if(this.lineBreak && (size > maxWidth || !breakFound && size + afterData > maxWidth)) {
+					newline = true;
+					if(font.charset.isSpace(cc)) {
+						lines.push(HxOverrides.substr(text,restPos,i - restPos));
+						e = null;
+					} else {
+						lines.push(HxOverrides.substr(text,restPos,i + 1 - restPos));
+					}
+					restPos = i + 1;
+				}
+			}
+			if(e != null && cc != 10) {
+				x += esize + this.letterSpacing;
+			}
+			if(newline) {
+				if(sizes != null) {
+					sizes.push(x);
+				}
+				x = 0;
+				prevChar = -1;
+			} else {
+				prevChar = cc;
+			}
+		}
+		if(restPos < text.length) {
+			if(lines.length == 0 && leftMargin > 0 && x + afterData - this.letterSpacing > maxWidth) {
+				lines.push("");
+				if(sizes != null) {
+					sizes.push(leftMargin);
+				}
+				x -= leftMargin;
+			}
+			lines.push(HxOverrides.substr(text,restPos,text.length - restPos));
+			if(sizes != null) {
+				sizes.push(x);
+			}
+		}
+		return lines.join("\n");
+	}
+	,initGlyphs: function(text,rebuild) {
+		if(rebuild == null) {
+			rebuild = true;
+		}
+		if(rebuild) {
+			this.glyphs.clear();
+		}
+		var x = 0.;
+		var y = 0.;
+		var xMax = 0.;
+		var xMin = 0.;
+		var yMin = 0.;
+		var prevChar = -1;
+		var linei = 0;
+		var align = this.textAlign;
+		var lines = [];
+		var dl = this.font.lineHeight + this.lineSpacing;
+		var t = this.splitRawText(text,0,0,null,lines);
+		var _g = 0;
+		while(_g < lines.length) {
+			var lw = lines[_g];
+			++_g;
+			if(lw > x) {
+				x = lw;
+			}
+		}
+		this.calcWidth = x;
+		switch(align._hx_index) {
+		case 0:
+			x = 0;
+			break;
+		case 1:case 2:case 3:case 4:
+			var max = align == h2d_Align.MultilineCenter || align == h2d_Align.MultilineRight ? Math.ceil(this.calcWidth) : this.realMaxWidth < 0 ? 0 : Math.ceil(this.realMaxWidth);
+			var k = align == h2d_Align.Center || align == h2d_Align.MultilineCenter ? 0.5 : 1;
+			var _g = 0;
+			var _g1 = lines.length;
+			while(_g < _g1) {
+				var i = _g++;
+				lines[i] = Math.floor((max - lines[i]) * k);
+			}
+			x = lines[0];
+			xMin = x;
+			break;
+		}
+		var _g = 0;
+		var _g1 = t.length;
+		while(_g < _g1) {
+			var cc = HxOverrides.cca(t,_g++);
+			var _this = this.font;
+			var c = _this.glyphs.h[cc];
+			if(c == null) {
+				c = _this.charset.resolveChar(cc,_this.glyphs);
+				if(c == null) {
+					c = cc == 13 || cc == 10 ? _this.nullChar : _this.defaultChar;
+				}
+			}
+			var e = c;
+			var offs = e.getKerningOffset(prevChar);
+			var esize = e.width + offs;
+			if(cc == 10) {
+				if(x > xMax) {
+					xMax = x;
+				}
+				switch(align._hx_index) {
+				case 0:
+					x = 0;
+					break;
+				case 1:case 2:case 3:case 4:
+					x = lines[++linei];
+					if(x < xMin) {
+						xMin = x;
+					}
+					break;
+				}
+				y += dl;
+				prevChar = -1;
+			} else {
+				if(e != null) {
+					if(rebuild) {
+						var _this1 = this.glyphs;
+						_this1.content.add(x + offs,y,_this1.curColor.x,_this1.curColor.y,_this1.curColor.z,_this1.curColor.w,e.t);
+					}
+					if(y == 0 && e.t.dy < yMin) {
+						yMin = e.t.dy;
+					}
+					x += esize + this.letterSpacing;
+				}
+				prevChar = cc;
+			}
+		}
+		if(x > xMax) {
+			xMax = x;
+		}
+		this.calcXMin = xMin;
+		this.calcYMin = yMin;
+		this.calcWidth = xMax - xMin;
+		this.calcHeight = y + this.font.lineHeight;
+		this.calcSizeHeight = y + (this.font.baseLine > 0 ? this.font.baseLine : this.font.lineHeight);
+		this.calcDone = true;
+		if(rebuild) {
+			this.needsRebuild = false;
+		}
+	}
+	,updateConstraint: function() {
+		var old = this.realMaxWidth;
+		if(this.maxWidth == null) {
+			this.realMaxWidth = this.constraintWidth;
+		} else if(this.constraintWidth < 0) {
+			this.realMaxWidth = this.maxWidth;
+		} else {
+			var a = this.maxWidth;
+			var b = this.constraintWidth;
+			this.realMaxWidth = a > b ? b : a;
+		}
+		if(this.realMaxWidth != old) {
+			this.rebuild();
+		}
+	}
+	,set_textColor: function(c) {
+		if(this.textColor == c) {
+			return c;
+		}
+		this.textColor = c;
+		var a = this.color.w;
+		var _this = this.color;
+		_this.x = (c >> 16 & 255) / 255;
+		_this.y = (c >> 8 & 255) / 255;
+		_this.z = (c & 255) / 255;
+		_this.w = (c >>> 24) / 255;
+		this.color.w = a;
+		return c;
+	}
+	,getBoundsRec: function(relativeTo,out,forSize) {
+		h2d_Drawable.prototype.getBoundsRec.call(this,relativeTo,out,forSize);
+		if(this.textChanged && this.text != this.currentText) {
+			this.textChanged = false;
+			this.currentText = this.text;
+			this.calcDone = false;
+			this.needsRebuild = true;
+		}
+		if(!this.calcDone) {
+			this.initGlyphs(this.text,this.needsRebuild);
+		}
+		var x;
+		var y;
+		var w;
+		var h;
+		if(forSize) {
+			x = this.calcXMin;
+			y = 0.;
+			w = this.calcWidth;
+			h = this.calcSizeHeight;
+		} else {
+			x = this.calcXMin;
+			y = this.calcYMin;
+			w = this.calcWidth;
+			h = this.calcHeight - this.calcYMin;
+		}
+		this.addBounds(relativeTo,out,x,y,w,h);
+	}
+	,__class__: h2d_Text
+	,__properties__: $extend(h2d_Drawable.prototype.__properties__,{set_textAlign:"set_textAlign",set_textColor:"set_textColor",set_text:"set_text",set_font:"set_font"})
+});
 var hxd_Interactive = function() { };
 $hxClasses["hxd.Interactive"] = hxd_Interactive;
 hxd_Interactive.__name__ = "hxd.Interactive";
@@ -13962,15 +12565,6 @@ h2d_TileGroup.prototype = $extend(h2d_Drawable.prototype,{
 	,onRemove: function() {
 		this.content.dispose();
 		h2d_Drawable.prototype.onRemove.call(this);
-	}
-	,setDefaultColor: function(rgb,alpha) {
-		if(alpha == null) {
-			alpha = 1.0;
-		}
-		this.curColor.x = (rgb >> 16 & 255) / 255;
-		this.curColor.y = (rgb >> 8 & 255) / 255;
-		this.curColor.z = (rgb & 255) / 255;
-		this.curColor.w = alpha;
 	}
 	,draw: function(ctx) {
 		this.drawWith(ctx,this);
@@ -49412,11 +48006,6 @@ HerbalTeaApp.avgUpdateTime = 0.0;
 HerbalTeaApp.avgRenderTime = 0.0;
 HerbalTeaApp.cutout = { top : 0, bottom : 0, left : 0, right : 0};
 h2d_Object.tmpPoint = new h2d_col_Point();
-h2d_HtmlText.REG_SPACES = new EReg("[\r\n\t ]+","g");
-Colors.BLUE = -13291603;
-Colors.LIGHT_GREY = -10066330;
-TextButton.BUTTON_TEXT_COLOR_ENABLED = -1;
-TextButton.BUTTON_TEXT_COLOR_DISABLED = -5592406;
 Ldtk.proj = new LdtkProject();
 Ldtk.validated = Ldtk.validate();
 PlayView.GAME_WIDTH = 512;
