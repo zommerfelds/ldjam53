@@ -1,3 +1,4 @@
+import LdtkProject.Ldtk;
 import h2d.Graphics;
 import h2d.TileGroup;
 import h2d.SpriteBatch;
@@ -119,21 +120,31 @@ class Tiles {
 	public static function resTile(res:ResType):Tile {
 		return switch (res) {
 			case Res1: Tiles.TILE_RES1;
-			case Res2: Tiles.TILE_RES1;
-			case Res3: Tiles.TILE_RES1;
-			case Res4: Tiles.TILE_RES1;
+			case Res2: Tiles.TILE_RES2;
+			case Res3: Tiles.TILE_RES3;
+			case Res4: Tiles.TILE_RES4;
 		};
 	}
 }
 
 class PlayView extends GameState {
-	public static final GAME_WIDTH = 350;
-	public static final GAME_HEIGHT = 350;
+	public static final GAME_WIDTH = 352;
+	public static final GAME_HEIGHT = 352;
 
 	final cannons:Array<Cannon> = [];
 	final blackHoles:Array<BlackHole> = [];
 	var flyingRes:Array<FlyingRes> = [];
 	final planets:Array<Planet> = [];
+	final ldtkLevel:LdtkProject.LdtkProject_Level;
+
+	final level:Int;
+
+	public function new(level:Int) {
+		super();
+		this.level = level;
+		this.ldtkLevel = Ldtk.proj.levels[level];
+
+	}
 
 	override function init() {
 		this.scaleMode = LetterBox(GAME_WIDTH, GAME_HEIGHT);
@@ -141,12 +152,15 @@ class PlayView extends GameState {
 
 		Tiles.init(this);
 
-		cannons.push(new Cannon(40, 30, 0.5, Res1, this));
-
-		blackHoles.push(new BlackHole(100, 100, this));
-		blackHoles.push(new BlackHole(190, 150, this));
-
-		planets.push(new Planet(300, 250, Res1, this));
+		for (cannon in ldtkLevel.l_Entities.all_Cannon) {
+			cannons.push(new Cannon(cannon.pixelX, cannon.pixelY, cannon.f_Angle, cannon.f_ResType, this));
+		}
+		for (blackHole in ldtkLevel.l_Entities.all_BlackHole) {
+			blackHoles.push(new BlackHole(blackHole.pixelX, blackHole.pixelY, this));
+		}
+		for (planet in ldtkLevel.l_Entities.all_Planet) {
+			planets.push(new Planet(planet.pixelX, planet.pixelY, planet.f_ResType, this));
+		}
 
 		final letterBox = new Graphics(this);
 		letterBox.beginFill(0x000000);

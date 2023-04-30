@@ -1,3 +1,5 @@
+import LdtkProject.Ldtk;
+
 class App extends HerbalTeaApp {
 	public static var instance:App;
 
@@ -6,11 +8,13 @@ class App extends HerbalTeaApp {
 	}
 
 	override function onload() {
+		Ldtk.validate();
+		
 		final params = new js.html.URLSearchParams(js.Browser.window.location.search);
 		final view = switch (params.get("start")) {
 			case "play":
-				final levelIndex = params.get("level") == null ? 0 : Std.parseInt(params.get("level")) - 1;
-				new PlayView(/* levelIndex */);
+				final levelIndex = params.get("level") == null ? 0 : Std.parseInt(params.get("level"));
+				new PlayView(levelIndex);
 			case "menu" | null:
 				new MenuView();
 			case x: throw 'invavid "start" query param "$x"';
