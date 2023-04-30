@@ -389,6 +389,12 @@ App.__name__ = "App";
 App.main = function() {
 	App.instance = new App();
 };
+App.getUnlockedLevel = function() {
+	return hxd_Save.load({ unlockedLevel : 0}).unlockedLevel;
+};
+App.setUnlockedLevel = function(level) {
+	hxd_Save.save({ unlockedLevel : level});
+};
 App.__super__ = HerbalTeaApp;
 App.prototype = $extend(HerbalTeaApp.prototype,{
 	onload: function() {
@@ -2521,13 +2527,13 @@ ldtk_Project.prototype = {
 	,__class__: ldtk_Project
 };
 var LdtkProject = function(overrideEmbedJson) {
-	this.all_levels = { Level_0 : null, Level_1 : null, Level_2 : null, Level_3 : null, Level_4 : null};
+	this.all_levels = { Level_0 : null, Level_1 : null, Level_2 : null, Level_3 : null, Level_4 : null, Level_5 : null};
 	this.levels = [];
 	ldtk_Project.call(this);
 	this._enumTypePrefix = "Enum_";
 	this.projectDir = "res/heaps";
 	this.projectFilePath = "res/heaps/map.ldtk";
-	this.parseJson(overrideEmbedJson != null ? overrideEmbedJson : "{\n\t\"__header__\": {\n\t\t\"fileType\": \"LDtk Project JSON\",\n\t\t\"app\": \"LDtk\",\n\t\t\"doc\": \"https://ldtk.io/json\",\n\t\t\"schema\": \"https://ldtk.io/files/JSON_SCHEMA.json\",\n\t\t\"appAuthor\": \"Sebastien 'deepnight' Benard\",\n\t\t\"appVersion\": \"1.3.0\",\n\t\t\"url\": \"https://ldtk.io\"\n\t},\n\t\"iid\": \"85272e40-c640-11ed-b80c-413bbce048d2\",\n\t\"jsonVersion\": \"1.3.0\",\n\t\"appBuildId\": 467368,\n\t\"nextUid\": 22,\n\t\"identifierStyle\": \"Capitalize\",\n\t\"toc\": [],\n\t\"worldLayout\": \"LinearHorizontal\",\n\t\"worldGridWidth\": 256,\n\t\"worldGridHeight\": 256,\n\t\"defaultLevelWidth\": 512,\n\t\"defaultLevelHeight\": 512,\n\t\"defaultPivotX\": 0.5,\n\t\"defaultPivotY\": 0.5,\n\t\"defaultGridSize\": 16,\n\t\"bgColor\": \"#40465B\",\n\t\"defaultLevelBgColor\": \"#303037\",\n\t\"minifyJson\": false,\n\t\"externalLevels\": false,\n\t\"exportTiled\": false,\n\t\"simplifiedExport\": false,\n\t\"imageExportMode\": \"None\",\n\t\"exportLevelBg\": true,\n\t\"pngFilePattern\": null,\n\t\"backupOnSave\": false,\n\t\"backupLimit\": 10,\n\t\"backupRelPath\": null,\n\t\"levelNamePattern\": \"Level_%idx\",\n\t\"tutorialDesc\": null,\n\t\"customCommands\": [],\n\t\"flags\": [],\n\t\"defs\": { \"layers\": [\n\t\t{\n\t\t\t\"__type\": \"Entities\",\n\t\t\t\"identifier\": \"Entities\",\n\t\t\t\"type\": \"Entities\",\n\t\t\t\"uid\": 3,\n\t\t\t\"doc\": null,\n\t\t\t\"gridSize\": 1,\n\t\t\t\"guideGridWid\": 16,\n\t\t\t\"guideGridHei\": 16,\n\t\t\t\"displayOpacity\": 1,\n\t\t\t\"inactiveOpacity\": 0.6,\n\t\t\t\"hideInList\": false,\n\t\t\t\"hideFieldsWhenInactive\": true,\n\t\t\t\"canSelectWhenInactive\": true,\n\t\t\t\"pxOffsetX\": 0,\n\t\t\t\"pxOffsetY\": 0,\n\t\t\t\"parallaxFactorX\": 0,\n\t\t\t\"parallaxFactorY\": 0,\n\t\t\t\"parallaxScaling\": true,\n\t\t\t\"requiredTags\": [],\n\t\t\t\"excludedTags\": [],\n\t\t\t\"intGridValues\": [],\n\t\t\t\"autoRuleGroups\": [],\n\t\t\t\"autoSourceLayerDefUid\": null,\n\t\t\t\"tilesetDefUid\": null,\n\t\t\t\"tilePivotX\": 0,\n\t\t\t\"tilePivotY\": 0\n\t\t},\n\t\t{\n\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\"identifier\": \"IntGrid\",\n\t\t\t\"type\": \"IntGrid\",\n\t\t\t\"uid\": 16,\n\t\t\t\"doc\": null,\n\t\t\t\"gridSize\": 16,\n\t\t\t\"guideGridWid\": 0,\n\t\t\t\"guideGridHei\": 0,\n\t\t\t\"displayOpacity\": 1,\n\t\t\t\"inactiveOpacity\": 1,\n\t\t\t\"hideInList\": false,\n\t\t\t\"hideFieldsWhenInactive\": false,\n\t\t\t\"canSelectWhenInactive\": true,\n\t\t\t\"pxOffsetX\": 0,\n\t\t\t\"pxOffsetY\": 0,\n\t\t\t\"parallaxFactorX\": 0,\n\t\t\t\"parallaxFactorY\": 0,\n\t\t\t\"parallaxScaling\": true,\n\t\t\t\"requiredTags\": [],\n\t\t\t\"excludedTags\": [],\n\t\t\t\"intGridValues\": [{ \"value\": 1, \"identifier\": \"Nebula\", \"color\": \"#000000\" }],\n\t\t\t\"autoRuleGroups\": [{ \"uid\": 18, \"name\": \"New group\", \"active\": true, \"isOptional\": false, \"rules\": [\n\t\t\t\t{\n\t\t\t\t\t\"uid\": 19,\n\t\t\t\t\t\"active\": true,\n\t\t\t\t\t\"size\": 1,\n\t\t\t\t\t\"tileIds\": [10,11],\n\t\t\t\t\t\"chance\": 1,\n\t\t\t\t\t\"breakOnMatch\": false,\n\t\t\t\t\t\"pattern\": [1],\n\t\t\t\t\t\"flipX\": false,\n\t\t\t\t\t\"flipY\": false,\n\t\t\t\t\t\"xModulo\": 1,\n\t\t\t\t\t\"yModulo\": 1,\n\t\t\t\t\t\"xOffset\": 0,\n\t\t\t\t\t\"yOffset\": 0,\n\t\t\t\t\t\"tileXOffset\": 0,\n\t\t\t\t\t\"tileYOffset\": 0,\n\t\t\t\t\t\"tileRandomXMin\": -4,\n\t\t\t\t\t\"tileRandomXMax\": 4,\n\t\t\t\t\t\"tileRandomYMin\": -4,\n\t\t\t\t\t\"tileRandomYMax\": 4,\n\t\t\t\t\t\"checker\": \"None\",\n\t\t\t\t\t\"tileMode\": \"Single\",\n\t\t\t\t\t\"pivotX\": 0,\n\t\t\t\t\t\"pivotY\": 0,\n\t\t\t\t\t\"outOfBoundsValue\": null,\n\t\t\t\t\t\"perlinActive\": false,\n\t\t\t\t\t\"perlinSeed\": 2827235,\n\t\t\t\t\t\"perlinScale\": 0.2,\n\t\t\t\t\t\"perlinOctaves\": 2\n\t\t\t\t}\n\t\t\t], \"usesWizard\": false }],\n\t\t\t\"autoSourceLayerDefUid\": null,\n\t\t\t\"tilesetDefUid\": 1,\n\t\t\t\"tilePivotX\": 0,\n\t\t\t\"tilePivotY\": 0\n\t\t}\n\t], \"entities\": [\n\t\t{\n\t\t\t\"identifier\": \"Cannon\",\n\t\t\t\"uid\": 2,\n\t\t\t\"tags\": [],\n\t\t\t\"exportToToc\": false,\n\t\t\t\"doc\": null,\n\t\t\t\"width\": 16,\n\t\t\t\"height\": 16,\n\t\t\t\"resizableX\": false,\n\t\t\t\"resizableY\": false,\n\t\t\t\"keepAspectRatio\": false,\n\t\t\t\"tileOpacity\": 1,\n\t\t\t\"fillOpacity\": 0.08,\n\t\t\t\"lineOpacity\": 0,\n\t\t\t\"hollow\": false,\n\t\t\t\"color\": \"#BE4A2F\",\n\t\t\t\"renderMode\": \"Tile\",\n\t\t\t\"showName\": true,\n\t\t\t\"tilesetId\": 1,\n\t\t\t\"tileRenderMode\": \"FitInside\",\n\t\t\t\"tileRect\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\"nineSliceBorders\": [],\n\t\t\t\"maxCount\": 0,\n\t\t\t\"limitScope\": \"PerLevel\",\n\t\t\t\"limitBehavior\": \"MoveLastOne\",\n\t\t\t\"pivotX\": 0.5,\n\t\t\t\"pivotY\": 0.5,\n\t\t\t\"fieldDefs\": [\n\t\t\t\t{\n\t\t\t\t\t\"identifier\": \"ResType\",\n\t\t\t\t\t\"doc\": null,\n\t\t\t\t\t\"__type\": \"ExternEnum.ResType\",\n\t\t\t\t\t\"uid\": 8,\n\t\t\t\t\t\"type\": \"F_Enum(6)\",\n\t\t\t\t\t\"isArray\": false,\n\t\t\t\t\t\"canBeNull\": false,\n\t\t\t\t\t\"arrayMinLength\": null,\n\t\t\t\t\t\"arrayMaxLength\": null,\n\t\t\t\t\t\"editorDisplayMode\": \"ValueOnly\",\n\t\t\t\t\t\"editorDisplayScale\": 0,\n\t\t\t\t\t\"editorDisplayPos\": \"Above\",\n\t\t\t\t\t\"editorLinkStyle\": \"StraightArrow\",\n\t\t\t\t\t\"editorAlwaysShow\": true,\n\t\t\t\t\t\"editorShowInWorld\": true,\n\t\t\t\t\t\"editorCutLongValues\": true,\n\t\t\t\t\t\"editorTextSuffix\": null,\n\t\t\t\t\t\"editorTextPrefix\": null,\n\t\t\t\t\t\"useForSmartColor\": true,\n\t\t\t\t\t\"min\": null,\n\t\t\t\t\t\"max\": null,\n\t\t\t\t\t\"regex\": null,\n\t\t\t\t\t\"acceptFileTypes\": null,\n\t\t\t\t\t\"defaultOverride\": {\n\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\"params\": [\"Res1\"]\n\t\t\t\t\t},\n\t\t\t\t\t\"textLanguageMode\": null,\n\t\t\t\t\t\"symmetricalRef\": false,\n\t\t\t\t\t\"autoChainRef\": true,\n\t\t\t\t\t\"allowOutOfLevelRef\": true,\n\t\t\t\t\t\"allowedRefs\": \"OnlySame\",\n\t\t\t\t\t\"allowedRefsEntityUid\": null,\n\t\t\t\t\t\"allowedRefTags\": [],\n\t\t\t\t\t\"tilesetUid\": null\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"identifier\": \"Angle\",\n\t\t\t\t\t\"doc\": null,\n\t\t\t\t\t\"__type\": \"Float\",\n\t\t\t\t\t\"uid\": 12,\n\t\t\t\t\t\"type\": \"F_Float\",\n\t\t\t\t\t\"isArray\": false,\n\t\t\t\t\t\"canBeNull\": false,\n\t\t\t\t\t\"arrayMinLength\": null,\n\t\t\t\t\t\"arrayMaxLength\": null,\n\t\t\t\t\t\"editorDisplayMode\": \"NameAndValue\",\n\t\t\t\t\t\"editorDisplayScale\": 0,\n\t\t\t\t\t\"editorDisplayPos\": \"Above\",\n\t\t\t\t\t\"editorLinkStyle\": \"StraightArrow\",\n\t\t\t\t\t\"editorAlwaysShow\": true,\n\t\t\t\t\t\"editorShowInWorld\": true,\n\t\t\t\t\t\"editorCutLongValues\": true,\n\t\t\t\t\t\"editorTextSuffix\": null,\n\t\t\t\t\t\"editorTextPrefix\": null,\n\t\t\t\t\t\"useForSmartColor\": false,\n\t\t\t\t\t\"min\": 0,\n\t\t\t\t\t\"max\": 3.142,\n\t\t\t\t\t\"regex\": null,\n\t\t\t\t\t\"acceptFileTypes\": null,\n\t\t\t\t\t\"defaultOverride\": null,\n\t\t\t\t\t\"textLanguageMode\": null,\n\t\t\t\t\t\"symmetricalRef\": false,\n\t\t\t\t\t\"autoChainRef\": true,\n\t\t\t\t\t\"allowOutOfLevelRef\": true,\n\t\t\t\t\t\"allowedRefs\": \"OnlySame\",\n\t\t\t\t\t\"allowedRefsEntityUid\": null,\n\t\t\t\t\t\"allowedRefTags\": [],\n\t\t\t\t\t\"tilesetUid\": null\n\t\t\t\t}\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Planet\",\n\t\t\t\"uid\": 4,\n\t\t\t\"tags\": [],\n\t\t\t\"exportToToc\": false,\n\t\t\t\"doc\": null,\n\t\t\t\"width\": 16,\n\t\t\t\"height\": 16,\n\t\t\t\"resizableX\": false,\n\t\t\t\"resizableY\": false,\n\t\t\t\"keepAspectRatio\": false,\n\t\t\t\"tileOpacity\": 1,\n\t\t\t\"fillOpacity\": 0.08,\n\t\t\t\"lineOpacity\": 0,\n\t\t\t\"hollow\": false,\n\t\t\t\"color\": \"#D77643\",\n\t\t\t\"renderMode\": \"Tile\",\n\t\t\t\"showName\": true,\n\t\t\t\"tilesetId\": 1,\n\t\t\t\"tileRenderMode\": \"FitInside\",\n\t\t\t\"tileRect\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\"nineSliceBorders\": [],\n\t\t\t\"maxCount\": 0,\n\t\t\t\"limitScope\": \"PerLevel\",\n\t\t\t\"limitBehavior\": \"MoveLastOne\",\n\t\t\t\"pivotX\": 0.5,\n\t\t\t\"pivotY\": 0.5,\n\t\t\t\"fieldDefs\": [\n\t\t\t\t{\n\t\t\t\t\t\"identifier\": \"ResType\",\n\t\t\t\t\t\"doc\": null,\n\t\t\t\t\t\"__type\": \"ExternEnum.ResType\",\n\t\t\t\t\t\"uid\": 9,\n\t\t\t\t\t\"type\": \"F_Enum(6)\",\n\t\t\t\t\t\"isArray\": false,\n\t\t\t\t\t\"canBeNull\": false,\n\t\t\t\t\t\"arrayMinLength\": null,\n\t\t\t\t\t\"arrayMaxLength\": null,\n\t\t\t\t\t\"editorDisplayMode\": \"ValueOnly\",\n\t\t\t\t\t\"editorDisplayScale\": 0,\n\t\t\t\t\t\"editorDisplayPos\": \"Above\",\n\t\t\t\t\t\"editorLinkStyle\": \"StraightArrow\",\n\t\t\t\t\t\"editorAlwaysShow\": true,\n\t\t\t\t\t\"editorShowInWorld\": true,\n\t\t\t\t\t\"editorCutLongValues\": true,\n\t\t\t\t\t\"editorTextSuffix\": null,\n\t\t\t\t\t\"editorTextPrefix\": null,\n\t\t\t\t\t\"useForSmartColor\": true,\n\t\t\t\t\t\"min\": null,\n\t\t\t\t\t\"max\": null,\n\t\t\t\t\t\"regex\": null,\n\t\t\t\t\t\"acceptFileTypes\": null,\n\t\t\t\t\t\"defaultOverride\": {\n\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\"params\": [\"Res1\"]\n\t\t\t\t\t},\n\t\t\t\t\t\"textLanguageMode\": null,\n\t\t\t\t\t\"symmetricalRef\": false,\n\t\t\t\t\t\"autoChainRef\": true,\n\t\t\t\t\t\"allowOutOfLevelRef\": true,\n\t\t\t\t\t\"allowedRefs\": \"OnlySame\",\n\t\t\t\t\t\"allowedRefsEntityUid\": null,\n\t\t\t\t\t\"allowedRefTags\": [],\n\t\t\t\t\t\"tilesetUid\": null\n\t\t\t\t}\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"BlackHole\",\n\t\t\t\"uid\": 11,\n\t\t\t\"tags\": [],\n\t\t\t\"exportToToc\": false,\n\t\t\t\"doc\": null,\n\t\t\t\"width\": 16,\n\t\t\t\"height\": 16,\n\t\t\t\"resizableX\": false,\n\t\t\t\"resizableY\": false,\n\t\t\t\"keepAspectRatio\": false,\n\t\t\t\"tileOpacity\": 1,\n\t\t\t\"fillOpacity\": 0.08,\n\t\t\t\"lineOpacity\": 0,\n\t\t\t\"hollow\": false,\n\t\t\t\"color\": \"#EAD4AA\",\n\t\t\t\"renderMode\": \"Tile\",\n\t\t\t\"showName\": true,\n\t\t\t\"tilesetId\": 1,\n\t\t\t\"tileRenderMode\": \"FullSizeUncropped\",\n\t\t\t\"tileRect\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\"nineSliceBorders\": [],\n\t\t\t\"maxCount\": 0,\n\t\t\t\"limitScope\": \"PerLevel\",\n\t\t\t\"limitBehavior\": \"MoveLastOne\",\n\t\t\t\"pivotX\": 0.5,\n\t\t\t\"pivotY\": 0.5,\n\t\t\t\"fieldDefs\": []\n\t\t}\n\t], \"tilesets\": [\n\t\t{\n\t\t\t\"__cWid\": 9,\n\t\t\t\"__cHei\": 2,\n\t\t\t\"identifier\": \"Tiles16x16\",\n\t\t\t\"uid\": 1,\n\t\t\t\"relPath\": \"tiles.png\",\n\t\t\t\"embedAtlas\": null,\n\t\t\t\"pxWid\": 144,\n\t\t\t\"pxHei\": 32,\n\t\t\t\"tileGridSize\": 16,\n\t\t\t\"spacing\": 0,\n\t\t\t\"padding\": 0,\n\t\t\t\"tags\": [],\n\t\t\t\"tagsSourceEnumUid\": null,\n\t\t\t\"enumTags\": [],\n\t\t\t\"customData\": [],\n\t\t\t\"savedSelections\": [],\n\t\t\t\"cachedPixelData\": {\n\t\t\t\t\"opaqueTiles\": \"000000000000000000\",\n\t\t\t\t\"averageColors\": \"a998bb856aaa4a624a724a624a724a624a62afff3a6449644a624a624a724a724a624a62\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"__cWid\": 18,\n\t\t\t\"__cHei\": 4,\n\t\t\t\"identifier\": \"Tiles8x8\",\n\t\t\t\"uid\": 7,\n\t\t\t\"relPath\": \"tiles.png\",\n\t\t\t\"embedAtlas\": null,\n\t\t\t\"pxWid\": 144,\n\t\t\t\"pxHei\": 32,\n\t\t\t\"tileGridSize\": 8,\n\t\t\t\"spacing\": 0,\n\t\t\t\"padding\": 0,\n\t\t\t\"tags\": [],\n\t\t\t\"tagsSourceEnumUid\": null,\n\t\t\t\"enumTags\": [],\n\t\t\t\"customData\": [],\n\t\t\t\"savedSelections\": [],\n\t\t\t\"cachedPixelData\": {\n\t\t\t\t\"opaqueTiles\": \"000000000000000000000000000000000000000000000000000000000000000000000000\",\n\t\t\t\t\"averageColors\": \"8b33c7adbda8bc857aaa49991443295219621a621962295229621a6204432852275207529187bea2ba84b7527aaa49991962cb72bb7229522952cb72cb721a621752cb72db7217429fffcfff4a63296538644a632a62cb72cb721a622962bb72cb7229622852cb72cb722752afff9fff4a7439644a744a641962196218521752174219622b620443185217522a620752\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"__cWid\": 3,\n\t\t\t\"__cHei\": 1,\n\t\t\t\"identifier\": \"Tiles32x32\",\n\t\t\t\"uid\": 10,\n\t\t\t\"relPath\": \"tiles.png\",\n\t\t\t\"embedAtlas\": null,\n\t\t\t\"pxWid\": 144,\n\t\t\t\"pxHei\": 32,\n\t\t\t\"tileGridSize\": 32,\n\t\t\t\"spacing\": 16,\n\t\t\t\"padding\": 0,\n\t\t\t\"tags\": [],\n\t\t\t\"tagsSourceEnumUid\": null,\n\t\t\t\"enumTags\": [],\n\t\t\t\"customData\": [],\n\t\t\t\"savedSelections\": [],\n\t\t\t\"cachedPixelData\": { \"opaqueTiles\": \"000\", \"averageColors\": \"9caa4a624a62\" }\n\t\t}\n\t], \"enums\": [{ \"identifier\": \"Enum\", \"uid\": 5, \"values\": [], \"iconTilesetUid\": null, \"externalRelPath\": null, \"externalFileChecksum\": null, \"tags\": [] }], \"externalEnums\": [{ \"identifier\": \"ResType\", \"uid\": 6, \"values\": [\n\t\t{ \"id\": \"Res1\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 0, \"y\": 0, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 12470831, \"__tileSrcRect\": [0,0,8,8] },\n\t\t{ \"id\": \"Res2\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 8, \"y\": 0, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 39387, \"__tileSrcRect\": [8,0,8,8] },\n\t\t{ \"id\": \"Res3\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 0, \"y\": 8, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 30539, \"__tileSrcRect\": [0,8,8,8] },\n\t\t{ \"id\": \"Res4\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 8, \"y\": 8, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 16771072, \"__tileSrcRect\": [8,8,8,8] }\n\t], \"iconTilesetUid\": 7, \"externalRelPath\": \"../../src/PlayView.hx\", \"externalFileChecksum\": \"64a01420d9f99a9c0a2237b9d1936198\", \"tags\": [] }], \"levelFields\": [] },\n\t\"levels\": [\n\t\t{\n\t\t\t\"identifier\": \"Level_0\",\n\t\t\t\"iid\": \"85277c60-c640-11ed-b80c-51e670ab0343\",\n\t\t\t\"uid\": 0,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"d312b0c0-c640-11ed-b80c-152e7f27cc3a\",\n\t\t\t\t\t\"levelId\": 0,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [113,118],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"db08ce90-c640-11ed-b80c-d579d994bf2a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [113,118],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0.55, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [0.55] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [266,361],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"707fbf10-c640-11ed-b80c-d3463032e0b2\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [266,361],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [346,198],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"48b99900-c640-11ed-b80c-6ff96bfd2c60\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [346,198],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"866779a0-c640-11ed-b80c-cbd7788cb03a\",\n\t\t\t\t\t\"levelId\": 0,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_1\",\n\t\t\t\"iid\": \"997bf750-c640-11ed-b80c-0bb4f2c7c19b\",\n\t\t\t\"uid\": 17,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"997bf752-c640-11ed-b80c-ad70819e819f\",\n\t\t\t\t\t\"levelId\": 17,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [118,95],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"997bf753-c640-11ed-b80c-4148b6a6b7b9\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [118,95],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 1, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [1] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [406,233],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"997bf754-c640-11ed-b80c-cd6cf3f3745f\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [406,233],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [220,285],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"997bf755-c640-11ed-b80c-132e5e1fe160\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [220,285],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"997bf751-c640-11ed-b80c-196637dbbd27\",\n\t\t\t\t\t\"levelId\": 17,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,\n\t\t\t\t\t\t1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,\n\t\t\t\t\t\t1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,1,1,1,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,\n\t\t\t\t\t\t1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,1,1,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [\n\t\t\t\t\t\t{ \"px\": [236,49], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,111] },\n\t\t\t\t\t\t{ \"px\": [258,46], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,112] },\n\t\t\t\t\t\t{ \"px\": [272,45], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,113] },\n\t\t\t\t\t\t{ \"px\": [236,63], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,143] },\n\t\t\t\t\t\t{ \"px\": [272,61], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,145] },\n\t\t\t\t\t\t{ \"px\": [288,65], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,146] },\n\t\t\t\t\t\t{ \"px\": [305,65], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,147] },\n\t\t\t\t\t\t{ \"px\": [228,83], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,174] },\n\t\t\t\t\t\t{ \"px\": [236,81], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,175] },\n\t\t\t\t\t\t{ \"px\": [253,80], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,176] },\n\t\t\t\t\t\t{ \"px\": [275,83], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,177] },\n\t\t\t\t\t\t{ \"px\": [288,77], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,178] },\n\t\t\t\t\t\t{ \"px\": [301,83], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,179] },\n\t\t\t\t\t\t{ \"px\": [221,96], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,206] },\n\t\t\t\t\t\t{ \"px\": [260,95], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,208] },\n\t\t\t\t\t\t{ \"px\": [268,95], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,209] },\n\t\t\t\t\t\t{ \"px\": [285,93], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,210] },\n\t\t\t\t\t\t{ \"px\": [300,100], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,211] },\n\t\t\t\t\t\t{ \"px\": [319,97], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,212] },\n\t\t\t\t\t\t{ \"px\": [334,92], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,213] },\n\t\t\t\t\t\t{ \"px\": [348,93], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,214] },\n\t\t\t\t\t\t{ \"px\": [257,109], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,240] },\n\t\t\t\t\t\t{ \"px\": [284,109], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,242] },\n\t\t\t\t\t\t{ \"px\": [303,115], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,243] },\n\t\t\t\t\t\t{ \"px\": [321,113], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,244] },\n\t\t\t\t\t\t{ \"px\": [334,111], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,245] },\n\t\t\t\t\t\t{ \"px\": [371,108], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,247] },\n\t\t\t\t\t\t{ \"px\": [384,112], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,248] },\n\t\t\t\t\t\t{ \"px\": [237,126], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,271] },\n\t\t\t\t\t\t{ \"px\": [258,128], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,272] },\n\t\t\t\t\t\t{ \"px\": [274,131], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,273] },\n\t\t\t\t\t\t{ \"px\": [289,125], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,274] },\n\t\t\t\t\t\t{ \"px\": [308,129], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,275] },\n\t\t\t\t\t\t{ \"px\": [336,131], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,277] },\n\t\t\t\t\t\t{ \"px\": [382,129], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,280] },\n\t\t\t\t\t\t{ \"px\": [243,140], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,303] },\n\t\t\t\t\t\t{ \"px\": [252,140], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,304] },\n\t\t\t\t\t\t{ \"px\": [274,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,305] },\n\t\t\t\t\t\t{ \"px\": [286,145], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,306] },\n\t\t\t\t\t\t{ \"px\": [303,143], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,307] },\n\t\t\t\t\t\t{ \"px\": [337,143], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,309] },\n\t\t\t\t\t\t{ \"px\": [348,147], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,310] },\n\t\t\t\t\t\t{ \"px\": [364,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,311] },\n\t\t\t\t\t\t{ \"px\": [380,143], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,312] },\n\t\t\t\t\t\t{ \"px\": [292,161], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,338] },\n\t\t\t\t\t\t{ \"px\": [323,159], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,340] },\n\t\t\t\t\t\t{ \"px\": [334,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,341] },\n\t\t\t\t\t\t{ \"px\": [350,160], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,342] },\n\t\t\t\t\t\t{ \"px\": [367,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,343] },\n\t\t\t\t\t\t{ \"px\": [67,207], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,420] },\n\t\t\t\t\t\t{ \"px\": [77,211], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,421] },\n\t\t\t\t\t\t{ \"px\": [127,207], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,424] },\n\t\t\t\t\t\t{ \"px\": [51,223], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,451] },\n\t\t\t\t\t\t{ \"px\": [62,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,452] },\n\t\t\t\t\t\t{ \"px\": [79,227], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,453] },\n\t\t\t\t\t\t{ \"px\": [108,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,455] },\n\t\t\t\t\t\t{ \"px\": [31,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,482] },\n\t\t\t\t\t\t{ \"px\": [44,236], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,483] },\n\t\t\t\t\t\t{ \"px\": [67,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,484] },\n\t\t\t\t\t\t{ \"px\": [93,244], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,486] },\n\t\t\t\t\t\t{ \"px\": [143,237], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,489] },\n\t\t\t\t\t\t{ \"px\": [35,260], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,514] },\n\t\t\t\t\t\t{ \"px\": [62,258], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,516] },\n\t\t\t\t\t\t{ \"px\": [79,256], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,517] },\n\t\t\t\t\t\t{ \"px\": [95,255], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,518] },\n\t\t\t\t\t\t{ \"px\": [111,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,519] },\n\t\t\t\t\t\t{ \"px\": [125,255], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,520] },\n\t\t\t\t\t\t{ \"px\": [145,257], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,521] },\n\t\t\t\t\t\t{ \"px\": [340,258], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,533] },\n\t\t\t\t\t\t{ \"px\": [352,255], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,534] },\n\t\t\t\t\t\t{ \"px\": [364,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,535] },\n\t\t\t\t\t\t{ \"px\": [28,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,546] },\n\t\t\t\t\t\t{ \"px\": [62,272], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,548] },\n\t\t\t\t\t\t{ \"px\": [83,268], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,549] },\n\t\t\t\t\t\t{ \"px\": [92,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,550] },\n\t\t\t\t\t\t{ \"px\": [142,275], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,553] },\n\t\t\t\t\t\t{ \"px\": [159,272], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,554] },\n\t\t\t\t\t\t{ \"px\": [340,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,565] },\n\t\t\t\t\t\t{ \"px\": [354,272], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,566] },\n\t\t\t\t\t\t{ \"px\": [366,272], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,567] },\n\t\t\t\t\t\t{ \"px\": [386,269], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,568] },\n\t\t\t\t\t\t{ \"px\": [34,291], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,578] },\n\t\t\t\t\t\t{ \"px\": [52,286], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,579] },\n\t\t\t\t\t\t{ \"px\": [66,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,580] },\n\t\t\t\t\t\t{ \"px\": [147,289], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,585] },\n\t\t\t\t\t\t{ \"px\": [162,291], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,586] },\n\t\t\t\t\t\t{ \"px\": [352,290], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,598] },\n\t\t\t\t\t\t{ \"px\": [366,289], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,599] },\n\t\t\t\t\t\t{ \"px\": [148,306], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,617] },\n\t\t\t\t\t\t{ \"px\": [158,306], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,618] },\n\t\t\t\t\t\t{ \"px\": [173,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,619] },\n\t\t\t\t\t\t{ \"px\": [124,320], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,648] },\n\t\t\t\t\t\t{ \"px\": [144,324], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,649] },\n\t\t\t\t\t\t{ \"px\": [177,319], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,651] },\n\t\t\t\t\t\t{ \"px\": [225,322], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,654] },\n\t\t\t\t\t\t{ \"px\": [244,322], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,655] },\n\t\t\t\t\t\t{ \"px\": [129,339], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,680] },\n\t\t\t\t\t\t{ \"px\": [191,339], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,684] },\n\t\t\t\t\t\t{ \"px\": [211,336], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,685] },\n\t\t\t\t\t\t{ \"px\": [223,336], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,686] },\n\t\t\t\t\t\t{ \"px\": [244,336], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,687] },\n\t\t\t\t\t\t{ \"px\": [189,350], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,716] },\n\t\t\t\t\t\t{ \"px\": [208,350], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,717] },\n\t\t\t\t\t\t{ \"px\": [224,352], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,718] }\n\t\t\t\t\t],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_2\",\n\t\t\t\"iid\": \"c158b2a0-c640-11ed-b80c-b1b780c18627\",\n\t\t\t\"uid\": 13,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"c158d9b0-c640-11ed-b80c-5317bcd7679f\",\n\t\t\t\t\t\"levelId\": 13,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [144,142],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b1-c640-11ed-b80c-57931a4b66d2\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [144,142],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [125,161],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#0099DB\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b3-c640-11ed-b80c-9d40aa7c321a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [125,161],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res2\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\t\"params\": [\"Res2\"]\n\t\t\t\t\t\t\t\t}] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 1.5, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [1.5] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [295,363],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b4-c640-11ed-b80c-676e640689d1\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [295,363],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [399,238],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#0099DB\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b5-c640-11ed-b80c-97c0e87ba996\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [399,238],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res2\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\"params\": [\"Res2\"]\n\t\t\t\t\t\t\t}] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [269,110],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b6-c640-11ed-b80c-cbd1fba118ba\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [269,110],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [99,188],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"c15900c0-c640-11ed-b80c-41e2e4cc47fe\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [99,188],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"866779a1-c640-11ed-b80c-6def8772b844\",\n\t\t\t\t\t\"levelId\": 13,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 9936467,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_3\",\n\t\t\t\"iid\": \"60024780-c640-11ed-8fcd-c32af69589eb\",\n\t\t\t\"uid\": 20,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"60026e90-c640-11ed-8fcd-bdc32b6acb72\",\n\t\t\t\t\t\"levelId\": 20,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [63,57],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"60026e91-c640-11ed-8fcd-0b5e1d315408\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [63,57],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0.55, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [0.55] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [68,223],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"60026e92-c640-11ed-8fcd-871dc368cabf\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [68,223],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [340,320],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"60026e93-c640-11ed-8fcd-71076f0111c5\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [340,320],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [345,375],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"6d540220-c640-11ed-8fcd-19290dedb34d\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [345,375],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [265,380],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"69caa260-c640-11ed-8fcd-29b9c96b218a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [265,380],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"60024781-c640-11ed-8fcd-c9a1a971557b\",\n\t\t\t\t\t\"levelId\": 20,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,1,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,\n\t\t\t\t\t\t1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,\n\t\t\t\t\t\t1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [\n\t\t\t\t\t\t{ \"px\": [221,33], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,78] },\n\t\t\t\t\t\t{ \"px\": [244,36], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,79] },\n\t\t\t\t\t\t{ \"px\": [206,52], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,109] },\n\t\t\t\t\t\t{ \"px\": [221,46], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,110] },\n\t\t\t\t\t\t{ \"px\": [236,49], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,111] },\n\t\t\t\t\t\t{ \"px\": [258,46], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,112] },\n\t\t\t\t\t\t{ \"px\": [205,62], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,141] },\n\t\t\t\t\t\t{ \"px\": [236,63], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,143] },\n\t\t\t\t\t\t{ \"px\": [28,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,258] },\n\t\t\t\t\t\t{ \"px\": [49,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,259] },\n\t\t\t\t\t\t{ \"px\": [-4,145], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,288] },\n\t\t\t\t\t\t{ \"px\": [16,140], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,289] },\n\t\t\t\t\t\t{ \"px\": [32,146], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,290] },\n\t\t\t\t\t\t{ \"px\": [44,147], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,291] },\n\t\t\t\t\t\t{ \"px\": [67,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,292] },\n\t\t\t\t\t\t{ \"px\": [-4,162], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,320] },\n\t\t\t\t\t\t{ \"px\": [16,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,321] },\n\t\t\t\t\t\t{ \"px\": [31,161], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,322] },\n\t\t\t\t\t\t{ \"px\": [68,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,324] },\n\t\t\t\t\t\t{ \"px\": [84,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,325] },\n\t\t\t\t\t\t{ \"px\": [99,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,326] },\n\t\t\t\t\t\t{ \"px\": [109,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,327] },\n\t\t\t\t\t\t{ \"px\": [131,162], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,328] },\n\t\t\t\t\t\t{ \"px\": [2,175], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,352] },\n\t\t\t\t\t\t{ \"px\": [67,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,356] },\n\t\t\t\t\t\t{ \"px\": [99,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,358] },\n\t\t\t\t\t\t{ \"px\": [115,180], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,359] },\n\t\t\t\t\t\t{ \"px\": [125,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,360] },\n\t\t\t\t\t\t{ \"px\": [148,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,361] },\n\t\t\t\t\t\t{ \"px\": [-2,195], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,384] },\n\t\t\t\t\t\t{ \"px\": [92,194], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,390] },\n\t\t\t\t\t\t{ \"px\": [163,192], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,394] },\n\t\t\t\t\t\t{ \"px\": [500,196], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,415] },\n\t\t\t\t\t\t{ \"px\": [-3,210], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,416] },\n\t\t\t\t\t\t{ \"px\": [178,207], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,427] },\n\t\t\t\t\t\t{ \"px\": [496,212], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,447] },\n\t\t\t\t\t\t{ \"px\": [-1,223], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,448] },\n\t\t\t\t\t\t{ \"px\": [160,224], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,458] },\n\t\t\t\t\t\t{ \"px\": [174,222], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,459] },\n\t\t\t\t\t\t{ \"px\": [193,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,460] },\n\t\t\t\t\t\t{ \"px\": [467,225], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,477] },\n\t\t\t\t\t\t{ \"px\": [482,221], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,478] },\n\t\t\t\t\t\t{ \"px\": [498,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,479] },\n\t\t\t\t\t\t{ \"px\": [1,237], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,480] },\n\t\t\t\t\t\t{ \"px\": [19,240], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,481] },\n\t\t\t\t\t\t{ \"px\": [31,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,482] },\n\t\t\t\t\t\t{ \"px\": [478,242], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,510] },\n\t\t\t\t\t\t{ \"px\": [498,237], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,511] },\n\t\t\t\t\t\t{ \"px\": [2,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,512] },\n\t\t\t\t\t\t{ \"px\": [18,260], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,513] },\n\t\t\t\t\t\t{ \"px\": [35,260], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,514] },\n\t\t\t\t\t\t{ \"px\": [479,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,542] },\n\t\t\t\t\t\t{ \"px\": [500,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,543] },\n\t\t\t\t\t\t{ \"px\": [1,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,544] },\n\t\t\t\t\t\t{ \"px\": [14,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,545] },\n\t\t\t\t\t\t{ \"px\": [28,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,546] },\n\t\t\t\t\t\t{ \"px\": [476,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,574] },\n\t\t\t\t\t\t{ \"px\": [492,272], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,575] },\n\t\t\t\t\t\t{ \"px\": [3,292], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,576] },\n\t\t\t\t\t\t{ \"px\": [13,287], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,577] },\n\t\t\t\t\t\t{ \"px\": [34,291], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,578] },\n\t\t\t\t\t\t{ \"px\": [52,286], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,579] },\n\t\t\t\t\t\t{ \"px\": [66,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,580] },\n\t\t\t\t\t\t{ \"px\": [483,284], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,606] },\n\t\t\t\t\t\t{ \"px\": [492,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,607] },\n\t\t\t\t\t\t{ \"px\": [1,301], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,608] },\n\t\t\t\t\t\t{ \"px\": [12,308], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,609] },\n\t\t\t\t\t\t{ \"px\": [33,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,610] },\n\t\t\t\t\t\t{ \"px\": [464,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,637] },\n\t\t\t\t\t\t{ \"px\": [476,307], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,638] },\n\t\t\t\t\t\t{ \"px\": [495,303], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,639] },\n\t\t\t\t\t\t{ \"px\": [14,319], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,641] },\n\t\t\t\t\t\t{ \"px\": [34,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,642] },\n\t\t\t\t\t\t{ \"px\": [81,322], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,645] },\n\t\t\t\t\t\t{ \"px\": [452,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,668] },\n\t\t\t\t\t\t{ \"px\": [462,318], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,669] },\n\t\t\t\t\t\t{ \"px\": [478,324], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,670] },\n\t\t\t\t\t\t{ \"px\": [493,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,671] },\n\t\t\t\t\t\t{ \"px\": [29,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,674] },\n\t\t\t\t\t\t{ \"px\": [67,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,676] },\n\t\t\t\t\t\t{ \"px\": [448,337], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,700] },\n\t\t\t\t\t\t{ \"px\": [466,335], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,701] },\n\t\t\t\t\t\t{ \"px\": [478,340], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,702] },\n\t\t\t\t\t\t{ \"px\": [493,340], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,703] },\n\t\t\t\t\t\t{ \"px\": [68,349], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,708] },\n\t\t\t\t\t\t{ \"px\": [80,349], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,709] },\n\t\t\t\t\t\t{ \"px\": [449,356], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,732] },\n\t\t\t\t\t\t{ \"px\": [464,348], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,733] },\n\t\t\t\t\t\t{ \"px\": [495,353], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,735] },\n\t\t\t\t\t\t{ \"px\": [19,366], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,737] },\n\t\t\t\t\t\t{ \"px\": [61,371], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,740] },\n\t\t\t\t\t\t{ \"px\": [83,364], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,741] },\n\t\t\t\t\t\t{ \"px\": [28,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,770] },\n\t\t\t\t\t\t{ \"px\": [52,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,771] },\n\t\t\t\t\t\t{ \"px\": [66,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,772] },\n\t\t\t\t\t\t{ \"px\": [84,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,773] },\n\t\t\t\t\t\t{ \"px\": [95,388], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,774] },\n\t\t\t\t\t\t{ \"px\": [30,399], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,802] },\n\t\t\t\t\t\t{ \"px\": [44,404], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,803] },\n\t\t\t\t\t\t{ \"px\": [61,402], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,804] },\n\t\t\t\t\t\t{ \"px\": [84,403], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,805] },\n\t\t\t\t\t\t{ \"px\": [98,396], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,806] },\n\t\t\t\t\t\t{ \"px\": [51,420], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,835] },\n\t\t\t\t\t\t{ \"px\": [113,415], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,839] },\n\t\t\t\t\t\t{ \"px\": [79,435], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,869] },\n\t\t\t\t\t\t{ \"px\": [51,452], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,899] },\n\t\t\t\t\t\t{ \"px\": [68,450], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,900] },\n\t\t\t\t\t\t{ \"px\": [47,464], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,931] },\n\t\t\t\t\t\t{ \"px\": [66,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,932] },\n\t\t\t\t\t\t{ \"px\": [77,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,933] },\n\t\t\t\t\t\t{ \"px\": [92,460], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,934] },\n\t\t\t\t\t\t{ \"px\": [67,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,964] },\n\t\t\t\t\t\t{ \"px\": [83,482], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,965] },\n\t\t\t\t\t\t{ \"px\": [100,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,966] }\n\t\t\t\t\t],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_4\",\n\t\t\t\"iid\": \"0fc37f00-c640-11ed-8fcd-3ba402ce0fa7\",\n\t\t\t\"uid\": 21,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"0fc3a610-c640-11ed-8fcd-c76bc060ce93\",\n\t\t\t\t\t\"levelId\": 21,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [63,57],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a611-c640-11ed-8fcd-91f920daccc1\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [63,57],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0.55, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [0.55] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [68,223],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a612-c640-11ed-8fcd-d56200611700\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [68,223],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [340,320],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a613-c640-11ed-8fcd-ebac47b79ab6\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [340,320],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [345,375],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a614-c640-11ed-8fcd-43b4e3b972ab\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [345,375],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [265,380],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3cd20-c640-11ed-8fcd-ef744b2c6be0\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [265,380],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"0fc3cd21-c640-11ed-8fcd-ffb470561e34\",\n\t\t\t\t\t\"levelId\": 21,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,1,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,\n\t\t\t\t\t\t1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,\n\t\t\t\t\t\t1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [\n\t\t\t\t\t\t{ \"px\": [221,33], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,78] },\n\t\t\t\t\t\t{ \"px\": [244,36], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,79] },\n\t\t\t\t\t\t{ \"px\": [206,52], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,109] },\n\t\t\t\t\t\t{ \"px\": [221,46], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,110] },\n\t\t\t\t\t\t{ \"px\": [236,49], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,111] },\n\t\t\t\t\t\t{ \"px\": [258,46], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,112] },\n\t\t\t\t\t\t{ \"px\": [205,62], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,141] },\n\t\t\t\t\t\t{ \"px\": [236,63], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,143] },\n\t\t\t\t\t\t{ \"px\": [28,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,258] },\n\t\t\t\t\t\t{ \"px\": [49,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,259] },\n\t\t\t\t\t\t{ \"px\": [-4,145], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,288] },\n\t\t\t\t\t\t{ \"px\": [16,140], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,289] },\n\t\t\t\t\t\t{ \"px\": [32,146], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,290] },\n\t\t\t\t\t\t{ \"px\": [44,147], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,291] },\n\t\t\t\t\t\t{ \"px\": [67,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,292] },\n\t\t\t\t\t\t{ \"px\": [-4,162], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,320] },\n\t\t\t\t\t\t{ \"px\": [16,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,321] },\n\t\t\t\t\t\t{ \"px\": [31,161], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,322] },\n\t\t\t\t\t\t{ \"px\": [68,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,324] },\n\t\t\t\t\t\t{ \"px\": [84,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,325] },\n\t\t\t\t\t\t{ \"px\": [99,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,326] },\n\t\t\t\t\t\t{ \"px\": [109,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,327] },\n\t\t\t\t\t\t{ \"px\": [131,162], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,328] },\n\t\t\t\t\t\t{ \"px\": [2,175], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,352] },\n\t\t\t\t\t\t{ \"px\": [67,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,356] },\n\t\t\t\t\t\t{ \"px\": [99,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,358] },\n\t\t\t\t\t\t{ \"px\": [115,180], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,359] },\n\t\t\t\t\t\t{ \"px\": [125,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,360] },\n\t\t\t\t\t\t{ \"px\": [148,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,361] },\n\t\t\t\t\t\t{ \"px\": [-2,195], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,384] },\n\t\t\t\t\t\t{ \"px\": [92,194], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,390] },\n\t\t\t\t\t\t{ \"px\": [163,192], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,394] },\n\t\t\t\t\t\t{ \"px\": [500,196], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,415] },\n\t\t\t\t\t\t{ \"px\": [-3,210], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,416] },\n\t\t\t\t\t\t{ \"px\": [178,207], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,427] },\n\t\t\t\t\t\t{ \"px\": [496,212], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,447] },\n\t\t\t\t\t\t{ \"px\": [-1,223], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,448] },\n\t\t\t\t\t\t{ \"px\": [160,224], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,458] },\n\t\t\t\t\t\t{ \"px\": [174,222], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,459] },\n\t\t\t\t\t\t{ \"px\": [193,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,460] },\n\t\t\t\t\t\t{ \"px\": [467,225], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,477] },\n\t\t\t\t\t\t{ \"px\": [482,221], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,478] },\n\t\t\t\t\t\t{ \"px\": [498,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,479] },\n\t\t\t\t\t\t{ \"px\": [1,237], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,480] },\n\t\t\t\t\t\t{ \"px\": [19,240], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,481] },\n\t\t\t\t\t\t{ \"px\": [31,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,482] },\n\t\t\t\t\t\t{ \"px\": [478,242], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,510] },\n\t\t\t\t\t\t{ \"px\": [498,237], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,511] },\n\t\t\t\t\t\t{ \"px\": [2,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,512] },\n\t\t\t\t\t\t{ \"px\": [18,260], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,513] },\n\t\t\t\t\t\t{ \"px\": [35,260], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,514] },\n\t\t\t\t\t\t{ \"px\": [479,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,542] },\n\t\t\t\t\t\t{ \"px\": [500,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,543] },\n\t\t\t\t\t\t{ \"px\": [1,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,544] },\n\t\t\t\t\t\t{ \"px\": [14,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,545] },\n\t\t\t\t\t\t{ \"px\": [28,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,546] },\n\t\t\t\t\t\t{ \"px\": [476,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,574] },\n\t\t\t\t\t\t{ \"px\": [492,272], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,575] },\n\t\t\t\t\t\t{ \"px\": [3,292], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,576] },\n\t\t\t\t\t\t{ \"px\": [13,287], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,577] },\n\t\t\t\t\t\t{ \"px\": [34,291], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,578] },\n\t\t\t\t\t\t{ \"px\": [52,286], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,579] },\n\t\t\t\t\t\t{ \"px\": [66,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,580] },\n\t\t\t\t\t\t{ \"px\": [483,284], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,606] },\n\t\t\t\t\t\t{ \"px\": [492,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,607] },\n\t\t\t\t\t\t{ \"px\": [1,301], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,608] },\n\t\t\t\t\t\t{ \"px\": [12,308], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,609] },\n\t\t\t\t\t\t{ \"px\": [33,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,610] },\n\t\t\t\t\t\t{ \"px\": [464,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,637] },\n\t\t\t\t\t\t{ \"px\": [476,307], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,638] },\n\t\t\t\t\t\t{ \"px\": [495,303], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,639] },\n\t\t\t\t\t\t{ \"px\": [14,319], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,641] },\n\t\t\t\t\t\t{ \"px\": [34,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,642] },\n\t\t\t\t\t\t{ \"px\": [81,322], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,645] },\n\t\t\t\t\t\t{ \"px\": [452,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,668] },\n\t\t\t\t\t\t{ \"px\": [462,318], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,669] },\n\t\t\t\t\t\t{ \"px\": [478,324], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,670] },\n\t\t\t\t\t\t{ \"px\": [493,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,671] },\n\t\t\t\t\t\t{ \"px\": [29,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,674] },\n\t\t\t\t\t\t{ \"px\": [67,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,676] },\n\t\t\t\t\t\t{ \"px\": [448,337], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,700] },\n\t\t\t\t\t\t{ \"px\": [466,335], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,701] },\n\t\t\t\t\t\t{ \"px\": [478,340], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,702] },\n\t\t\t\t\t\t{ \"px\": [493,340], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,703] },\n\t\t\t\t\t\t{ \"px\": [68,349], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,708] },\n\t\t\t\t\t\t{ \"px\": [80,349], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,709] },\n\t\t\t\t\t\t{ \"px\": [449,356], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,732] },\n\t\t\t\t\t\t{ \"px\": [464,348], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,733] },\n\t\t\t\t\t\t{ \"px\": [495,353], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,735] },\n\t\t\t\t\t\t{ \"px\": [19,366], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,737] },\n\t\t\t\t\t\t{ \"px\": [61,371], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,740] },\n\t\t\t\t\t\t{ \"px\": [83,364], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,741] },\n\t\t\t\t\t\t{ \"px\": [28,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,770] },\n\t\t\t\t\t\t{ \"px\": [52,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,771] },\n\t\t\t\t\t\t{ \"px\": [66,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,772] },\n\t\t\t\t\t\t{ \"px\": [84,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,773] },\n\t\t\t\t\t\t{ \"px\": [95,388], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,774] },\n\t\t\t\t\t\t{ \"px\": [30,399], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,802] },\n\t\t\t\t\t\t{ \"px\": [44,404], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,803] },\n\t\t\t\t\t\t{ \"px\": [61,402], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,804] },\n\t\t\t\t\t\t{ \"px\": [84,403], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,805] },\n\t\t\t\t\t\t{ \"px\": [98,396], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,806] },\n\t\t\t\t\t\t{ \"px\": [51,420], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,835] },\n\t\t\t\t\t\t{ \"px\": [113,415], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,839] },\n\t\t\t\t\t\t{ \"px\": [79,435], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,869] },\n\t\t\t\t\t\t{ \"px\": [51,452], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,899] },\n\t\t\t\t\t\t{ \"px\": [68,450], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,900] },\n\t\t\t\t\t\t{ \"px\": [47,464], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,931] },\n\t\t\t\t\t\t{ \"px\": [66,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,932] },\n\t\t\t\t\t\t{ \"px\": [77,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,933] },\n\t\t\t\t\t\t{ \"px\": [92,460], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,934] },\n\t\t\t\t\t\t{ \"px\": [67,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,964] },\n\t\t\t\t\t\t{ \"px\": [83,482], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,965] },\n\t\t\t\t\t\t{ \"px\": [100,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,966] }\n\t\t\t\t\t],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t}\n\t],\n\t\"worlds\": [],\n\t\"dummyWorldIid\": \"85272e41-c640-11ed-b80c-bd3d32a9c6a5\"\n}");
+	this.parseJson(overrideEmbedJson != null ? overrideEmbedJson : "{\n\t\"__header__\": {\n\t\t\"fileType\": \"LDtk Project JSON\",\n\t\t\"app\": \"LDtk\",\n\t\t\"doc\": \"https://ldtk.io/json\",\n\t\t\"schema\": \"https://ldtk.io/files/JSON_SCHEMA.json\",\n\t\t\"appAuthor\": \"Sebastien 'deepnight' Benard\",\n\t\t\"appVersion\": \"1.3.0\",\n\t\t\"url\": \"https://ldtk.io\"\n\t},\n\t\"iid\": \"85272e40-c640-11ed-b80c-413bbce048d2\",\n\t\"jsonVersion\": \"1.3.0\",\n\t\"appBuildId\": 467368,\n\t\"nextUid\": 23,\n\t\"identifierStyle\": \"Capitalize\",\n\t\"toc\": [],\n\t\"worldLayout\": \"LinearHorizontal\",\n\t\"worldGridWidth\": 256,\n\t\"worldGridHeight\": 256,\n\t\"defaultLevelWidth\": 512,\n\t\"defaultLevelHeight\": 512,\n\t\"defaultPivotX\": 0.5,\n\t\"defaultPivotY\": 0.5,\n\t\"defaultGridSize\": 16,\n\t\"bgColor\": \"#40465B\",\n\t\"defaultLevelBgColor\": \"#303037\",\n\t\"minifyJson\": false,\n\t\"externalLevels\": false,\n\t\"exportTiled\": false,\n\t\"simplifiedExport\": false,\n\t\"imageExportMode\": \"None\",\n\t\"exportLevelBg\": true,\n\t\"pngFilePattern\": null,\n\t\"backupOnSave\": false,\n\t\"backupLimit\": 10,\n\t\"backupRelPath\": null,\n\t\"levelNamePattern\": \"Level_%idx\",\n\t\"tutorialDesc\": null,\n\t\"customCommands\": [],\n\t\"flags\": [],\n\t\"defs\": { \"layers\": [\n\t\t{\n\t\t\t\"__type\": \"Entities\",\n\t\t\t\"identifier\": \"Entities\",\n\t\t\t\"type\": \"Entities\",\n\t\t\t\"uid\": 3,\n\t\t\t\"doc\": null,\n\t\t\t\"gridSize\": 1,\n\t\t\t\"guideGridWid\": 16,\n\t\t\t\"guideGridHei\": 16,\n\t\t\t\"displayOpacity\": 1,\n\t\t\t\"inactiveOpacity\": 0.6,\n\t\t\t\"hideInList\": false,\n\t\t\t\"hideFieldsWhenInactive\": true,\n\t\t\t\"canSelectWhenInactive\": true,\n\t\t\t\"pxOffsetX\": 0,\n\t\t\t\"pxOffsetY\": 0,\n\t\t\t\"parallaxFactorX\": 0,\n\t\t\t\"parallaxFactorY\": 0,\n\t\t\t\"parallaxScaling\": true,\n\t\t\t\"requiredTags\": [],\n\t\t\t\"excludedTags\": [],\n\t\t\t\"intGridValues\": [],\n\t\t\t\"autoRuleGroups\": [],\n\t\t\t\"autoSourceLayerDefUid\": null,\n\t\t\t\"tilesetDefUid\": null,\n\t\t\t\"tilePivotX\": 0,\n\t\t\t\"tilePivotY\": 0\n\t\t},\n\t\t{\n\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\"identifier\": \"IntGrid\",\n\t\t\t\"type\": \"IntGrid\",\n\t\t\t\"uid\": 16,\n\t\t\t\"doc\": null,\n\t\t\t\"gridSize\": 16,\n\t\t\t\"guideGridWid\": 0,\n\t\t\t\"guideGridHei\": 0,\n\t\t\t\"displayOpacity\": 1,\n\t\t\t\"inactiveOpacity\": 1,\n\t\t\t\"hideInList\": false,\n\t\t\t\"hideFieldsWhenInactive\": false,\n\t\t\t\"canSelectWhenInactive\": true,\n\t\t\t\"pxOffsetX\": 0,\n\t\t\t\"pxOffsetY\": 0,\n\t\t\t\"parallaxFactorX\": 0,\n\t\t\t\"parallaxFactorY\": 0,\n\t\t\t\"parallaxScaling\": true,\n\t\t\t\"requiredTags\": [],\n\t\t\t\"excludedTags\": [],\n\t\t\t\"intGridValues\": [{ \"value\": 1, \"identifier\": \"Nebula\", \"color\": \"#000000\" }],\n\t\t\t\"autoRuleGroups\": [{ \"uid\": 18, \"name\": \"New group\", \"active\": true, \"isOptional\": false, \"rules\": [\n\t\t\t\t{\n\t\t\t\t\t\"uid\": 19,\n\t\t\t\t\t\"active\": true,\n\t\t\t\t\t\"size\": 1,\n\t\t\t\t\t\"tileIds\": [10,11],\n\t\t\t\t\t\"chance\": 1,\n\t\t\t\t\t\"breakOnMatch\": false,\n\t\t\t\t\t\"pattern\": [1],\n\t\t\t\t\t\"flipX\": false,\n\t\t\t\t\t\"flipY\": false,\n\t\t\t\t\t\"xModulo\": 1,\n\t\t\t\t\t\"yModulo\": 1,\n\t\t\t\t\t\"xOffset\": 0,\n\t\t\t\t\t\"yOffset\": 0,\n\t\t\t\t\t\"tileXOffset\": 0,\n\t\t\t\t\t\"tileYOffset\": 0,\n\t\t\t\t\t\"tileRandomXMin\": -4,\n\t\t\t\t\t\"tileRandomXMax\": 4,\n\t\t\t\t\t\"tileRandomYMin\": -4,\n\t\t\t\t\t\"tileRandomYMax\": 4,\n\t\t\t\t\t\"checker\": \"None\",\n\t\t\t\t\t\"tileMode\": \"Single\",\n\t\t\t\t\t\"pivotX\": 0,\n\t\t\t\t\t\"pivotY\": 0,\n\t\t\t\t\t\"outOfBoundsValue\": null,\n\t\t\t\t\t\"perlinActive\": false,\n\t\t\t\t\t\"perlinSeed\": 2827235,\n\t\t\t\t\t\"perlinScale\": 0.2,\n\t\t\t\t\t\"perlinOctaves\": 2\n\t\t\t\t}\n\t\t\t], \"usesWizard\": false }],\n\t\t\t\"autoSourceLayerDefUid\": null,\n\t\t\t\"tilesetDefUid\": 1,\n\t\t\t\"tilePivotX\": 0,\n\t\t\t\"tilePivotY\": 0\n\t\t}\n\t], \"entities\": [\n\t\t{\n\t\t\t\"identifier\": \"Cannon\",\n\t\t\t\"uid\": 2,\n\t\t\t\"tags\": [],\n\t\t\t\"exportToToc\": false,\n\t\t\t\"doc\": null,\n\t\t\t\"width\": 16,\n\t\t\t\"height\": 16,\n\t\t\t\"resizableX\": false,\n\t\t\t\"resizableY\": false,\n\t\t\t\"keepAspectRatio\": false,\n\t\t\t\"tileOpacity\": 1,\n\t\t\t\"fillOpacity\": 0.08,\n\t\t\t\"lineOpacity\": 0,\n\t\t\t\"hollow\": false,\n\t\t\t\"color\": \"#BE4A2F\",\n\t\t\t\"renderMode\": \"Tile\",\n\t\t\t\"showName\": true,\n\t\t\t\"tilesetId\": 1,\n\t\t\t\"tileRenderMode\": \"FitInside\",\n\t\t\t\"tileRect\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\"nineSliceBorders\": [],\n\t\t\t\"maxCount\": 0,\n\t\t\t\"limitScope\": \"PerLevel\",\n\t\t\t\"limitBehavior\": \"MoveLastOne\",\n\t\t\t\"pivotX\": 0.5,\n\t\t\t\"pivotY\": 0.5,\n\t\t\t\"fieldDefs\": [\n\t\t\t\t{\n\t\t\t\t\t\"identifier\": \"ResType\",\n\t\t\t\t\t\"doc\": null,\n\t\t\t\t\t\"__type\": \"ExternEnum.ResType\",\n\t\t\t\t\t\"uid\": 8,\n\t\t\t\t\t\"type\": \"F_Enum(6)\",\n\t\t\t\t\t\"isArray\": false,\n\t\t\t\t\t\"canBeNull\": false,\n\t\t\t\t\t\"arrayMinLength\": null,\n\t\t\t\t\t\"arrayMaxLength\": null,\n\t\t\t\t\t\"editorDisplayMode\": \"ValueOnly\",\n\t\t\t\t\t\"editorDisplayScale\": 0,\n\t\t\t\t\t\"editorDisplayPos\": \"Above\",\n\t\t\t\t\t\"editorLinkStyle\": \"StraightArrow\",\n\t\t\t\t\t\"editorAlwaysShow\": true,\n\t\t\t\t\t\"editorShowInWorld\": true,\n\t\t\t\t\t\"editorCutLongValues\": true,\n\t\t\t\t\t\"editorTextSuffix\": null,\n\t\t\t\t\t\"editorTextPrefix\": null,\n\t\t\t\t\t\"useForSmartColor\": true,\n\t\t\t\t\t\"min\": null,\n\t\t\t\t\t\"max\": null,\n\t\t\t\t\t\"regex\": null,\n\t\t\t\t\t\"acceptFileTypes\": null,\n\t\t\t\t\t\"defaultOverride\": {\n\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\"params\": [\"Res1\"]\n\t\t\t\t\t},\n\t\t\t\t\t\"textLanguageMode\": null,\n\t\t\t\t\t\"symmetricalRef\": false,\n\t\t\t\t\t\"autoChainRef\": true,\n\t\t\t\t\t\"allowOutOfLevelRef\": true,\n\t\t\t\t\t\"allowedRefs\": \"OnlySame\",\n\t\t\t\t\t\"allowedRefsEntityUid\": null,\n\t\t\t\t\t\"allowedRefTags\": [],\n\t\t\t\t\t\"tilesetUid\": null\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"identifier\": \"Angle\",\n\t\t\t\t\t\"doc\": null,\n\t\t\t\t\t\"__type\": \"Float\",\n\t\t\t\t\t\"uid\": 12,\n\t\t\t\t\t\"type\": \"F_Float\",\n\t\t\t\t\t\"isArray\": false,\n\t\t\t\t\t\"canBeNull\": false,\n\t\t\t\t\t\"arrayMinLength\": null,\n\t\t\t\t\t\"arrayMaxLength\": null,\n\t\t\t\t\t\"editorDisplayMode\": \"NameAndValue\",\n\t\t\t\t\t\"editorDisplayScale\": 0,\n\t\t\t\t\t\"editorDisplayPos\": \"Above\",\n\t\t\t\t\t\"editorLinkStyle\": \"StraightArrow\",\n\t\t\t\t\t\"editorAlwaysShow\": true,\n\t\t\t\t\t\"editorShowInWorld\": true,\n\t\t\t\t\t\"editorCutLongValues\": true,\n\t\t\t\t\t\"editorTextSuffix\": null,\n\t\t\t\t\t\"editorTextPrefix\": null,\n\t\t\t\t\t\"useForSmartColor\": false,\n\t\t\t\t\t\"min\": 0,\n\t\t\t\t\t\"max\": 3.142,\n\t\t\t\t\t\"regex\": null,\n\t\t\t\t\t\"acceptFileTypes\": null,\n\t\t\t\t\t\"defaultOverride\": null,\n\t\t\t\t\t\"textLanguageMode\": null,\n\t\t\t\t\t\"symmetricalRef\": false,\n\t\t\t\t\t\"autoChainRef\": true,\n\t\t\t\t\t\"allowOutOfLevelRef\": true,\n\t\t\t\t\t\"allowedRefs\": \"OnlySame\",\n\t\t\t\t\t\"allowedRefsEntityUid\": null,\n\t\t\t\t\t\"allowedRefTags\": [],\n\t\t\t\t\t\"tilesetUid\": null\n\t\t\t\t}\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Planet\",\n\t\t\t\"uid\": 4,\n\t\t\t\"tags\": [],\n\t\t\t\"exportToToc\": false,\n\t\t\t\"doc\": null,\n\t\t\t\"width\": 16,\n\t\t\t\"height\": 16,\n\t\t\t\"resizableX\": false,\n\t\t\t\"resizableY\": false,\n\t\t\t\"keepAspectRatio\": false,\n\t\t\t\"tileOpacity\": 1,\n\t\t\t\"fillOpacity\": 0.08,\n\t\t\t\"lineOpacity\": 0,\n\t\t\t\"hollow\": false,\n\t\t\t\"color\": \"#D77643\",\n\t\t\t\"renderMode\": \"Tile\",\n\t\t\t\"showName\": true,\n\t\t\t\"tilesetId\": 1,\n\t\t\t\"tileRenderMode\": \"FitInside\",\n\t\t\t\"tileRect\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\"nineSliceBorders\": [],\n\t\t\t\"maxCount\": 0,\n\t\t\t\"limitScope\": \"PerLevel\",\n\t\t\t\"limitBehavior\": \"MoveLastOne\",\n\t\t\t\"pivotX\": 0.5,\n\t\t\t\"pivotY\": 0.5,\n\t\t\t\"fieldDefs\": [\n\t\t\t\t{\n\t\t\t\t\t\"identifier\": \"ResType\",\n\t\t\t\t\t\"doc\": null,\n\t\t\t\t\t\"__type\": \"ExternEnum.ResType\",\n\t\t\t\t\t\"uid\": 9,\n\t\t\t\t\t\"type\": \"F_Enum(6)\",\n\t\t\t\t\t\"isArray\": false,\n\t\t\t\t\t\"canBeNull\": false,\n\t\t\t\t\t\"arrayMinLength\": null,\n\t\t\t\t\t\"arrayMaxLength\": null,\n\t\t\t\t\t\"editorDisplayMode\": \"ValueOnly\",\n\t\t\t\t\t\"editorDisplayScale\": 0,\n\t\t\t\t\t\"editorDisplayPos\": \"Above\",\n\t\t\t\t\t\"editorLinkStyle\": \"StraightArrow\",\n\t\t\t\t\t\"editorAlwaysShow\": true,\n\t\t\t\t\t\"editorShowInWorld\": true,\n\t\t\t\t\t\"editorCutLongValues\": true,\n\t\t\t\t\t\"editorTextSuffix\": null,\n\t\t\t\t\t\"editorTextPrefix\": null,\n\t\t\t\t\t\"useForSmartColor\": true,\n\t\t\t\t\t\"min\": null,\n\t\t\t\t\t\"max\": null,\n\t\t\t\t\t\"regex\": null,\n\t\t\t\t\t\"acceptFileTypes\": null,\n\t\t\t\t\t\"defaultOverride\": {\n\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\"params\": [\"Res1\"]\n\t\t\t\t\t},\n\t\t\t\t\t\"textLanguageMode\": null,\n\t\t\t\t\t\"symmetricalRef\": false,\n\t\t\t\t\t\"autoChainRef\": true,\n\t\t\t\t\t\"allowOutOfLevelRef\": true,\n\t\t\t\t\t\"allowedRefs\": \"OnlySame\",\n\t\t\t\t\t\"allowedRefsEntityUid\": null,\n\t\t\t\t\t\"allowedRefTags\": [],\n\t\t\t\t\t\"tilesetUid\": null\n\t\t\t\t}\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"BlackHole\",\n\t\t\t\"uid\": 11,\n\t\t\t\"tags\": [],\n\t\t\t\"exportToToc\": false,\n\t\t\t\"doc\": null,\n\t\t\t\"width\": 16,\n\t\t\t\"height\": 16,\n\t\t\t\"resizableX\": false,\n\t\t\t\"resizableY\": false,\n\t\t\t\"keepAspectRatio\": false,\n\t\t\t\"tileOpacity\": 1,\n\t\t\t\"fillOpacity\": 0.08,\n\t\t\t\"lineOpacity\": 0,\n\t\t\t\"hollow\": false,\n\t\t\t\"color\": \"#EAD4AA\",\n\t\t\t\"renderMode\": \"Tile\",\n\t\t\t\"showName\": true,\n\t\t\t\"tilesetId\": 1,\n\t\t\t\"tileRenderMode\": \"FullSizeUncropped\",\n\t\t\t\"tileRect\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\"nineSliceBorders\": [],\n\t\t\t\"maxCount\": 0,\n\t\t\t\"limitScope\": \"PerLevel\",\n\t\t\t\"limitBehavior\": \"MoveLastOne\",\n\t\t\t\"pivotX\": 0.5,\n\t\t\t\"pivotY\": 0.5,\n\t\t\t\"fieldDefs\": []\n\t\t}\n\t], \"tilesets\": [\n\t\t{\n\t\t\t\"__cWid\": 9,\n\t\t\t\"__cHei\": 2,\n\t\t\t\"identifier\": \"Tiles16x16\",\n\t\t\t\"uid\": 1,\n\t\t\t\"relPath\": \"tiles.png\",\n\t\t\t\"embedAtlas\": null,\n\t\t\t\"pxWid\": 144,\n\t\t\t\"pxHei\": 32,\n\t\t\t\"tileGridSize\": 16,\n\t\t\t\"spacing\": 0,\n\t\t\t\"padding\": 0,\n\t\t\t\"tags\": [],\n\t\t\t\"tagsSourceEnumUid\": null,\n\t\t\t\"enumTags\": [],\n\t\t\t\"customData\": [],\n\t\t\t\"savedSelections\": [],\n\t\t\t\"cachedPixelData\": {\n\t\t\t\t\"opaqueTiles\": \"000000000000000000\",\n\t\t\t\t\"averageColors\": \"a998bb856aaa4a624a724a624a724a624a62afff3a6449644a624a624a724a724a624a62\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"__cWid\": 18,\n\t\t\t\"__cHei\": 4,\n\t\t\t\"identifier\": \"Tiles8x8\",\n\t\t\t\"uid\": 7,\n\t\t\t\"relPath\": \"tiles.png\",\n\t\t\t\"embedAtlas\": null,\n\t\t\t\"pxWid\": 144,\n\t\t\t\"pxHei\": 32,\n\t\t\t\"tileGridSize\": 8,\n\t\t\t\"spacing\": 0,\n\t\t\t\"padding\": 0,\n\t\t\t\"tags\": [],\n\t\t\t\"tagsSourceEnumUid\": null,\n\t\t\t\"enumTags\": [],\n\t\t\t\"customData\": [],\n\t\t\t\"savedSelections\": [],\n\t\t\t\"cachedPixelData\": {\n\t\t\t\t\"opaqueTiles\": \"000000000000000000000000000000000000000000000000000000000000000000000000\",\n\t\t\t\t\"averageColors\": \"8b33c7adbda8bc857aaa49991443295219621a621962295229621a6204432852275207529187bea2ba84b7527aaa49991962cb72bb7229522952cb72cb721a621752cb72db7217429fffcfff4a63296538644a632a62cb72cb721a622962bb72cb7229622852cb72cb722752afff9fff4a7439644a744a641962196218521752174219622b620443185217522a620752\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"__cWid\": 3,\n\t\t\t\"__cHei\": 1,\n\t\t\t\"identifier\": \"Tiles32x32\",\n\t\t\t\"uid\": 10,\n\t\t\t\"relPath\": \"tiles.png\",\n\t\t\t\"embedAtlas\": null,\n\t\t\t\"pxWid\": 144,\n\t\t\t\"pxHei\": 32,\n\t\t\t\"tileGridSize\": 32,\n\t\t\t\"spacing\": 16,\n\t\t\t\"padding\": 0,\n\t\t\t\"tags\": [],\n\t\t\t\"tagsSourceEnumUid\": null,\n\t\t\t\"enumTags\": [],\n\t\t\t\"customData\": [],\n\t\t\t\"savedSelections\": [],\n\t\t\t\"cachedPixelData\": { \"opaqueTiles\": \"000\", \"averageColors\": \"9caa4a624a62\" }\n\t\t}\n\t], \"enums\": [{ \"identifier\": \"Enum\", \"uid\": 5, \"values\": [], \"iconTilesetUid\": null, \"externalRelPath\": null, \"externalFileChecksum\": null, \"tags\": [] }], \"externalEnums\": [{ \"identifier\": \"ResType\", \"uid\": 6, \"values\": [\n\t\t{ \"id\": \"Res1\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 0, \"y\": 0, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 12470831, \"__tileSrcRect\": [0,0,8,8] },\n\t\t{ \"id\": \"Res2\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 8, \"y\": 0, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 39387, \"__tileSrcRect\": [8,0,8,8] },\n\t\t{ \"id\": \"Res3\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 0, \"y\": 8, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 30539, \"__tileSrcRect\": [0,8,8,8] },\n\t\t{ \"id\": \"Res4\", \"tileRect\": { \"tilesetUid\": 7, \"x\": 8, \"y\": 8, \"w\": 8, \"h\": 8 }, \"tileId\": -1, \"color\": 16771072, \"__tileSrcRect\": [8,8,8,8] }\n\t], \"iconTilesetUid\": 7, \"externalRelPath\": \"../../src/PlayView.hx\", \"externalFileChecksum\": \"45be15fda880ee361dab0bc278d58217\", \"tags\": [] }], \"levelFields\": [] },\n\t\"levels\": [\n\t\t{\n\t\t\t\"identifier\": \"Level_0\",\n\t\t\t\"iid\": \"85277c60-c640-11ed-b80c-51e670ab0343\",\n\t\t\t\"uid\": 0,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"d312b0c0-c640-11ed-b80c-152e7f27cc3a\",\n\t\t\t\t\t\"levelId\": 0,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [113,118],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"db08ce90-c640-11ed-b80c-d579d994bf2a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [113,118],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0.55, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [0.55] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [266,361],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"707fbf10-c640-11ed-b80c-d3463032e0b2\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [266,361],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [346,198],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"48b99900-c640-11ed-b80c-6ff96bfd2c60\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [346,198],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"866779a0-c640-11ed-b80c-cbd7788cb03a\",\n\t\t\t\t\t\"levelId\": 0,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_1\",\n\t\t\t\"iid\": \"997bf750-c640-11ed-b80c-0bb4f2c7c19b\",\n\t\t\t\"uid\": 17,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"997bf752-c640-11ed-b80c-ad70819e819f\",\n\t\t\t\t\t\"levelId\": 17,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [118,95],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#00774B\",\n\t\t\t\t\t\t\t\"iid\": \"997bf753-c640-11ed-b80c-4148b6a6b7b9\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [118,95],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res3\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\t\"params\": [\"Res3\"]\n\t\t\t\t\t\t\t\t}] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 1, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [1] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [406,233],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#00774B\",\n\t\t\t\t\t\t\t\"iid\": \"997bf754-c640-11ed-b80c-cd6cf3f3745f\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [406,233],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res3\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\"params\": [\"Res3\"]\n\t\t\t\t\t\t\t}] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [220,285],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"997bf755-c640-11ed-b80c-132e5e1fe160\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [220,285],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"997bf751-c640-11ed-b80c-196637dbbd27\",\n\t\t\t\t\t\"levelId\": 17,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,\n\t\t\t\t\t\t1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,\n\t\t\t\t\t\t1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,1,1,1,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,\n\t\t\t\t\t\t1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,1,1,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [\n\t\t\t\t\t\t{ \"px\": [236,49], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,111] },\n\t\t\t\t\t\t{ \"px\": [258,46], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,112] },\n\t\t\t\t\t\t{ \"px\": [272,45], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,113] },\n\t\t\t\t\t\t{ \"px\": [236,63], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,143] },\n\t\t\t\t\t\t{ \"px\": [272,61], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,145] },\n\t\t\t\t\t\t{ \"px\": [288,65], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,146] },\n\t\t\t\t\t\t{ \"px\": [305,65], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,147] },\n\t\t\t\t\t\t{ \"px\": [228,83], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,174] },\n\t\t\t\t\t\t{ \"px\": [236,81], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,175] },\n\t\t\t\t\t\t{ \"px\": [253,80], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,176] },\n\t\t\t\t\t\t{ \"px\": [275,83], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,177] },\n\t\t\t\t\t\t{ \"px\": [288,77], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,178] },\n\t\t\t\t\t\t{ \"px\": [301,83], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,179] },\n\t\t\t\t\t\t{ \"px\": [221,96], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,206] },\n\t\t\t\t\t\t{ \"px\": [260,95], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,208] },\n\t\t\t\t\t\t{ \"px\": [268,95], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,209] },\n\t\t\t\t\t\t{ \"px\": [285,93], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,210] },\n\t\t\t\t\t\t{ \"px\": [300,100], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,211] },\n\t\t\t\t\t\t{ \"px\": [319,97], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,212] },\n\t\t\t\t\t\t{ \"px\": [334,92], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,213] },\n\t\t\t\t\t\t{ \"px\": [348,93], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,214] },\n\t\t\t\t\t\t{ \"px\": [257,109], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,240] },\n\t\t\t\t\t\t{ \"px\": [284,109], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,242] },\n\t\t\t\t\t\t{ \"px\": [303,115], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,243] },\n\t\t\t\t\t\t{ \"px\": [321,113], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,244] },\n\t\t\t\t\t\t{ \"px\": [334,111], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,245] },\n\t\t\t\t\t\t{ \"px\": [371,108], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,247] },\n\t\t\t\t\t\t{ \"px\": [384,112], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,248] },\n\t\t\t\t\t\t{ \"px\": [237,126], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,271] },\n\t\t\t\t\t\t{ \"px\": [258,128], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,272] },\n\t\t\t\t\t\t{ \"px\": [274,131], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,273] },\n\t\t\t\t\t\t{ \"px\": [289,125], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,274] },\n\t\t\t\t\t\t{ \"px\": [308,129], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,275] },\n\t\t\t\t\t\t{ \"px\": [336,131], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,277] },\n\t\t\t\t\t\t{ \"px\": [382,129], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,280] },\n\t\t\t\t\t\t{ \"px\": [243,140], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,303] },\n\t\t\t\t\t\t{ \"px\": [252,140], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,304] },\n\t\t\t\t\t\t{ \"px\": [274,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,305] },\n\t\t\t\t\t\t{ \"px\": [286,145], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,306] },\n\t\t\t\t\t\t{ \"px\": [303,143], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,307] },\n\t\t\t\t\t\t{ \"px\": [337,143], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,309] },\n\t\t\t\t\t\t{ \"px\": [348,147], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,310] },\n\t\t\t\t\t\t{ \"px\": [364,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,311] },\n\t\t\t\t\t\t{ \"px\": [380,143], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,312] },\n\t\t\t\t\t\t{ \"px\": [292,161], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,338] },\n\t\t\t\t\t\t{ \"px\": [323,159], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,340] },\n\t\t\t\t\t\t{ \"px\": [334,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,341] },\n\t\t\t\t\t\t{ \"px\": [350,160], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,342] },\n\t\t\t\t\t\t{ \"px\": [367,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,343] },\n\t\t\t\t\t\t{ \"px\": [67,207], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,420] },\n\t\t\t\t\t\t{ \"px\": [77,211], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,421] },\n\t\t\t\t\t\t{ \"px\": [127,207], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,424] },\n\t\t\t\t\t\t{ \"px\": [51,223], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,451] },\n\t\t\t\t\t\t{ \"px\": [62,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,452] },\n\t\t\t\t\t\t{ \"px\": [79,227], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,453] },\n\t\t\t\t\t\t{ \"px\": [108,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,455] },\n\t\t\t\t\t\t{ \"px\": [31,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,482] },\n\t\t\t\t\t\t{ \"px\": [44,236], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,483] },\n\t\t\t\t\t\t{ \"px\": [67,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,484] },\n\t\t\t\t\t\t{ \"px\": [93,244], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,486] },\n\t\t\t\t\t\t{ \"px\": [143,237], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,489] },\n\t\t\t\t\t\t{ \"px\": [35,260], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,514] },\n\t\t\t\t\t\t{ \"px\": [62,258], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,516] },\n\t\t\t\t\t\t{ \"px\": [79,256], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,517] },\n\t\t\t\t\t\t{ \"px\": [95,255], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,518] },\n\t\t\t\t\t\t{ \"px\": [111,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,519] },\n\t\t\t\t\t\t{ \"px\": [125,255], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,520] },\n\t\t\t\t\t\t{ \"px\": [145,257], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,521] },\n\t\t\t\t\t\t{ \"px\": [340,258], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,533] },\n\t\t\t\t\t\t{ \"px\": [352,255], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,534] },\n\t\t\t\t\t\t{ \"px\": [364,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,535] },\n\t\t\t\t\t\t{ \"px\": [28,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,546] },\n\t\t\t\t\t\t{ \"px\": [62,272], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,548] },\n\t\t\t\t\t\t{ \"px\": [83,268], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,549] },\n\t\t\t\t\t\t{ \"px\": [92,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,550] },\n\t\t\t\t\t\t{ \"px\": [142,275], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,553] },\n\t\t\t\t\t\t{ \"px\": [159,272], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,554] },\n\t\t\t\t\t\t{ \"px\": [340,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,565] },\n\t\t\t\t\t\t{ \"px\": [354,272], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,566] },\n\t\t\t\t\t\t{ \"px\": [366,272], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,567] },\n\t\t\t\t\t\t{ \"px\": [386,269], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,568] },\n\t\t\t\t\t\t{ \"px\": [34,291], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,578] },\n\t\t\t\t\t\t{ \"px\": [52,286], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,579] },\n\t\t\t\t\t\t{ \"px\": [66,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,580] },\n\t\t\t\t\t\t{ \"px\": [147,289], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,585] },\n\t\t\t\t\t\t{ \"px\": [162,291], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,586] },\n\t\t\t\t\t\t{ \"px\": [352,290], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,598] },\n\t\t\t\t\t\t{ \"px\": [366,289], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,599] },\n\t\t\t\t\t\t{ \"px\": [148,306], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,617] },\n\t\t\t\t\t\t{ \"px\": [158,306], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,618] },\n\t\t\t\t\t\t{ \"px\": [173,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,619] },\n\t\t\t\t\t\t{ \"px\": [124,320], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,648] },\n\t\t\t\t\t\t{ \"px\": [144,324], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,649] },\n\t\t\t\t\t\t{ \"px\": [177,319], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,651] },\n\t\t\t\t\t\t{ \"px\": [225,322], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,654] },\n\t\t\t\t\t\t{ \"px\": [244,322], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,655] },\n\t\t\t\t\t\t{ \"px\": [129,339], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,680] },\n\t\t\t\t\t\t{ \"px\": [191,339], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,684] },\n\t\t\t\t\t\t{ \"px\": [211,336], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,685] },\n\t\t\t\t\t\t{ \"px\": [223,336], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,686] },\n\t\t\t\t\t\t{ \"px\": [244,336], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,687] },\n\t\t\t\t\t\t{ \"px\": [189,350], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,716] },\n\t\t\t\t\t\t{ \"px\": [208,350], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,717] },\n\t\t\t\t\t\t{ \"px\": [224,352], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,718] }\n\t\t\t\t\t],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_2\",\n\t\t\t\"iid\": \"c158b2a0-c640-11ed-b80c-b1b780c18627\",\n\t\t\t\"uid\": 13,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"c158d9b0-c640-11ed-b80c-5317bcd7679f\",\n\t\t\t\t\t\"levelId\": 13,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [144,142],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b1-c640-11ed-b80c-57931a4b66d2\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [144,142],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [125,161],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#0099DB\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b3-c640-11ed-b80c-9d40aa7c321a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [125,161],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res2\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\t\"params\": [\"Res2\"]\n\t\t\t\t\t\t\t\t}] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 1.5, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [1.5] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [295,363],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b4-c640-11ed-b80c-676e640689d1\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [295,363],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [399,238],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#0099DB\",\n\t\t\t\t\t\t\t\"iid\": \"c158d9b5-c640-11ed-b80c-97c0e87ba996\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [399,238],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res2\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\"params\": [\"Res2\"]\n\t\t\t\t\t\t\t}] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [99,188],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"c15900c0-c640-11ed-b80c-41e2e4cc47fe\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [99,188],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"866779a1-c640-11ed-b80c-6def8772b844\",\n\t\t\t\t\t\"levelId\": 13,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 9936467,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_3\",\n\t\t\t\"iid\": \"7428ff10-c640-11ed-8fcd-4d984a3330c7\",\n\t\t\t\"uid\": 22,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"74292620-c640-11ed-8fcd-ad42cff3c406\",\n\t\t\t\t\t\"levelId\": 22,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [118,120],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#00774B\",\n\t\t\t\t\t\t\t\"iid\": \"74292621-c640-11ed-8fcd-f593c44cbcd9\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [118,120],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res3\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\t\"params\": [\"Res3\"]\n\t\t\t\t\t\t\t\t}] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 1.6, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [1.6] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [350,121],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#0099DB\",\n\t\t\t\t\t\t\t\"iid\": \"74292622-c640-11ed-8fcd-bd11e95dce9a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [350,121],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res2\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\t\"params\": [\"Res2\"]\n\t\t\t\t\t\t\t\t}] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 2.2, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [2.2] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [104,363],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#00774B\",\n\t\t\t\t\t\t\t\"iid\": \"74292623-c640-11ed-8fcd-97a06c04e6aa\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [104,363],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res3\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\"params\": [\"Res3\"]\n\t\t\t\t\t\t\t}] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [438,293],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#0099DB\",\n\t\t\t\t\t\t\t\"iid\": \"74292624-c640-11ed-8fcd-8d0e204c2c57\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [438,293],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res2\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [{\n\t\t\t\t\t\t\t\t\"id\": \"V_String\",\n\t\t\t\t\t\t\t\t\"params\": [\"Res2\"]\n\t\t\t\t\t\t\t}] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [332,252],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"74292625-c640-11ed-8fcd-897013500f81\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [332,252],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [99,188],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"74292626-c640-11ed-8fcd-275f9455e414\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [99,188],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"74292627-c640-11ed-8fcd-7db64483dd2a\",\n\t\t\t\t\t\"levelId\": 22,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 9936467,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_4\",\n\t\t\t\"iid\": \"60024780-c640-11ed-8fcd-c32af69589eb\",\n\t\t\t\"uid\": 20,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"60026e90-c640-11ed-8fcd-bdc32b6acb72\",\n\t\t\t\t\t\"levelId\": 20,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [63,57],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"60026e91-c640-11ed-8fcd-0b5e1d315408\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [63,57],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0.55, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [0.55] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [68,223],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"60026e92-c640-11ed-8fcd-871dc368cabf\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [68,223],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [340,320],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"60026e93-c640-11ed-8fcd-71076f0111c5\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [340,320],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [345,375],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"6d540220-c640-11ed-8fcd-19290dedb34d\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [345,375],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [265,380],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"69caa260-c640-11ed-8fcd-29b9c96b218a\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [265,380],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"60024781-c640-11ed-8fcd-c9a1a971557b\",\n\t\t\t\t\t\"levelId\": 20,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,1,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,\n\t\t\t\t\t\t1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,\n\t\t\t\t\t\t1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [\n\t\t\t\t\t\t{ \"px\": [221,33], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,78] },\n\t\t\t\t\t\t{ \"px\": [244,36], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,79] },\n\t\t\t\t\t\t{ \"px\": [206,52], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,109] },\n\t\t\t\t\t\t{ \"px\": [221,46], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,110] },\n\t\t\t\t\t\t{ \"px\": [236,49], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,111] },\n\t\t\t\t\t\t{ \"px\": [258,46], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,112] },\n\t\t\t\t\t\t{ \"px\": [205,62], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,141] },\n\t\t\t\t\t\t{ \"px\": [236,63], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,143] },\n\t\t\t\t\t\t{ \"px\": [28,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,258] },\n\t\t\t\t\t\t{ \"px\": [49,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,259] },\n\t\t\t\t\t\t{ \"px\": [-4,145], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,288] },\n\t\t\t\t\t\t{ \"px\": [16,140], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,289] },\n\t\t\t\t\t\t{ \"px\": [32,146], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,290] },\n\t\t\t\t\t\t{ \"px\": [44,147], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,291] },\n\t\t\t\t\t\t{ \"px\": [67,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,292] },\n\t\t\t\t\t\t{ \"px\": [-4,162], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,320] },\n\t\t\t\t\t\t{ \"px\": [16,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,321] },\n\t\t\t\t\t\t{ \"px\": [31,161], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,322] },\n\t\t\t\t\t\t{ \"px\": [68,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,324] },\n\t\t\t\t\t\t{ \"px\": [84,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,325] },\n\t\t\t\t\t\t{ \"px\": [99,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,326] },\n\t\t\t\t\t\t{ \"px\": [109,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,327] },\n\t\t\t\t\t\t{ \"px\": [131,162], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,328] },\n\t\t\t\t\t\t{ \"px\": [2,175], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,352] },\n\t\t\t\t\t\t{ \"px\": [67,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,356] },\n\t\t\t\t\t\t{ \"px\": [99,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,358] },\n\t\t\t\t\t\t{ \"px\": [115,180], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,359] },\n\t\t\t\t\t\t{ \"px\": [125,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,360] },\n\t\t\t\t\t\t{ \"px\": [148,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,361] },\n\t\t\t\t\t\t{ \"px\": [-2,195], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,384] },\n\t\t\t\t\t\t{ \"px\": [92,194], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,390] },\n\t\t\t\t\t\t{ \"px\": [163,192], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,394] },\n\t\t\t\t\t\t{ \"px\": [500,196], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,415] },\n\t\t\t\t\t\t{ \"px\": [-3,210], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,416] },\n\t\t\t\t\t\t{ \"px\": [178,207], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,427] },\n\t\t\t\t\t\t{ \"px\": [496,212], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,447] },\n\t\t\t\t\t\t{ \"px\": [-1,223], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,448] },\n\t\t\t\t\t\t{ \"px\": [160,224], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,458] },\n\t\t\t\t\t\t{ \"px\": [174,222], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,459] },\n\t\t\t\t\t\t{ \"px\": [193,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,460] },\n\t\t\t\t\t\t{ \"px\": [467,225], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,477] },\n\t\t\t\t\t\t{ \"px\": [482,221], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,478] },\n\t\t\t\t\t\t{ \"px\": [498,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,479] },\n\t\t\t\t\t\t{ \"px\": [1,237], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,480] },\n\t\t\t\t\t\t{ \"px\": [19,240], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,481] },\n\t\t\t\t\t\t{ \"px\": [31,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,482] },\n\t\t\t\t\t\t{ \"px\": [478,242], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,510] },\n\t\t\t\t\t\t{ \"px\": [498,237], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,511] },\n\t\t\t\t\t\t{ \"px\": [2,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,512] },\n\t\t\t\t\t\t{ \"px\": [18,260], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,513] },\n\t\t\t\t\t\t{ \"px\": [35,260], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,514] },\n\t\t\t\t\t\t{ \"px\": [479,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,542] },\n\t\t\t\t\t\t{ \"px\": [500,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,543] },\n\t\t\t\t\t\t{ \"px\": [1,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,544] },\n\t\t\t\t\t\t{ \"px\": [14,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,545] },\n\t\t\t\t\t\t{ \"px\": [28,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,546] },\n\t\t\t\t\t\t{ \"px\": [476,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,574] },\n\t\t\t\t\t\t{ \"px\": [492,272], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,575] },\n\t\t\t\t\t\t{ \"px\": [3,292], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,576] },\n\t\t\t\t\t\t{ \"px\": [13,287], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,577] },\n\t\t\t\t\t\t{ \"px\": [34,291], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,578] },\n\t\t\t\t\t\t{ \"px\": [52,286], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,579] },\n\t\t\t\t\t\t{ \"px\": [66,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,580] },\n\t\t\t\t\t\t{ \"px\": [483,284], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,606] },\n\t\t\t\t\t\t{ \"px\": [492,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,607] },\n\t\t\t\t\t\t{ \"px\": [1,301], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,608] },\n\t\t\t\t\t\t{ \"px\": [12,308], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,609] },\n\t\t\t\t\t\t{ \"px\": [33,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,610] },\n\t\t\t\t\t\t{ \"px\": [464,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,637] },\n\t\t\t\t\t\t{ \"px\": [476,307], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,638] },\n\t\t\t\t\t\t{ \"px\": [495,303], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,639] },\n\t\t\t\t\t\t{ \"px\": [14,319], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,641] },\n\t\t\t\t\t\t{ \"px\": [34,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,642] },\n\t\t\t\t\t\t{ \"px\": [81,322], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,645] },\n\t\t\t\t\t\t{ \"px\": [452,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,668] },\n\t\t\t\t\t\t{ \"px\": [462,318], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,669] },\n\t\t\t\t\t\t{ \"px\": [478,324], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,670] },\n\t\t\t\t\t\t{ \"px\": [493,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,671] },\n\t\t\t\t\t\t{ \"px\": [29,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,674] },\n\t\t\t\t\t\t{ \"px\": [67,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,676] },\n\t\t\t\t\t\t{ \"px\": [448,337], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,700] },\n\t\t\t\t\t\t{ \"px\": [466,335], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,701] },\n\t\t\t\t\t\t{ \"px\": [478,340], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,702] },\n\t\t\t\t\t\t{ \"px\": [493,340], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,703] },\n\t\t\t\t\t\t{ \"px\": [68,349], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,708] },\n\t\t\t\t\t\t{ \"px\": [80,349], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,709] },\n\t\t\t\t\t\t{ \"px\": [449,356], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,732] },\n\t\t\t\t\t\t{ \"px\": [464,348], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,733] },\n\t\t\t\t\t\t{ \"px\": [495,353], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,735] },\n\t\t\t\t\t\t{ \"px\": [19,366], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,737] },\n\t\t\t\t\t\t{ \"px\": [61,371], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,740] },\n\t\t\t\t\t\t{ \"px\": [83,364], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,741] },\n\t\t\t\t\t\t{ \"px\": [28,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,770] },\n\t\t\t\t\t\t{ \"px\": [52,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,771] },\n\t\t\t\t\t\t{ \"px\": [66,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,772] },\n\t\t\t\t\t\t{ \"px\": [84,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,773] },\n\t\t\t\t\t\t{ \"px\": [95,388], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,774] },\n\t\t\t\t\t\t{ \"px\": [30,399], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,802] },\n\t\t\t\t\t\t{ \"px\": [44,404], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,803] },\n\t\t\t\t\t\t{ \"px\": [61,402], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,804] },\n\t\t\t\t\t\t{ \"px\": [84,403], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,805] },\n\t\t\t\t\t\t{ \"px\": [98,396], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,806] },\n\t\t\t\t\t\t{ \"px\": [51,420], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,835] },\n\t\t\t\t\t\t{ \"px\": [113,415], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,839] },\n\t\t\t\t\t\t{ \"px\": [79,435], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,869] },\n\t\t\t\t\t\t{ \"px\": [51,452], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,899] },\n\t\t\t\t\t\t{ \"px\": [68,450], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,900] },\n\t\t\t\t\t\t{ \"px\": [47,464], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,931] },\n\t\t\t\t\t\t{ \"px\": [66,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,932] },\n\t\t\t\t\t\t{ \"px\": [77,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,933] },\n\t\t\t\t\t\t{ \"px\": [92,460], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,934] },\n\t\t\t\t\t\t{ \"px\": [67,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,964] },\n\t\t\t\t\t\t{ \"px\": [83,482], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,965] },\n\t\t\t\t\t\t{ \"px\": [100,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,966] }\n\t\t\t\t\t],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t},\n\t\t{\n\t\t\t\"identifier\": \"Level_5\",\n\t\t\t\"iid\": \"0fc37f00-c640-11ed-8fcd-3ba402ce0fa7\",\n\t\t\t\"uid\": 21,\n\t\t\t\"worldX\": -1,\n\t\t\t\"worldY\": -1,\n\t\t\t\"worldDepth\": 0,\n\t\t\t\"pxWid\": 512,\n\t\t\t\"pxHei\": 512,\n\t\t\t\"__bgColor\": \"#303037\",\n\t\t\t\"bgColor\": null,\n\t\t\t\"useAutoIdentifier\": true,\n\t\t\t\"bgRelPath\": null,\n\t\t\t\"bgPos\": null,\n\t\t\t\"bgPivotX\": 0.5,\n\t\t\t\"bgPivotY\": 0.5,\n\t\t\t\"__smartColor\": \"#8D8D91\",\n\t\t\t\"__bgPos\": null,\n\t\t\t\"externalRelPath\": null,\n\t\t\t\"fieldInstances\": [],\n\t\t\t\"layerInstances\": [\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"Entities\",\n\t\t\t\t\t\"__type\": \"Entities\",\n\t\t\t\t\t\"__cWid\": 512,\n\t\t\t\t\t\"__cHei\": 512,\n\t\t\t\t\t\"__gridSize\": 1,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": null,\n\t\t\t\t\t\"__tilesetRelPath\": null,\n\t\t\t\t\t\"iid\": \"0fc3a610-c640-11ed-8fcd-c76bc060ce93\",\n\t\t\t\t\t\"levelId\": 21,\n\t\t\t\t\t\"layerDefUid\": 3,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [],\n\t\t\t\t\t\"autoLayerTiles\": [],\n\t\t\t\t\t\"seed\": 1638747,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": [\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Cannon\",\n\t\t\t\t\t\t\t\"__grid\": [63,57],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 32, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a611-c640-11ed-8fcd-91f920daccc1\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 2,\n\t\t\t\t\t\t\t\"px\": [63,57],\n\t\t\t\t\t\t\t\"fieldInstances\": [\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 8, \"realEditorValues\": [] },\n\t\t\t\t\t\t\t\t{ \"__identifier\": \"Angle\", \"__type\": \"Float\", \"__value\": 0.55, \"__tile\": null, \"defUid\": 12, \"realEditorValues\": [{ \"id\": \"V_Float\", \"params\": [0.55] }] }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"Planet\",\n\t\t\t\t\t\t\t\"__grid\": [68,223],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 16, \"y\": 0, \"w\": 16, \"h\": 16 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#BE4A2F\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a612-c640-11ed-8fcd-d56200611700\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 4,\n\t\t\t\t\t\t\t\"px\": [68,223],\n\t\t\t\t\t\t\t\"fieldInstances\": [{ \"__identifier\": \"ResType\", \"__type\": \"ExternEnum.ResType\", \"__value\": \"Res1\", \"__tile\": null, \"defUid\": 9, \"realEditorValues\": [] }]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [340,320],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a613-c640-11ed-8fcd-ebac47b79ab6\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [340,320],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [345,375],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3a614-c640-11ed-8fcd-43b4e3b972ab\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [345,375],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t},\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"__identifier\": \"BlackHole\",\n\t\t\t\t\t\t\t\"__grid\": [265,380],\n\t\t\t\t\t\t\t\"__pivot\": [0.5,0.5],\n\t\t\t\t\t\t\t\"__tags\": [],\n\t\t\t\t\t\t\t\"__tile\": { \"tilesetUid\": 1, \"x\": 48, \"y\": 0, \"w\": 32, \"h\": 32 },\n\t\t\t\t\t\t\t\"__smartColor\": \"#EAD4AA\",\n\t\t\t\t\t\t\t\"iid\": \"0fc3cd20-c640-11ed-8fcd-ef744b2c6be0\",\n\t\t\t\t\t\t\t\"width\": 16,\n\t\t\t\t\t\t\t\"height\": 16,\n\t\t\t\t\t\t\t\"defUid\": 11,\n\t\t\t\t\t\t\t\"px\": [265,380],\n\t\t\t\t\t\t\t\"fieldInstances\": []\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"__identifier\": \"IntGrid\",\n\t\t\t\t\t\"__type\": \"IntGrid\",\n\t\t\t\t\t\"__cWid\": 32,\n\t\t\t\t\t\"__cHei\": 32,\n\t\t\t\t\t\"__gridSize\": 16,\n\t\t\t\t\t\"__opacity\": 1,\n\t\t\t\t\t\"__pxTotalOffsetX\": 0,\n\t\t\t\t\t\"__pxTotalOffsetY\": 0,\n\t\t\t\t\t\"__tilesetDefUid\": 1,\n\t\t\t\t\t\"__tilesetRelPath\": \"tiles.png\",\n\t\t\t\t\t\"iid\": \"0fc3cd21-c640-11ed-8fcd-ffb470561e34\",\n\t\t\t\t\t\"levelId\": 21,\n\t\t\t\t\t\"layerDefUid\": 16,\n\t\t\t\t\t\"pxOffsetX\": 0,\n\t\t\t\t\t\"pxOffsetY\": 0,\n\t\t\t\t\t\"visible\": true,\n\t\t\t\t\t\"optionalRules\": [],\n\t\t\t\t\t\"intGridCsv\": [\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,1,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,\n\t\t\t\t\t\t1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,\n\t\t\t\t\t\t1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n\t\t\t\t\t\t0,0,0,0,0,0,0,0,0\n\t\t\t\t\t],\n\t\t\t\t\t\"autoLayerTiles\": [\n\t\t\t\t\t\t{ \"px\": [221,33], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,78] },\n\t\t\t\t\t\t{ \"px\": [244,36], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,79] },\n\t\t\t\t\t\t{ \"px\": [206,52], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,109] },\n\t\t\t\t\t\t{ \"px\": [221,46], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,110] },\n\t\t\t\t\t\t{ \"px\": [236,49], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,111] },\n\t\t\t\t\t\t{ \"px\": [258,46], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,112] },\n\t\t\t\t\t\t{ \"px\": [205,62], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,141] },\n\t\t\t\t\t\t{ \"px\": [236,63], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,143] },\n\t\t\t\t\t\t{ \"px\": [28,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,258] },\n\t\t\t\t\t\t{ \"px\": [49,130], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,259] },\n\t\t\t\t\t\t{ \"px\": [-4,145], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,288] },\n\t\t\t\t\t\t{ \"px\": [16,140], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,289] },\n\t\t\t\t\t\t{ \"px\": [32,146], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,290] },\n\t\t\t\t\t\t{ \"px\": [44,147], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,291] },\n\t\t\t\t\t\t{ \"px\": [67,141], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,292] },\n\t\t\t\t\t\t{ \"px\": [-4,162], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,320] },\n\t\t\t\t\t\t{ \"px\": [16,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,321] },\n\t\t\t\t\t\t{ \"px\": [31,161], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,322] },\n\t\t\t\t\t\t{ \"px\": [68,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,324] },\n\t\t\t\t\t\t{ \"px\": [84,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,325] },\n\t\t\t\t\t\t{ \"px\": [99,164], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,326] },\n\t\t\t\t\t\t{ \"px\": [109,156], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,327] },\n\t\t\t\t\t\t{ \"px\": [131,162], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,328] },\n\t\t\t\t\t\t{ \"px\": [2,175], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,352] },\n\t\t\t\t\t\t{ \"px\": [67,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,356] },\n\t\t\t\t\t\t{ \"px\": [99,175], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,358] },\n\t\t\t\t\t\t{ \"px\": [115,180], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,359] },\n\t\t\t\t\t\t{ \"px\": [125,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,360] },\n\t\t\t\t\t\t{ \"px\": [148,176], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,361] },\n\t\t\t\t\t\t{ \"px\": [-2,195], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,384] },\n\t\t\t\t\t\t{ \"px\": [92,194], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,390] },\n\t\t\t\t\t\t{ \"px\": [163,192], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,394] },\n\t\t\t\t\t\t{ \"px\": [500,196], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,415] },\n\t\t\t\t\t\t{ \"px\": [-3,210], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,416] },\n\t\t\t\t\t\t{ \"px\": [178,207], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,427] },\n\t\t\t\t\t\t{ \"px\": [496,212], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,447] },\n\t\t\t\t\t\t{ \"px\": [-1,223], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,448] },\n\t\t\t\t\t\t{ \"px\": [160,224], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,458] },\n\t\t\t\t\t\t{ \"px\": [174,222], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,459] },\n\t\t\t\t\t\t{ \"px\": [193,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,460] },\n\t\t\t\t\t\t{ \"px\": [467,225], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,477] },\n\t\t\t\t\t\t{ \"px\": [482,221], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,478] },\n\t\t\t\t\t\t{ \"px\": [498,221], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,479] },\n\t\t\t\t\t\t{ \"px\": [1,237], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,480] },\n\t\t\t\t\t\t{ \"px\": [19,240], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,481] },\n\t\t\t\t\t\t{ \"px\": [31,239], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,482] },\n\t\t\t\t\t\t{ \"px\": [478,242], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,510] },\n\t\t\t\t\t\t{ \"px\": [498,237], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,511] },\n\t\t\t\t\t\t{ \"px\": [2,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,512] },\n\t\t\t\t\t\t{ \"px\": [18,260], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,513] },\n\t\t\t\t\t\t{ \"px\": [35,260], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,514] },\n\t\t\t\t\t\t{ \"px\": [479,253], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,542] },\n\t\t\t\t\t\t{ \"px\": [500,259], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,543] },\n\t\t\t\t\t\t{ \"px\": [1,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,544] },\n\t\t\t\t\t\t{ \"px\": [14,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,545] },\n\t\t\t\t\t\t{ \"px\": [28,276], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,546] },\n\t\t\t\t\t\t{ \"px\": [476,271], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,574] },\n\t\t\t\t\t\t{ \"px\": [492,272], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,575] },\n\t\t\t\t\t\t{ \"px\": [3,292], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,576] },\n\t\t\t\t\t\t{ \"px\": [13,287], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,577] },\n\t\t\t\t\t\t{ \"px\": [34,291], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,578] },\n\t\t\t\t\t\t{ \"px\": [52,286], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,579] },\n\t\t\t\t\t\t{ \"px\": [66,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,580] },\n\t\t\t\t\t\t{ \"px\": [483,284], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,606] },\n\t\t\t\t\t\t{ \"px\": [492,284], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,607] },\n\t\t\t\t\t\t{ \"px\": [1,301], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,608] },\n\t\t\t\t\t\t{ \"px\": [12,308], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,609] },\n\t\t\t\t\t\t{ \"px\": [33,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,610] },\n\t\t\t\t\t\t{ \"px\": [464,302], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,637] },\n\t\t\t\t\t\t{ \"px\": [476,307], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,638] },\n\t\t\t\t\t\t{ \"px\": [495,303], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,639] },\n\t\t\t\t\t\t{ \"px\": [14,319], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,641] },\n\t\t\t\t\t\t{ \"px\": [34,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,642] },\n\t\t\t\t\t\t{ \"px\": [81,322], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,645] },\n\t\t\t\t\t\t{ \"px\": [452,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,668] },\n\t\t\t\t\t\t{ \"px\": [462,318], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,669] },\n\t\t\t\t\t\t{ \"px\": [478,324], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,670] },\n\t\t\t\t\t\t{ \"px\": [493,318], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,671] },\n\t\t\t\t\t\t{ \"px\": [29,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,674] },\n\t\t\t\t\t\t{ \"px\": [67,338], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,676] },\n\t\t\t\t\t\t{ \"px\": [448,337], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,700] },\n\t\t\t\t\t\t{ \"px\": [466,335], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,701] },\n\t\t\t\t\t\t{ \"px\": [478,340], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,702] },\n\t\t\t\t\t\t{ \"px\": [493,340], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,703] },\n\t\t\t\t\t\t{ \"px\": [68,349], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,708] },\n\t\t\t\t\t\t{ \"px\": [80,349], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,709] },\n\t\t\t\t\t\t{ \"px\": [449,356], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,732] },\n\t\t\t\t\t\t{ \"px\": [464,348], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,733] },\n\t\t\t\t\t\t{ \"px\": [495,353], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,735] },\n\t\t\t\t\t\t{ \"px\": [19,366], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,737] },\n\t\t\t\t\t\t{ \"px\": [61,371], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,740] },\n\t\t\t\t\t\t{ \"px\": [83,364], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,741] },\n\t\t\t\t\t\t{ \"px\": [28,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,770] },\n\t\t\t\t\t\t{ \"px\": [52,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,771] },\n\t\t\t\t\t\t{ \"px\": [66,383], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,772] },\n\t\t\t\t\t\t{ \"px\": [84,384], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,773] },\n\t\t\t\t\t\t{ \"px\": [95,388], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,774] },\n\t\t\t\t\t\t{ \"px\": [30,399], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,802] },\n\t\t\t\t\t\t{ \"px\": [44,404], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,803] },\n\t\t\t\t\t\t{ \"px\": [61,402], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,804] },\n\t\t\t\t\t\t{ \"px\": [84,403], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,805] },\n\t\t\t\t\t\t{ \"px\": [98,396], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,806] },\n\t\t\t\t\t\t{ \"px\": [51,420], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,835] },\n\t\t\t\t\t\t{ \"px\": [113,415], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,839] },\n\t\t\t\t\t\t{ \"px\": [79,435], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,869] },\n\t\t\t\t\t\t{ \"px\": [51,452], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,899] },\n\t\t\t\t\t\t{ \"px\": [68,450], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,900] },\n\t\t\t\t\t\t{ \"px\": [47,464], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,931] },\n\t\t\t\t\t\t{ \"px\": [66,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,932] },\n\t\t\t\t\t\t{ \"px\": [77,466], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,933] },\n\t\t\t\t\t\t{ \"px\": [92,460], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,934] },\n\t\t\t\t\t\t{ \"px\": [67,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,964] },\n\t\t\t\t\t\t{ \"px\": [83,482], \"src\": [16,16], \"f\": 0, \"t\": 10, \"d\": [19,965] },\n\t\t\t\t\t\t{ \"px\": [100,478], \"src\": [32,16], \"f\": 0, \"t\": 11, \"d\": [19,966] }\n\t\t\t\t\t],\n\t\t\t\t\t\"seed\": 3730891,\n\t\t\t\t\t\"overrideTilesetUid\": null,\n\t\t\t\t\t\"gridTiles\": [],\n\t\t\t\t\t\"entityInstances\": []\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"__neighbours\": []\n\t\t}\n\t],\n\t\"worlds\": [],\n\t\"dummyWorldIid\": \"85272e41-c640-11ed-b80c-bd3d32a9c6a5\"\n}");
 };
 $hxClasses["LdtkProject"] = LdtkProject;
 LdtkProject.__name__ = "LdtkProject";
@@ -2619,7 +2625,7 @@ Ldtk.validate = function() {
 	while(_g < _g1.length) ++_g;
 	return true;
 };
-var EntityEnum = $hxEnums["EntityEnum"] = { __ename__:true,__constructs__:null
+var EntityEnum = $hxEnums["EntityEnum"] = { __ename__:"EntityEnum",__constructs__:null
 	,Cannon: {_hx_name:"Cannon",_hx_index:0,__enum__:"EntityEnum",toString:$estr}
 	,Planet: {_hx_name:"Planet",_hx_index:1,__enum__:"EntityEnum",toString:$estr}
 	,BlackHole: {_hx_name:"BlackHole",_hx_index:2,__enum__:"EntityEnum",toString:$estr}
@@ -3079,15 +3085,18 @@ MapView.prototype = $extend(GameState.prototype,{
 		f.interactive.onClick = function(e) {
 			HerbalTeaApp.toggleFullScreen();
 		};
+		f.interactive.set_cursor(hxd_Cursor.Button);
 		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Toggle fullscreen");
 		var sprites = new h2d_SpriteBatch(null,this);
 		var x = 115;
 		var y = 200;
+		var unlockedLvl = App.getUnlockedLevel();
 		var _g = 0;
 		var _g1 = Ldtk.proj.levels;
 		while(_g < _g1.length) {
 			var level = [_g1[_g]];
 			++_g;
+			var unlocked = unlockedLvl >= level[0].arrayIndex;
 			var e = new h2d_BatchElement(hxd_Res.get_loader().loadCache("galaxy.png",hxd_res_Image).toTile());
 			var rand = new hxd_Rand(level[0].arrayIndex);
 			rand.seed = 36969 * (rand.seed & 65535) + (rand.seed >> 16);
@@ -3099,6 +3108,7 @@ MapView.prototype = $extend(GameState.prototype,{
 			rand.seed = 36969 * (rand.seed & 65535) + (rand.seed >> 16);
 			rand.seed2 = 18000 * (rand.seed2 & 65535) + (rand.seed2 >> 16);
 			e.b = (((rand.seed << 16) + rand.seed2 | 0) & 1073741823) % 10007 / 10007.0 + 0.5;
+			e.a = unlocked ? 1.0 : 0.4;
 			e.x = x;
 			e.y = y;
 			sprites.add(e);
@@ -3109,16 +3119,19 @@ MapView.prototype = $extend(GameState.prototype,{
 			label.x = x + 32;
 			label.posChanged = true;
 			label.y = y + 50;
-			var i = new h2d_Interactive(64,70,this);
-			i.posChanged = true;
-			i.x = x;
-			i.posChanged = true;
-			i.y = y;
-			i.onClick = (function(level) {
-				return function(e) {
-					App.instance.switchState(new PlayView(level[0].arrayIndex));
-				};
-			})(level);
+			label.alpha = unlocked ? 1.0 : 0.4;
+			if(unlocked) {
+				var i = new h2d_Interactive(64,70,this);
+				i.posChanged = true;
+				i.x = x;
+				i.posChanged = true;
+				i.y = y;
+				i.onClick = (function(level) {
+					return function(e) {
+						App.instance.switchState(new PlayView(level[0].arrayIndex));
+					};
+				})(level);
+			}
 			x += 70;
 			if(x > 350) {
 				y += 100;
@@ -3129,7 +3142,7 @@ MapView.prototype = $extend(GameState.prototype,{
 	,__class__: MapView
 });
 Math.__name__ = "Math";
-var ResType = $hxEnums["ResType"] = { __ename__:true,__constructs__:null
+var ResType = $hxEnums["ResType"] = { __ename__:"ResType",__constructs__:null
 	,Res1: {_hx_name:"Res1",_hx_index:0,__enum__:"ResType",toString:$estr}
 	,Res2: {_hx_name:"Res2",_hx_index:1,__enum__:"ResType",toString:$estr}
 	,Res3: {_hx_name:"Res3",_hx_index:2,__enum__:"ResType",toString:$estr}
@@ -3424,6 +3437,7 @@ Tiles.randNebula = function() {
 	return [Tiles.TILE_NEBULA1,Tiles.TILE_NEBULA2][Std.random(2)].clone();
 };
 var PlayView = function(level) {
+	this.complete = false;
 	this.starsShader = new StarsShader();
 	this.nebulas = [];
 	this.planets = [];
@@ -3510,20 +3524,21 @@ PlayView.prototype = $extend(GameState.prototype,{
 		f.set_verticalAlign(h2d_FlowAlign.Middle);
 		f.set_horizontalAlign(h2d_FlowAlign.Middle);
 		f.set_enableInteractive(true);
+		f.interactive.set_cursor(hxd_Cursor.Button);
 		f.interactive.onClick = function(e) {
 			App.instance.switchState(new MapView());
 		};
 		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Back");
-		var f = new h2d_Flow(this);
-		f.posChanged = true;
-		f.x = 50;
-		f.set_padding(5);
-		f.set_paddingTop(1);
-		f.set_backgroundTile(h2d_Tile.fromColor(3359280));
-		f.set_verticalAlign(h2d_FlowAlign.Middle);
-		f.set_horizontalAlign(h2d_FlowAlign.Middle);
-		f.set_enableInteractive(true);
-		this.progressText = new h2d_Text(hxd_res_DefaultFont.get(),f);
+		this.progressFlow = new h2d_Flow(this);
+		var _this = this.progressFlow;
+		_this.posChanged = true;
+		_this.x = 60;
+		this.progressFlow.set_padding(5);
+		this.progressFlow.set_paddingTop(1);
+		this.progressFlow.set_backgroundTile(h2d_Tile.fromColor(3359280));
+		this.progressFlow.set_verticalAlign(h2d_FlowAlign.Middle);
+		this.progressFlow.set_horizontalAlign(h2d_FlowAlign.Middle);
+		this.progressText = new h2d_Text(hxd_res_DefaultFont.get(),this.progressFlow);
 		var letterBox = new h2d_Graphics(this);
 		letterBox.beginFill(0);
 		letterBox.drawRect(0,-100,PlayView.GAME_WIDTH,100);
@@ -3552,7 +3567,18 @@ PlayView.prototype = $extend(GameState.prototype,{
 			var max = 1;
 			totalProgress += (f1 < min ? min : f1 > max ? max : f1) / this.planets.length;
 		}
-		this.progressText.set_text("Delivery progress: " + Math.floor(totalProgress * 100) + "%");
+		if(!this.complete) {
+			if(totalProgress > 0.999) {
+				this.progressText.set_text("Delivery progress: 100% - Mission complete");
+				this.complete = true;
+				if(App.getUnlockedLevel() == this.level) {
+					App.setUnlockedLevel(this.level + 1);
+				}
+				Utils.tween(this.progressFlow,0.5,{ scaleX : 1.2, scaleY : 1.2, x : this.progressFlow.x - 10}).ease(motion_easing_Sine.easeInOut).reflect().repeat();
+			} else {
+				this.progressText.set_text("Delivery progress: " + Math.floor(totalProgress * 100) + "%");
+			}
+		}
 	}
 	,updateCannons: function(dt) {
 		var _g = 0;
@@ -3820,12 +3846,34 @@ Reflect.compareMethods = function(f1,f2) {
 		return false;
 	}
 };
+Reflect.isObject = function(v) {
+	if(v == null) {
+		return false;
+	}
+	var t = typeof(v);
+	if(!(t == "string" || t == "object" && v.__enum__ == null)) {
+		if(t == "function") {
+			return (v.__name__ || v.__ename__) != null;
+		} else {
+			return false;
+		}
+	} else {
+		return true;
+	}
+};
 Reflect.isEnumValue = function(v) {
 	if(v != null) {
 		return v.__enum__ != null;
 	} else {
 		return false;
 	}
+};
+Reflect.deleteField = function(o,field) {
+	if(!Object.prototype.hasOwnProperty.call(o,field)) {
+		return false;
+	}
+	delete(o[field]);
+	return true;
 };
 var hxsl_Shader = function() {
 	this.priority = 0;
@@ -4171,6 +4219,19 @@ StringTools.hex = function(n,digits) {
 	}
 	return s;
 };
+var ValueType = $hxEnums["ValueType"] = { __ename__:"ValueType",__constructs__:null
+	,TNull: {_hx_name:"TNull",_hx_index:0,__enum__:"ValueType",toString:$estr}
+	,TInt: {_hx_name:"TInt",_hx_index:1,__enum__:"ValueType",toString:$estr}
+	,TFloat: {_hx_name:"TFloat",_hx_index:2,__enum__:"ValueType",toString:$estr}
+	,TBool: {_hx_name:"TBool",_hx_index:3,__enum__:"ValueType",toString:$estr}
+	,TObject: {_hx_name:"TObject",_hx_index:4,__enum__:"ValueType",toString:$estr}
+	,TFunction: {_hx_name:"TFunction",_hx_index:5,__enum__:"ValueType",toString:$estr}
+	,TClass: ($_=function(c) { return {_hx_index:6,c:c,__enum__:"ValueType",toString:$estr}; },$_._hx_name="TClass",$_.__params__ = ["c"],$_)
+	,TEnum: ($_=function(e) { return {_hx_index:7,e:e,__enum__:"ValueType",toString:$estr}; },$_._hx_name="TEnum",$_.__params__ = ["e"],$_)
+	,TUnknown: {_hx_name:"TUnknown",_hx_index:8,__enum__:"ValueType",toString:$estr}
+};
+ValueType.__constructs__ = [ValueType.TNull,ValueType.TInt,ValueType.TFloat,ValueType.TBool,ValueType.TObject,ValueType.TFunction,ValueType.TClass,ValueType.TEnum,ValueType.TUnknown];
+ValueType.__empty_constructs__ = [ValueType.TNull,ValueType.TInt,ValueType.TFloat,ValueType.TBool,ValueType.TObject,ValueType.TFunction,ValueType.TUnknown];
 var Type = function() { };
 $hxClasses["Type"] = Type;
 Type.__name__ = "Type";
@@ -4206,6 +4267,41 @@ Type.createEnumIndex = function(e,index,params) {
 		throw haxe_Exception.thrown(index + " is not a valid enum constructor index");
 	}
 	return Type.createEnum(e,c,params);
+};
+Type.typeof = function(v) {
+	switch(typeof(v)) {
+	case "boolean":
+		return ValueType.TBool;
+	case "function":
+		if(v.__name__ || v.__ename__) {
+			return ValueType.TObject;
+		}
+		return ValueType.TFunction;
+	case "number":
+		if(Math.ceil(v) == v % 2147483648.0) {
+			return ValueType.TInt;
+		}
+		return ValueType.TFloat;
+	case "object":
+		if(v == null) {
+			return ValueType.TNull;
+		}
+		var e = v.__enum__;
+		if(e != null) {
+			return ValueType.TEnum($hxEnums[e]);
+		}
+		var c = js_Boot.getClass(v);
+		if(c != null) {
+			return ValueType.TClass(c);
+		}
+		return ValueType.TObject;
+	case "string":
+		return ValueType.TClass(String);
+	case "undefined":
+		return ValueType.TNull;
+	default:
+		return ValueType.TUnknown;
+	}
 };
 Type.enumEq = function(a,b) {
 	if(a == b) {
@@ -4541,7 +4637,7 @@ dn_Delayer.__name__ = "dn.Delayer";
 dn_Delayer.prototype = {
 	__class__: dn_Delayer
 };
-var dn_PathSlashMode = $hxEnums["dn.PathSlashMode"] = { __ename__:true,__constructs__:null
+var dn_PathSlashMode = $hxEnums["dn.PathSlashMode"] = { __ename__:"dn.PathSlashMode",__constructs__:null
 	,Preserve: {_hx_name:"Preserve",_hx_index:0,__enum__:"dn.PathSlashMode",toString:$estr}
 	,OnlyBackslashes: {_hx_name:"OnlyBackslashes",_hx_index:1,__enum__:"dn.PathSlashMode",toString:$estr}
 	,OnlySlashes: {_hx_name:"OnlySlashes",_hx_index:2,__enum__:"dn.PathSlashMode",toString:$estr}
@@ -4745,7 +4841,7 @@ dn_FilePath.prototype = {
 	,__class__: dn_FilePath
 	,__properties__: {set_extension:"set_extension",set_fileName:"set_fileName"}
 };
-var dn_IdentifyFormat = $hxEnums["dn.IdentifyFormat"] = { __ename__:true,__constructs__:null
+var dn_IdentifyFormat = $hxEnums["dn.IdentifyFormat"] = { __ename__:"dn.IdentifyFormat",__constructs__:null
 	,Unknown: {_hx_name:"Unknown",_hx_index:0,__enum__:"dn.IdentifyFormat",toString:$estr}
 	,Png: {_hx_name:"Png",_hx_index:1,__enum__:"dn.IdentifyFormat",toString:$estr}
 	,Jpeg: {_hx_name:"Jpeg",_hx_index:2,__enum__:"dn.IdentifyFormat",toString:$estr}
@@ -5112,14 +5208,14 @@ dn_struct__$RecyclablePool_UnitTestObject.prototype = {
 	}
 	,__class__: dn_struct__$RecyclablePool_UnitTestObject
 };
-var format_gif_Block = $hxEnums["format.gif.Block"] = { __ename__:true,__constructs__:null
+var format_gif_Block = $hxEnums["format.gif.Block"] = { __ename__:"format.gif.Block",__constructs__:null
 	,BFrame: ($_=function(frame) { return {_hx_index:0,frame:frame,__enum__:"format.gif.Block",toString:$estr}; },$_._hx_name="BFrame",$_.__params__ = ["frame"],$_)
 	,BExtension: ($_=function(extension) { return {_hx_index:1,extension:extension,__enum__:"format.gif.Block",toString:$estr}; },$_._hx_name="BExtension",$_.__params__ = ["extension"],$_)
 	,BEOF: {_hx_name:"BEOF",_hx_index:2,__enum__:"format.gif.Block",toString:$estr}
 };
 format_gif_Block.__constructs__ = [format_gif_Block.BFrame,format_gif_Block.BExtension,format_gif_Block.BEOF];
 format_gif_Block.__empty_constructs__ = [format_gif_Block.BEOF];
-var format_gif_Extension = $hxEnums["format.gif.Extension"] = { __ename__:true,__constructs__:null
+var format_gif_Extension = $hxEnums["format.gif.Extension"] = { __ename__:"format.gif.Extension",__constructs__:null
 	,EGraphicControl: ($_=function(gce) { return {_hx_index:0,gce:gce,__enum__:"format.gif.Extension",toString:$estr}; },$_._hx_name="EGraphicControl",$_.__params__ = ["gce"],$_)
 	,EComment: ($_=function(text) { return {_hx_index:1,text:text,__enum__:"format.gif.Extension",toString:$estr}; },$_._hx_name="EComment",$_.__params__ = ["text"],$_)
 	,EText: ($_=function(pte) { return {_hx_index:2,pte:pte,__enum__:"format.gif.Extension",toString:$estr}; },$_._hx_name="EText",$_.__params__ = ["pte"],$_)
@@ -5128,20 +5224,20 @@ var format_gif_Extension = $hxEnums["format.gif.Extension"] = { __ename__:true,_
 };
 format_gif_Extension.__constructs__ = [format_gif_Extension.EGraphicControl,format_gif_Extension.EComment,format_gif_Extension.EText,format_gif_Extension.EApplicationExtension,format_gif_Extension.EUnknown];
 format_gif_Extension.__empty_constructs__ = [];
-var format_gif_ApplicationExtension = $hxEnums["format.gif.ApplicationExtension"] = { __ename__:true,__constructs__:null
+var format_gif_ApplicationExtension = $hxEnums["format.gif.ApplicationExtension"] = { __ename__:"format.gif.ApplicationExtension",__constructs__:null
 	,AENetscapeLooping: ($_=function(loops) { return {_hx_index:0,loops:loops,__enum__:"format.gif.ApplicationExtension",toString:$estr}; },$_._hx_name="AENetscapeLooping",$_.__params__ = ["loops"],$_)
 	,AEUnknown: ($_=function(name,version,data) { return {_hx_index:1,name:name,version:version,data:data,__enum__:"format.gif.ApplicationExtension",toString:$estr}; },$_._hx_name="AEUnknown",$_.__params__ = ["name","version","data"],$_)
 };
 format_gif_ApplicationExtension.__constructs__ = [format_gif_ApplicationExtension.AENetscapeLooping,format_gif_ApplicationExtension.AEUnknown];
 format_gif_ApplicationExtension.__empty_constructs__ = [];
-var format_gif_Version = $hxEnums["format.gif.Version"] = { __ename__:true,__constructs__:null
+var format_gif_Version = $hxEnums["format.gif.Version"] = { __ename__:"format.gif.Version",__constructs__:null
 	,GIF87a: {_hx_name:"GIF87a",_hx_index:0,__enum__:"format.gif.Version",toString:$estr}
 	,GIF89a: {_hx_name:"GIF89a",_hx_index:1,__enum__:"format.gif.Version",toString:$estr}
 	,Unknown: ($_=function(version) { return {_hx_index:2,version:version,__enum__:"format.gif.Version",toString:$estr}; },$_._hx_name="Unknown",$_.__params__ = ["version"],$_)
 };
 format_gif_Version.__constructs__ = [format_gif_Version.GIF87a,format_gif_Version.GIF89a,format_gif_Version.Unknown];
 format_gif_Version.__empty_constructs__ = [format_gif_Version.GIF87a,format_gif_Version.GIF89a];
-var format_gif_DisposalMethod = $hxEnums["format.gif.DisposalMethod"] = { __ename__:true,__constructs__:null
+var format_gif_DisposalMethod = $hxEnums["format.gif.DisposalMethod"] = { __ename__:"format.gif.DisposalMethod",__constructs__:null
 	,UNSPECIFIED: {_hx_name:"UNSPECIFIED",_hx_index:0,__enum__:"format.gif.DisposalMethod",toString:$estr}
 	,NO_ACTION: {_hx_name:"NO_ACTION",_hx_index:1,__enum__:"format.gif.DisposalMethod",toString:$estr}
 	,FILL_BACKGROUND: {_hx_name:"FILL_BACKGROUND",_hx_index:2,__enum__:"format.gif.DisposalMethod",toString:$estr}
@@ -5608,7 +5704,7 @@ format_gif_Tools.extractFullRGBA = function(data,frameIndex) {
 	}
 	return bytes;
 };
-var format_mp3_SamplingRate = $hxEnums["format.mp3.SamplingRate"] = { __ename__:true,__constructs__:null
+var format_mp3_SamplingRate = $hxEnums["format.mp3.SamplingRate"] = { __ename__:"format.mp3.SamplingRate",__constructs__:null
 	,SR_8000: {_hx_name:"SR_8000",_hx_index:0,__enum__:"format.mp3.SamplingRate",toString:$estr}
 	,SR_11025: {_hx_name:"SR_11025",_hx_index:1,__enum__:"format.mp3.SamplingRate",toString:$estr}
 	,SR_12000: {_hx_name:"SR_12000",_hx_index:2,__enum__:"format.mp3.SamplingRate",toString:$estr}
@@ -5621,7 +5717,7 @@ var format_mp3_SamplingRate = $hxEnums["format.mp3.SamplingRate"] = { __ename__:
 };
 format_mp3_SamplingRate.__constructs__ = [format_mp3_SamplingRate.SR_8000,format_mp3_SamplingRate.SR_11025,format_mp3_SamplingRate.SR_12000,format_mp3_SamplingRate.SR_22050,format_mp3_SamplingRate.SR_24000,format_mp3_SamplingRate.SR_32000,format_mp3_SamplingRate.SR_44100,format_mp3_SamplingRate.SR_48000,format_mp3_SamplingRate.SR_Bad];
 format_mp3_SamplingRate.__empty_constructs__ = [format_mp3_SamplingRate.SR_8000,format_mp3_SamplingRate.SR_11025,format_mp3_SamplingRate.SR_12000,format_mp3_SamplingRate.SR_22050,format_mp3_SamplingRate.SR_24000,format_mp3_SamplingRate.SR_32000,format_mp3_SamplingRate.SR_44100,format_mp3_SamplingRate.SR_48000,format_mp3_SamplingRate.SR_Bad];
-var format_mp3_Bitrate = $hxEnums["format.mp3.Bitrate"] = { __ename__:true,__constructs__:null
+var format_mp3_Bitrate = $hxEnums["format.mp3.Bitrate"] = { __ename__:"format.mp3.Bitrate",__constructs__:null
 	,BR_8: {_hx_name:"BR_8",_hx_index:0,__enum__:"format.mp3.Bitrate",toString:$estr}
 	,BR_16: {_hx_name:"BR_16",_hx_index:1,__enum__:"format.mp3.Bitrate",toString:$estr}
 	,BR_24: {_hx_name:"BR_24",_hx_index:2,__enum__:"format.mp3.Bitrate",toString:$estr}
@@ -5805,7 +5901,7 @@ format_mp3_CEmphasis.num2Enum = function(c) {
 		throw haxe_Exception.thrown("assert");
 	}
 };
-var format_mp3_MPEGVersion = $hxEnums["format.mp3.MPEGVersion"] = { __ename__:true,__constructs__:null
+var format_mp3_MPEGVersion = $hxEnums["format.mp3.MPEGVersion"] = { __ename__:"format.mp3.MPEGVersion",__constructs__:null
 	,MPEG_V1: {_hx_name:"MPEG_V1",_hx_index:0,__enum__:"format.mp3.MPEGVersion",toString:$estr}
 	,MPEG_V2: {_hx_name:"MPEG_V2",_hx_index:1,__enum__:"format.mp3.MPEGVersion",toString:$estr}
 	,MPEG_V25: {_hx_name:"MPEG_V25",_hx_index:2,__enum__:"format.mp3.MPEGVersion",toString:$estr}
@@ -5813,7 +5909,7 @@ var format_mp3_MPEGVersion = $hxEnums["format.mp3.MPEGVersion"] = { __ename__:tr
 };
 format_mp3_MPEGVersion.__constructs__ = [format_mp3_MPEGVersion.MPEG_V1,format_mp3_MPEGVersion.MPEG_V2,format_mp3_MPEGVersion.MPEG_V25,format_mp3_MPEGVersion.MPEG_Reserved];
 format_mp3_MPEGVersion.__empty_constructs__ = [format_mp3_MPEGVersion.MPEG_V1,format_mp3_MPEGVersion.MPEG_V2,format_mp3_MPEGVersion.MPEG_V25,format_mp3_MPEGVersion.MPEG_Reserved];
-var format_mp3_Layer = $hxEnums["format.mp3.Layer"] = { __ename__:true,__constructs__:null
+var format_mp3_Layer = $hxEnums["format.mp3.Layer"] = { __ename__:"format.mp3.Layer",__constructs__:null
 	,LayerReserved: {_hx_name:"LayerReserved",_hx_index:0,__enum__:"format.mp3.Layer",toString:$estr}
 	,Layer3: {_hx_name:"Layer3",_hx_index:1,__enum__:"format.mp3.Layer",toString:$estr}
 	,Layer2: {_hx_name:"Layer2",_hx_index:2,__enum__:"format.mp3.Layer",toString:$estr}
@@ -5821,7 +5917,7 @@ var format_mp3_Layer = $hxEnums["format.mp3.Layer"] = { __ename__:true,__constru
 };
 format_mp3_Layer.__constructs__ = [format_mp3_Layer.LayerReserved,format_mp3_Layer.Layer3,format_mp3_Layer.Layer2,format_mp3_Layer.Layer1];
 format_mp3_Layer.__empty_constructs__ = [format_mp3_Layer.LayerReserved,format_mp3_Layer.Layer3,format_mp3_Layer.Layer2,format_mp3_Layer.Layer1];
-var format_mp3_ChannelMode = $hxEnums["format.mp3.ChannelMode"] = { __ename__:true,__constructs__:null
+var format_mp3_ChannelMode = $hxEnums["format.mp3.ChannelMode"] = { __ename__:"format.mp3.ChannelMode",__constructs__:null
 	,Stereo: {_hx_name:"Stereo",_hx_index:0,__enum__:"format.mp3.ChannelMode",toString:$estr}
 	,JointStereo: {_hx_name:"JointStereo",_hx_index:1,__enum__:"format.mp3.ChannelMode",toString:$estr}
 	,DualChannel: {_hx_name:"DualChannel",_hx_index:2,__enum__:"format.mp3.ChannelMode",toString:$estr}
@@ -5829,7 +5925,7 @@ var format_mp3_ChannelMode = $hxEnums["format.mp3.ChannelMode"] = { __ename__:tr
 };
 format_mp3_ChannelMode.__constructs__ = [format_mp3_ChannelMode.Stereo,format_mp3_ChannelMode.JointStereo,format_mp3_ChannelMode.DualChannel,format_mp3_ChannelMode.Mono];
 format_mp3_ChannelMode.__empty_constructs__ = [format_mp3_ChannelMode.Stereo,format_mp3_ChannelMode.JointStereo,format_mp3_ChannelMode.DualChannel,format_mp3_ChannelMode.Mono];
-var format_mp3_Emphasis = $hxEnums["format.mp3.Emphasis"] = { __ename__:true,__constructs__:null
+var format_mp3_Emphasis = $hxEnums["format.mp3.Emphasis"] = { __ename__:"format.mp3.Emphasis",__constructs__:null
 	,NoEmphasis: {_hx_name:"NoEmphasis",_hx_index:0,__enum__:"format.mp3.Emphasis",toString:$estr}
 	,Ms50_15: {_hx_name:"Ms50_15",_hx_index:1,__enum__:"format.mp3.Emphasis",toString:$estr}
 	,CCIT_J17: {_hx_name:"CCIT_J17",_hx_index:2,__enum__:"format.mp3.Emphasis",toString:$estr}
@@ -5837,7 +5933,7 @@ var format_mp3_Emphasis = $hxEnums["format.mp3.Emphasis"] = { __ename__:true,__c
 };
 format_mp3_Emphasis.__constructs__ = [format_mp3_Emphasis.NoEmphasis,format_mp3_Emphasis.Ms50_15,format_mp3_Emphasis.CCIT_J17,format_mp3_Emphasis.InvalidEmphasis];
 format_mp3_Emphasis.__empty_constructs__ = [format_mp3_Emphasis.NoEmphasis,format_mp3_Emphasis.Ms50_15,format_mp3_Emphasis.CCIT_J17,format_mp3_Emphasis.InvalidEmphasis];
-var format_mp3_FrameType = $hxEnums["format.mp3.FrameType"] = { __ename__:true,__constructs__:null
+var format_mp3_FrameType = $hxEnums["format.mp3.FrameType"] = { __ename__:"format.mp3.FrameType",__constructs__:null
 	,FT_MP3: {_hx_name:"FT_MP3",_hx_index:0,__enum__:"format.mp3.FrameType",toString:$estr}
 	,FT_NONE: {_hx_name:"FT_NONE",_hx_index:1,__enum__:"format.mp3.FrameType",toString:$estr}
 };
@@ -6001,14 +6097,14 @@ format_mp3_Tools.getSampleCount = function(mpegVersion) {
 format_mp3_Tools.getSampleCountHdr = function(hdr) {
 	return format_mp3_Tools.getSampleCount(format_mp3_MPEG.enum2Num(hdr.version));
 };
-var format_png_Color = $hxEnums["format.png.Color"] = { __ename__:true,__constructs__:null
+var format_png_Color = $hxEnums["format.png.Color"] = { __ename__:"format.png.Color",__constructs__:null
 	,ColGrey: ($_=function(alpha) { return {_hx_index:0,alpha:alpha,__enum__:"format.png.Color",toString:$estr}; },$_._hx_name="ColGrey",$_.__params__ = ["alpha"],$_)
 	,ColTrue: ($_=function(alpha) { return {_hx_index:1,alpha:alpha,__enum__:"format.png.Color",toString:$estr}; },$_._hx_name="ColTrue",$_.__params__ = ["alpha"],$_)
 	,ColIndexed: {_hx_name:"ColIndexed",_hx_index:2,__enum__:"format.png.Color",toString:$estr}
 };
 format_png_Color.__constructs__ = [format_png_Color.ColGrey,format_png_Color.ColTrue,format_png_Color.ColIndexed];
 format_png_Color.__empty_constructs__ = [format_png_Color.ColIndexed];
-var format_png_Chunk = $hxEnums["format.png.Chunk"] = { __ename__:true,__constructs__:null
+var format_png_Chunk = $hxEnums["format.png.Chunk"] = { __ename__:"format.png.Chunk",__constructs__:null
 	,CEnd: {_hx_name:"CEnd",_hx_index:0,__enum__:"format.png.Chunk",toString:$estr}
 	,CHeader: ($_=function(h) { return {_hx_index:1,h:h,__enum__:"format.png.Chunk",toString:$estr}; },$_._hx_name="CHeader",$_.__params__ = ["h"],$_)
 	,CData: ($_=function(b) { return {_hx_index:2,b:b,__enum__:"format.png.Chunk",toString:$estr}; },$_._hx_name="CData",$_.__params__ = ["b"],$_)
@@ -6919,7 +7015,7 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 	}
 	return bgra;
 };
-var format_tga_ImageOrigin = $hxEnums["format.tga.ImageOrigin"] = { __ename__:true,__constructs__:null
+var format_tga_ImageOrigin = $hxEnums["format.tga.ImageOrigin"] = { __ename__:"format.tga.ImageOrigin",__constructs__:null
 	,BottomLeft: {_hx_name:"BottomLeft",_hx_index:0,__enum__:"format.tga.ImageOrigin",toString:$estr}
 	,BottomRight: {_hx_name:"BottomRight",_hx_index:1,__enum__:"format.tga.ImageOrigin",toString:$estr}
 	,TopLeft: {_hx_name:"TopLeft",_hx_index:2,__enum__:"format.tga.ImageOrigin",toString:$estr}
@@ -6927,7 +7023,7 @@ var format_tga_ImageOrigin = $hxEnums["format.tga.ImageOrigin"] = { __ename__:tr
 };
 format_tga_ImageOrigin.__constructs__ = [format_tga_ImageOrigin.BottomLeft,format_tga_ImageOrigin.BottomRight,format_tga_ImageOrigin.TopLeft,format_tga_ImageOrigin.TopRight];
 format_tga_ImageOrigin.__empty_constructs__ = [format_tga_ImageOrigin.BottomLeft,format_tga_ImageOrigin.BottomRight,format_tga_ImageOrigin.TopLeft,format_tga_ImageOrigin.TopRight];
-var format_tga_ImageType = $hxEnums["format.tga.ImageType"] = { __ename__:true,__constructs__:null
+var format_tga_ImageType = $hxEnums["format.tga.ImageType"] = { __ename__:"format.tga.ImageType",__constructs__:null
 	,NoImage: {_hx_name:"NoImage",_hx_index:0,__enum__:"format.tga.ImageType",toString:$estr}
 	,UncompressedColorMapped: {_hx_name:"UncompressedColorMapped",_hx_index:1,__enum__:"format.tga.ImageType",toString:$estr}
 	,UncompressedTrueColor: {_hx_name:"UncompressedTrueColor",_hx_index:2,__enum__:"format.tga.ImageType",toString:$estr}
@@ -7239,7 +7335,7 @@ format_tools_Inflate.__name__ = "format.tools.Inflate";
 format_tools_Inflate.run = function(bytes) {
 	return haxe_zip_Uncompress.run(bytes);
 };
-var format_wav_WAVEFormat = $hxEnums["format.wav.WAVEFormat"] = { __ename__:true,__constructs__:null
+var format_wav_WAVEFormat = $hxEnums["format.wav.WAVEFormat"] = { __ename__:"format.wav.WAVEFormat",__constructs__:null
 	,WF_PCM: {_hx_name:"WF_PCM",_hx_index:0,__enum__:"format.wav.WAVEFormat",toString:$estr}
 };
 format_wav_WAVEFormat.__constructs__ = [format_wav_WAVEFormat.WF_PCM];
@@ -7419,7 +7515,7 @@ h2d_Anim.prototype = $extend(h2d_Drawable.prototype,{
 	}
 	,__class__: h2d_Anim
 });
-var h2d_BlendMode = $hxEnums["h2d.BlendMode"] = { __ename__:true,__constructs__:null
+var h2d_BlendMode = $hxEnums["h2d.BlendMode"] = { __ename__:"h2d.BlendMode",__constructs__:null
 	,None: {_hx_name:"None",_hx_index:0,__enum__:"h2d.BlendMode",toString:$estr}
 	,Alpha: {_hx_name:"Alpha",_hx_index:1,__enum__:"h2d.BlendMode",toString:$estr}
 	,Add: {_hx_name:"Add",_hx_index:2,__enum__:"h2d.BlendMode",toString:$estr}
@@ -7529,7 +7625,7 @@ h2d_Camera.prototype = {
 	}
 	,__class__: h2d_Camera
 };
-var h2d_FlowAlign = $hxEnums["h2d.FlowAlign"] = { __ename__:true,__constructs__:null
+var h2d_FlowAlign = $hxEnums["h2d.FlowAlign"] = { __ename__:"h2d.FlowAlign",__constructs__:null
 	,Top: {_hx_name:"Top",_hx_index:0,__enum__:"h2d.FlowAlign",toString:$estr}
 	,Left: {_hx_name:"Left",_hx_index:1,__enum__:"h2d.FlowAlign",toString:$estr}
 	,Right: {_hx_name:"Right",_hx_index:2,__enum__:"h2d.FlowAlign",toString:$estr}
@@ -7538,14 +7634,14 @@ var h2d_FlowAlign = $hxEnums["h2d.FlowAlign"] = { __ename__:true,__constructs__:
 };
 h2d_FlowAlign.__constructs__ = [h2d_FlowAlign.Top,h2d_FlowAlign.Left,h2d_FlowAlign.Right,h2d_FlowAlign.Middle,h2d_FlowAlign.Bottom];
 h2d_FlowAlign.__empty_constructs__ = [h2d_FlowAlign.Top,h2d_FlowAlign.Left,h2d_FlowAlign.Right,h2d_FlowAlign.Middle,h2d_FlowAlign.Bottom];
-var h2d_FlowLayout = $hxEnums["h2d.FlowLayout"] = { __ename__:true,__constructs__:null
+var h2d_FlowLayout = $hxEnums["h2d.FlowLayout"] = { __ename__:"h2d.FlowLayout",__constructs__:null
 	,Horizontal: {_hx_name:"Horizontal",_hx_index:0,__enum__:"h2d.FlowLayout",toString:$estr}
 	,Vertical: {_hx_name:"Vertical",_hx_index:1,__enum__:"h2d.FlowLayout",toString:$estr}
 	,Stack: {_hx_name:"Stack",_hx_index:2,__enum__:"h2d.FlowLayout",toString:$estr}
 };
 h2d_FlowLayout.__constructs__ = [h2d_FlowLayout.Horizontal,h2d_FlowLayout.Vertical,h2d_FlowLayout.Stack];
 h2d_FlowLayout.__empty_constructs__ = [h2d_FlowLayout.Horizontal,h2d_FlowLayout.Vertical,h2d_FlowLayout.Stack];
-var h2d_FlowOverflow = $hxEnums["h2d.FlowOverflow"] = { __ename__:true,__constructs__:null
+var h2d_FlowOverflow = $hxEnums["h2d.FlowOverflow"] = { __ename__:"h2d.FlowOverflow",__constructs__:null
 	,Expand: {_hx_name:"Expand",_hx_index:0,__enum__:"h2d.FlowOverflow",toString:$estr}
 	,Limit: {_hx_name:"Limit",_hx_index:1,__enum__:"h2d.FlowOverflow",toString:$estr}
 	,Hidden: {_hx_name:"Hidden",_hx_index:2,__enum__:"h2d.FlowOverflow",toString:$estr}
@@ -8951,7 +9047,7 @@ h2d_FontChar.prototype = {
 	}
 	,__class__: h2d_FontChar
 };
-var h2d_FontType = $hxEnums["h2d.FontType"] = { __ename__:true,__constructs__:null
+var h2d_FontType = $hxEnums["h2d.FontType"] = { __ename__:"h2d.FontType",__constructs__:null
 	,BitmapFont: {_hx_name:"BitmapFont",_hx_index:0,__enum__:"h2d.FontType",toString:$estr}
 	,SignedDistanceField: ($_=function(channel,alphaCutoff,smoothing) { return {_hx_index:1,channel:channel,alphaCutoff:alphaCutoff,smoothing:smoothing,__enum__:"h2d.FontType",toString:$estr}; },$_._hx_name="SignedDistanceField",$_.__params__ = ["channel","alphaCutoff","smoothing"],$_)
 };
@@ -12895,7 +12991,7 @@ h2d_ScaleGrid.prototype = $extend(h2d_TileGroup.prototype,{
 	,__class__: h2d_ScaleGrid
 	,__properties__: $extend(h2d_TileGroup.prototype.__properties__,{set_height:"set_height",set_width:"set_width",set_borderBottom:"set_borderBottom",set_borderTop:"set_borderTop",set_borderRight:"set_borderRight",set_borderLeft:"set_borderLeft"})
 });
-var h2d_ScaleModeAlign = $hxEnums["h2d.ScaleModeAlign"] = { __ename__:true,__constructs__:null
+var h2d_ScaleModeAlign = $hxEnums["h2d.ScaleModeAlign"] = { __ename__:"h2d.ScaleModeAlign",__constructs__:null
 	,Left: {_hx_name:"Left",_hx_index:0,__enum__:"h2d.ScaleModeAlign",toString:$estr}
 	,Right: {_hx_name:"Right",_hx_index:1,__enum__:"h2d.ScaleModeAlign",toString:$estr}
 	,Center: {_hx_name:"Center",_hx_index:2,__enum__:"h2d.ScaleModeAlign",toString:$estr}
@@ -12904,7 +13000,7 @@ var h2d_ScaleModeAlign = $hxEnums["h2d.ScaleModeAlign"] = { __ename__:true,__con
 };
 h2d_ScaleModeAlign.__constructs__ = [h2d_ScaleModeAlign.Left,h2d_ScaleModeAlign.Right,h2d_ScaleModeAlign.Center,h2d_ScaleModeAlign.Top,h2d_ScaleModeAlign.Bottom];
 h2d_ScaleModeAlign.__empty_constructs__ = [h2d_ScaleModeAlign.Left,h2d_ScaleModeAlign.Right,h2d_ScaleModeAlign.Center,h2d_ScaleModeAlign.Top,h2d_ScaleModeAlign.Bottom];
-var h2d_ScaleMode = $hxEnums["h2d.ScaleMode"] = { __ename__:true,__constructs__:null
+var h2d_ScaleMode = $hxEnums["h2d.ScaleMode"] = { __ename__:"h2d.ScaleMode",__constructs__:null
 	,Resize: {_hx_name:"Resize",_hx_index:0,__enum__:"h2d.ScaleMode",toString:$estr}
 	,Stretch: ($_=function(width,height) { return {_hx_index:1,width:width,height:height,__enum__:"h2d.ScaleMode",toString:$estr}; },$_._hx_name="Stretch",$_.__params__ = ["width","height"],$_)
 	,LetterBox: ($_=function(width,height,integerScale,horizontalAlign,verticalAlign) { return {_hx_index:2,width:width,height:height,integerScale:integerScale,horizontalAlign:horizontalAlign,verticalAlign:verticalAlign,__enum__:"h2d.ScaleMode",toString:$estr}; },$_._hx_name="LetterBox",$_.__params__ = ["width","height","integerScale","horizontalAlign","verticalAlign"],$_)
@@ -13184,7 +13280,7 @@ h2d_SpriteBatch.prototype = $extend(h2d_Drawable.prototype,{
 	}
 	,__class__: h2d_SpriteBatch
 });
-var h2d_Align = $hxEnums["h2d.Align"] = { __ename__:true,__constructs__:null
+var h2d_Align = $hxEnums["h2d.Align"] = { __ename__:"h2d.Align",__constructs__:null
 	,Left: {_hx_name:"Left",_hx_index:0,__enum__:"h2d.Align",toString:$estr}
 	,Right: {_hx_name:"Right",_hx_index:1,__enum__:"h2d.Align",toString:$estr}
 	,Center: {_hx_name:"Center",_hx_index:2,__enum__:"h2d.Align",toString:$estr}
@@ -14088,7 +14184,7 @@ h2d_impl__$BatchDrawState_StateEntry.prototype = {
 	}
 	,__class__: h2d_impl__$BatchDrawState_StateEntry
 };
-var h3d_BufferFlag = $hxEnums["h3d.BufferFlag"] = { __ename__:true,__constructs__:null
+var h3d_BufferFlag = $hxEnums["h3d.BufferFlag"] = { __ename__:"h3d.BufferFlag",__constructs__:null
 	,Dynamic: {_hx_name:"Dynamic",_hx_index:0,__enum__:"h3d.BufferFlag",toString:$estr}
 	,Triangles: {_hx_name:"Triangles",_hx_index:1,__enum__:"h3d.BufferFlag",toString:$estr}
 	,Quads: {_hx_name:"Quads",_hx_index:2,__enum__:"h3d.BufferFlag",toString:$estr}
@@ -16563,7 +16659,7 @@ h3d_col_Sphere.prototype = {
 	}
 	,__class__: h3d_col_Sphere
 };
-var h3d_impl_Feature = $hxEnums["h3d.impl.Feature"] = { __ename__:true,__constructs__:null
+var h3d_impl_Feature = $hxEnums["h3d.impl.Feature"] = { __ename__:"h3d.impl.Feature",__constructs__:null
 	,StandardDerivatives: {_hx_name:"StandardDerivatives",_hx_index:0,__enum__:"h3d.impl.Feature",toString:$estr}
 	,FloatTextures: {_hx_name:"FloatTextures",_hx_index:1,__enum__:"h3d.impl.Feature",toString:$estr}
 	,AllocDepthBuffer: {_hx_name:"AllocDepthBuffer",_hx_index:2,__enum__:"h3d.impl.Feature",toString:$estr}
@@ -16578,7 +16674,7 @@ var h3d_impl_Feature = $hxEnums["h3d.impl.Feature"] = { __ename__:true,__constru
 };
 h3d_impl_Feature.__constructs__ = [h3d_impl_Feature.StandardDerivatives,h3d_impl_Feature.FloatTextures,h3d_impl_Feature.AllocDepthBuffer,h3d_impl_Feature.HardwareAccelerated,h3d_impl_Feature.MultipleRenderTargets,h3d_impl_Feature.Queries,h3d_impl_Feature.SRGBTextures,h3d_impl_Feature.ShaderModel3,h3d_impl_Feature.BottomLeftCoords,h3d_impl_Feature.Wireframe,h3d_impl_Feature.InstancedRendering];
 h3d_impl_Feature.__empty_constructs__ = [h3d_impl_Feature.StandardDerivatives,h3d_impl_Feature.FloatTextures,h3d_impl_Feature.AllocDepthBuffer,h3d_impl_Feature.HardwareAccelerated,h3d_impl_Feature.MultipleRenderTargets,h3d_impl_Feature.Queries,h3d_impl_Feature.SRGBTextures,h3d_impl_Feature.ShaderModel3,h3d_impl_Feature.BottomLeftCoords,h3d_impl_Feature.Wireframe,h3d_impl_Feature.InstancedRendering];
-var h3d_impl_RenderFlag = $hxEnums["h3d.impl.RenderFlag"] = { __ename__:true,__constructs__:null
+var h3d_impl_RenderFlag = $hxEnums["h3d.impl.RenderFlag"] = { __ename__:"h3d.impl.RenderFlag",__constructs__:null
 	,CameraHandness: {_hx_name:"CameraHandness",_hx_index:0,__enum__:"h3d.impl.RenderFlag",toString:$estr}
 };
 h3d_impl_RenderFlag.__constructs__ = [h3d_impl_RenderFlag.CameraHandness];
@@ -18898,7 +18994,7 @@ h3d_mat_BaseMaterial.prototype = $extend(hxd_impl_AnyProps.prototype,{
 	}
 	,__class__: h3d_mat_BaseMaterial
 });
-var h3d_mat_Face = $hxEnums["h3d.mat.Face"] = { __ename__:true,__constructs__:null
+var h3d_mat_Face = $hxEnums["h3d.mat.Face"] = { __ename__:"h3d.mat.Face",__constructs__:null
 	,None: {_hx_name:"None",_hx_index:0,__enum__:"h3d.mat.Face",toString:$estr}
 	,Back: {_hx_name:"Back",_hx_index:1,__enum__:"h3d.mat.Face",toString:$estr}
 	,Front: {_hx_name:"Front",_hx_index:2,__enum__:"h3d.mat.Face",toString:$estr}
@@ -18906,7 +19002,7 @@ var h3d_mat_Face = $hxEnums["h3d.mat.Face"] = { __ename__:true,__constructs__:nu
 };
 h3d_mat_Face.__constructs__ = [h3d_mat_Face.None,h3d_mat_Face.Back,h3d_mat_Face.Front,h3d_mat_Face.Both];
 h3d_mat_Face.__empty_constructs__ = [h3d_mat_Face.None,h3d_mat_Face.Back,h3d_mat_Face.Front,h3d_mat_Face.Both];
-var h3d_mat_Blend = $hxEnums["h3d.mat.Blend"] = { __ename__:true,__constructs__:null
+var h3d_mat_Blend = $hxEnums["h3d.mat.Blend"] = { __ename__:"h3d.mat.Blend",__constructs__:null
 	,One: {_hx_name:"One",_hx_index:0,__enum__:"h3d.mat.Blend",toString:$estr}
 	,Zero: {_hx_name:"Zero",_hx_index:1,__enum__:"h3d.mat.Blend",toString:$estr}
 	,SrcAlpha: {_hx_name:"SrcAlpha",_hx_index:2,__enum__:"h3d.mat.Blend",toString:$estr}
@@ -18925,7 +19021,7 @@ var h3d_mat_Blend = $hxEnums["h3d.mat.Blend"] = { __ename__:true,__constructs__:
 };
 h3d_mat_Blend.__constructs__ = [h3d_mat_Blend.One,h3d_mat_Blend.Zero,h3d_mat_Blend.SrcAlpha,h3d_mat_Blend.SrcColor,h3d_mat_Blend.DstAlpha,h3d_mat_Blend.DstColor,h3d_mat_Blend.OneMinusSrcAlpha,h3d_mat_Blend.OneMinusSrcColor,h3d_mat_Blend.OneMinusDstAlpha,h3d_mat_Blend.OneMinusDstColor,h3d_mat_Blend.ConstantColor,h3d_mat_Blend.ConstantAlpha,h3d_mat_Blend.OneMinusConstantColor,h3d_mat_Blend.OneMinusConstantAlpha,h3d_mat_Blend.SrcAlphaSaturate];
 h3d_mat_Blend.__empty_constructs__ = [h3d_mat_Blend.One,h3d_mat_Blend.Zero,h3d_mat_Blend.SrcAlpha,h3d_mat_Blend.SrcColor,h3d_mat_Blend.DstAlpha,h3d_mat_Blend.DstColor,h3d_mat_Blend.OneMinusSrcAlpha,h3d_mat_Blend.OneMinusSrcColor,h3d_mat_Blend.OneMinusDstAlpha,h3d_mat_Blend.OneMinusDstColor,h3d_mat_Blend.ConstantColor,h3d_mat_Blend.ConstantAlpha,h3d_mat_Blend.OneMinusConstantColor,h3d_mat_Blend.OneMinusConstantAlpha,h3d_mat_Blend.SrcAlphaSaturate];
-var h3d_mat_Compare = $hxEnums["h3d.mat.Compare"] = { __ename__:true,__constructs__:null
+var h3d_mat_Compare = $hxEnums["h3d.mat.Compare"] = { __ename__:"h3d.mat.Compare",__constructs__:null
 	,Always: {_hx_name:"Always",_hx_index:0,__enum__:"h3d.mat.Compare",toString:$estr}
 	,Never: {_hx_name:"Never",_hx_index:1,__enum__:"h3d.mat.Compare",toString:$estr}
 	,Equal: {_hx_name:"Equal",_hx_index:2,__enum__:"h3d.mat.Compare",toString:$estr}
@@ -18937,7 +19033,7 @@ var h3d_mat_Compare = $hxEnums["h3d.mat.Compare"] = { __ename__:true,__construct
 };
 h3d_mat_Compare.__constructs__ = [h3d_mat_Compare.Always,h3d_mat_Compare.Never,h3d_mat_Compare.Equal,h3d_mat_Compare.NotEqual,h3d_mat_Compare.Greater,h3d_mat_Compare.GreaterEqual,h3d_mat_Compare.Less,h3d_mat_Compare.LessEqual];
 h3d_mat_Compare.__empty_constructs__ = [h3d_mat_Compare.Always,h3d_mat_Compare.Never,h3d_mat_Compare.Equal,h3d_mat_Compare.NotEqual,h3d_mat_Compare.Greater,h3d_mat_Compare.GreaterEqual,h3d_mat_Compare.Less,h3d_mat_Compare.LessEqual];
-var h3d_mat_StencilOp = $hxEnums["h3d.mat.StencilOp"] = { __ename__:true,__constructs__:null
+var h3d_mat_StencilOp = $hxEnums["h3d.mat.StencilOp"] = { __ename__:"h3d.mat.StencilOp",__constructs__:null
 	,Keep: {_hx_name:"Keep",_hx_index:0,__enum__:"h3d.mat.StencilOp",toString:$estr}
 	,Zero: {_hx_name:"Zero",_hx_index:1,__enum__:"h3d.mat.StencilOp",toString:$estr}
 	,Replace: {_hx_name:"Replace",_hx_index:2,__enum__:"h3d.mat.StencilOp",toString:$estr}
@@ -18949,26 +19045,26 @@ var h3d_mat_StencilOp = $hxEnums["h3d.mat.StencilOp"] = { __ename__:true,__const
 };
 h3d_mat_StencilOp.__constructs__ = [h3d_mat_StencilOp.Keep,h3d_mat_StencilOp.Zero,h3d_mat_StencilOp.Replace,h3d_mat_StencilOp.Increment,h3d_mat_StencilOp.IncrementWrap,h3d_mat_StencilOp.Decrement,h3d_mat_StencilOp.DecrementWrap,h3d_mat_StencilOp.Invert];
 h3d_mat_StencilOp.__empty_constructs__ = [h3d_mat_StencilOp.Keep,h3d_mat_StencilOp.Zero,h3d_mat_StencilOp.Replace,h3d_mat_StencilOp.Increment,h3d_mat_StencilOp.IncrementWrap,h3d_mat_StencilOp.Decrement,h3d_mat_StencilOp.DecrementWrap,h3d_mat_StencilOp.Invert];
-var h3d_mat_MipMap = $hxEnums["h3d.mat.MipMap"] = { __ename__:true,__constructs__:null
+var h3d_mat_MipMap = $hxEnums["h3d.mat.MipMap"] = { __ename__:"h3d.mat.MipMap",__constructs__:null
 	,None: {_hx_name:"None",_hx_index:0,__enum__:"h3d.mat.MipMap",toString:$estr}
 	,Nearest: {_hx_name:"Nearest",_hx_index:1,__enum__:"h3d.mat.MipMap",toString:$estr}
 	,Linear: {_hx_name:"Linear",_hx_index:2,__enum__:"h3d.mat.MipMap",toString:$estr}
 };
 h3d_mat_MipMap.__constructs__ = [h3d_mat_MipMap.None,h3d_mat_MipMap.Nearest,h3d_mat_MipMap.Linear];
 h3d_mat_MipMap.__empty_constructs__ = [h3d_mat_MipMap.None,h3d_mat_MipMap.Nearest,h3d_mat_MipMap.Linear];
-var h3d_mat_Filter = $hxEnums["h3d.mat.Filter"] = { __ename__:true,__constructs__:null
+var h3d_mat_Filter = $hxEnums["h3d.mat.Filter"] = { __ename__:"h3d.mat.Filter",__constructs__:null
 	,Nearest: {_hx_name:"Nearest",_hx_index:0,__enum__:"h3d.mat.Filter",toString:$estr}
 	,Linear: {_hx_name:"Linear",_hx_index:1,__enum__:"h3d.mat.Filter",toString:$estr}
 };
 h3d_mat_Filter.__constructs__ = [h3d_mat_Filter.Nearest,h3d_mat_Filter.Linear];
 h3d_mat_Filter.__empty_constructs__ = [h3d_mat_Filter.Nearest,h3d_mat_Filter.Linear];
-var h3d_mat_Wrap = $hxEnums["h3d.mat.Wrap"] = { __ename__:true,__constructs__:null
+var h3d_mat_Wrap = $hxEnums["h3d.mat.Wrap"] = { __ename__:"h3d.mat.Wrap",__constructs__:null
 	,Clamp: {_hx_name:"Clamp",_hx_index:0,__enum__:"h3d.mat.Wrap",toString:$estr}
 	,Repeat: {_hx_name:"Repeat",_hx_index:1,__enum__:"h3d.mat.Wrap",toString:$estr}
 };
 h3d_mat_Wrap.__constructs__ = [h3d_mat_Wrap.Clamp,h3d_mat_Wrap.Repeat];
 h3d_mat_Wrap.__empty_constructs__ = [h3d_mat_Wrap.Clamp,h3d_mat_Wrap.Repeat];
-var h3d_mat_Operation = $hxEnums["h3d.mat.Operation"] = { __ename__:true,__constructs__:null
+var h3d_mat_Operation = $hxEnums["h3d.mat.Operation"] = { __ename__:"h3d.mat.Operation",__constructs__:null
 	,Add: {_hx_name:"Add",_hx_index:0,__enum__:"h3d.mat.Operation",toString:$estr}
 	,Sub: {_hx_name:"Sub",_hx_index:1,__enum__:"h3d.mat.Operation",toString:$estr}
 	,ReverseSub: {_hx_name:"ReverseSub",_hx_index:2,__enum__:"h3d.mat.Operation",toString:$estr}
@@ -18977,7 +19073,7 @@ var h3d_mat_Operation = $hxEnums["h3d.mat.Operation"] = { __ename__:true,__const
 };
 h3d_mat_Operation.__constructs__ = [h3d_mat_Operation.Add,h3d_mat_Operation.Sub,h3d_mat_Operation.ReverseSub,h3d_mat_Operation.Min,h3d_mat_Operation.Max];
 h3d_mat_Operation.__empty_constructs__ = [h3d_mat_Operation.Add,h3d_mat_Operation.Sub,h3d_mat_Operation.ReverseSub,h3d_mat_Operation.Min,h3d_mat_Operation.Max];
-var h3d_mat_TextureFlags = $hxEnums["h3d.mat.TextureFlags"] = { __ename__:true,__constructs__:null
+var h3d_mat_TextureFlags = $hxEnums["h3d.mat.TextureFlags"] = { __ename__:"h3d.mat.TextureFlags",__constructs__:null
 	,Target: {_hx_name:"Target",_hx_index:0,__enum__:"h3d.mat.TextureFlags",toString:$estr}
 	,Cube: {_hx_name:"Cube",_hx_index:1,__enum__:"h3d.mat.TextureFlags",toString:$estr}
 	,MipMapped: {_hx_name:"MipMapped",_hx_index:2,__enum__:"h3d.mat.TextureFlags",toString:$estr}
@@ -19010,7 +19106,7 @@ h3d_mat_Defaults.get_shadowShader = function() {
 h3d_mat_Defaults.set_shadowShader = function(s) {
 	return h3d_mat_Defaults.shadowShader = s;
 };
-var h3d_mat_DepthFormat = $hxEnums["h3d.mat.DepthFormat"] = { __ename__:true,__constructs__:null
+var h3d_mat_DepthFormat = $hxEnums["h3d.mat.DepthFormat"] = { __ename__:"h3d.mat.DepthFormat",__constructs__:null
 	,Depth16: {_hx_name:"Depth16",_hx_index:0,__enum__:"h3d.mat.DepthFormat",toString:$estr}
 	,Depth24: {_hx_name:"Depth24",_hx_index:1,__enum__:"h3d.mat.DepthFormat",toString:$estr}
 	,Depth24Stencil8: {_hx_name:"Depth24Stencil8",_hx_index:2,__enum__:"h3d.mat.DepthFormat",toString:$estr}
@@ -19521,7 +19617,7 @@ h3d_mat_Stencil.prototype = {
 	,__class__: h3d_mat_Stencil
 	,__properties__: {set_backDPfail:"set_backDPfail",set_backSTfail:"set_backSTfail",set_backPass:"set_backPass",set_backTest:"set_backTest",set_frontDPfail:"set_frontDPfail",set_frontSTfail:"set_frontSTfail",set_frontPass:"set_frontPass",set_frontTest:"set_frontTest",set_reference:"set_reference",set_writeMask:"set_writeMask",set_readMask:"set_readMask"}
 };
-var hxd_PixelFormat = $hxEnums["hxd.PixelFormat"] = { __ename__:true,__constructs__:null
+var hxd_PixelFormat = $hxEnums["hxd.PixelFormat"] = { __ename__:"hxd.PixelFormat",__constructs__:null
 	,ARGB: {_hx_name:"ARGB",_hx_index:0,__enum__:"hxd.PixelFormat",toString:$estr}
 	,BGRA: {_hx_name:"BGRA",_hx_index:1,__enum__:"hxd.PixelFormat",toString:$estr}
 	,RGBA: {_hx_name:"RGBA",_hx_index:2,__enum__:"hxd.PixelFormat",toString:$estr}
@@ -23427,7 +23523,7 @@ h3d_pass_ShaderManager.prototype = {
 	}
 	,__class__: h3d_pass_ShaderManager
 };
-var h3d_pass_RenderMode = $hxEnums["h3d.pass.RenderMode"] = { __ename__:true,__constructs__:null
+var h3d_pass_RenderMode = $hxEnums["h3d.pass.RenderMode"] = { __ename__:"h3d.pass.RenderMode",__constructs__:null
 	,None: {_hx_name:"None",_hx_index:0,__enum__:"h3d.pass.RenderMode",toString:$estr}
 	,Static: {_hx_name:"Static",_hx_index:1,__enum__:"h3d.pass.RenderMode",toString:$estr}
 	,Dynamic: {_hx_name:"Dynamic",_hx_index:2,__enum__:"h3d.pass.RenderMode",toString:$estr}
@@ -23435,7 +23531,7 @@ var h3d_pass_RenderMode = $hxEnums["h3d.pass.RenderMode"] = { __ename__:true,__c
 };
 h3d_pass_RenderMode.__constructs__ = [h3d_pass_RenderMode.None,h3d_pass_RenderMode.Static,h3d_pass_RenderMode.Dynamic,h3d_pass_RenderMode.Mixed];
 h3d_pass_RenderMode.__empty_constructs__ = [h3d_pass_RenderMode.None,h3d_pass_RenderMode.Static,h3d_pass_RenderMode.Dynamic,h3d_pass_RenderMode.Mixed];
-var h3d_pass_ShadowSamplingKind = $hxEnums["h3d.pass.ShadowSamplingKind"] = { __ename__:true,__constructs__:null
+var h3d_pass_ShadowSamplingKind = $hxEnums["h3d.pass.ShadowSamplingKind"] = { __ename__:"h3d.pass.ShadowSamplingKind",__constructs__:null
 	,None: {_hx_name:"None",_hx_index:0,__enum__:"h3d.pass.ShadowSamplingKind",toString:$estr}
 	,PCF: {_hx_name:"PCF",_hx_index:1,__enum__:"h3d.pass.ShadowSamplingKind",toString:$estr}
 	,ESM: {_hx_name:"ESM",_hx_index:2,__enum__:"h3d.pass.ShadowSamplingKind",toString:$estr}
@@ -27169,6 +27265,301 @@ haxe_MainLoop.tick = function() {
 	}
 	return wait;
 };
+var haxe_Serializer = function() {
+	this.buf = new StringBuf();
+	this.cache = [];
+	this.useCache = haxe_Serializer.USE_CACHE;
+	this.useEnumIndex = haxe_Serializer.USE_ENUM_INDEX;
+	this.shash = new haxe_ds_StringMap();
+	this.scount = 0;
+};
+$hxClasses["haxe.Serializer"] = haxe_Serializer;
+haxe_Serializer.__name__ = "haxe.Serializer";
+haxe_Serializer.run = function(v) {
+	var s = new haxe_Serializer();
+	s.serialize(v);
+	return s.toString();
+};
+haxe_Serializer.prototype = {
+	toString: function() {
+		return this.buf.b;
+	}
+	,serializeString: function(s) {
+		var x = this.shash.h[s];
+		if(x != null) {
+			this.buf.b += "R";
+			this.buf.b += x == null ? "null" : "" + x;
+			return;
+		}
+		this.shash.h[s] = this.scount++;
+		this.buf.b += "y";
+		s = encodeURIComponent(s);
+		this.buf.b += Std.string(s.length);
+		this.buf.b += ":";
+		this.buf.b += s == null ? "null" : "" + s;
+	}
+	,serializeRef: function(v) {
+		var vt = typeof(v);
+		var _g = 0;
+		var _g1 = this.cache.length;
+		while(_g < _g1) {
+			var i = _g++;
+			var ci = this.cache[i];
+			if(typeof(ci) == vt && ci == v) {
+				this.buf.b += "r";
+				this.buf.b += i == null ? "null" : "" + i;
+				return true;
+			}
+		}
+		this.cache.push(v);
+		return false;
+	}
+	,serializeFields: function(v) {
+		var _g = 0;
+		var _g1 = Reflect.fields(v);
+		while(_g < _g1.length) {
+			var f = _g1[_g];
+			++_g;
+			this.serializeString(f);
+			this.serialize(Reflect.field(v,f));
+		}
+		this.buf.b += "g";
+	}
+	,serialize: function(v) {
+		var _g = Type.typeof(v);
+		switch(_g._hx_index) {
+		case 0:
+			this.buf.b += "n";
+			break;
+		case 1:
+			var v1 = v;
+			if(v1 == 0) {
+				this.buf.b += "z";
+				return;
+			}
+			this.buf.b += "i";
+			this.buf.b += v1 == null ? "null" : "" + v1;
+			break;
+		case 2:
+			var v1 = v;
+			if(isNaN(v1)) {
+				this.buf.b += "k";
+			} else if(!isFinite(v1)) {
+				this.buf.b += v1 < 0 ? "m" : "p";
+			} else {
+				this.buf.b += "d";
+				this.buf.b += v1 == null ? "null" : "" + v1;
+			}
+			break;
+		case 3:
+			this.buf.b += v ? "t" : "f";
+			break;
+		case 4:
+			if(js_Boot.__instanceof(v,Class)) {
+				var className = v.__name__;
+				this.buf.b += "A";
+				this.serializeString(className);
+			} else if(js_Boot.__instanceof(v,Enum)) {
+				this.buf.b += "B";
+				this.serializeString(v.__ename__);
+			} else {
+				if(this.useCache && this.serializeRef(v)) {
+					return;
+				}
+				this.buf.b += "o";
+				this.serializeFields(v);
+			}
+			break;
+		case 5:
+			throw haxe_Exception.thrown("Cannot serialize function");
+		case 6:
+			var c = _g.c;
+			if(c == String) {
+				this.serializeString(v);
+				return;
+			}
+			if(this.useCache && this.serializeRef(v)) {
+				return;
+			}
+			switch(c) {
+			case Array:
+				var ucount = 0;
+				this.buf.b += "a";
+				var _g1 = 0;
+				var _g2 = v["length"];
+				while(_g1 < _g2) {
+					var i = _g1++;
+					if(v[i] == null) {
+						++ucount;
+					} else {
+						if(ucount > 0) {
+							if(ucount == 1) {
+								this.buf.b += "n";
+							} else {
+								this.buf.b += "u";
+								this.buf.b += ucount == null ? "null" : "" + ucount;
+							}
+							ucount = 0;
+						}
+						this.serialize(v[i]);
+					}
+				}
+				if(ucount > 0) {
+					if(ucount == 1) {
+						this.buf.b += "n";
+					} else {
+						this.buf.b += "u";
+						this.buf.b += ucount == null ? "null" : "" + ucount;
+					}
+				}
+				this.buf.b += "h";
+				break;
+			case Date:
+				this.buf.b += "v";
+				this.buf.b += Std.string(v.getTime());
+				break;
+			case haxe_ds_IntMap:
+				this.buf.b += "q";
+				var v1 = v;
+				var k = v1.keys();
+				while(k.hasNext()) {
+					var k1 = k.next();
+					this.buf.b += ":";
+					this.buf.b += k1 == null ? "null" : "" + k1;
+					this.serialize(v1.h[k1]);
+				}
+				this.buf.b += "h";
+				break;
+			case haxe_ds_List:
+				this.buf.b += "l";
+				var _g_head = v.h;
+				while(_g_head != null) {
+					var val = _g_head.item;
+					_g_head = _g_head.next;
+					this.serialize(val);
+				}
+				this.buf.b += "h";
+				break;
+			case haxe_ds_ObjectMap:
+				this.buf.b += "M";
+				var v1 = v;
+				var k = v1.keys();
+				while(k.hasNext()) {
+					var k1 = k.next();
+					var id = Reflect.field(k1,"__id__");
+					Reflect.deleteField(k1,"__id__");
+					this.serialize(k1);
+					k1["__id__"] = id;
+					this.serialize(v1.h[k1.__id__]);
+				}
+				this.buf.b += "h";
+				break;
+			case haxe_ds_StringMap:
+				this.buf.b += "b";
+				var v1 = v;
+				var _g_keys = Object.keys(v1.h);
+				var _g_length = _g_keys.length;
+				var _g_current = 0;
+				while(_g_current < _g_length) {
+					var k = _g_keys[_g_current++];
+					this.serializeString(k);
+					this.serialize(v1.h[k]);
+				}
+				this.buf.b += "h";
+				break;
+			case haxe_io_Bytes:
+				var v1 = v;
+				this.buf.b += "s";
+				this.buf.b += Std.string(Math.ceil(v1.length * 8 / 6));
+				this.buf.b += ":";
+				var i = 0;
+				var max = v1.length - 2;
+				var b64 = haxe_Serializer.BASE64_CODES;
+				if(b64 == null) {
+					b64 = new Array(haxe_Serializer.BASE64.length);
+					var _g1 = 0;
+					var _g2 = haxe_Serializer.BASE64.length;
+					while(_g1 < _g2) {
+						var i1 = _g1++;
+						b64[i1] = HxOverrides.cca(haxe_Serializer.BASE64,i1);
+					}
+					haxe_Serializer.BASE64_CODES = b64;
+				}
+				while(i < max) {
+					var b1 = v1.b[i++];
+					var b2 = v1.b[i++];
+					var b3 = v1.b[i++];
+					this.buf.b += String.fromCodePoint(b64[b1 >> 2]);
+					this.buf.b += String.fromCodePoint(b64[(b1 << 4 | b2 >> 4) & 63]);
+					this.buf.b += String.fromCodePoint(b64[(b2 << 2 | b3 >> 6) & 63]);
+					this.buf.b += String.fromCodePoint(b64[b3 & 63]);
+				}
+				if(i == max) {
+					var b1 = v1.b[i++];
+					var b2 = v1.b[i++];
+					this.buf.b += String.fromCodePoint(b64[b1 >> 2]);
+					this.buf.b += String.fromCodePoint(b64[(b1 << 4 | b2 >> 4) & 63]);
+					this.buf.b += String.fromCodePoint(b64[b2 << 2 & 63]);
+				} else if(i == max + 1) {
+					var b1 = v1.b[i++];
+					this.buf.b += String.fromCodePoint(b64[b1 >> 2]);
+					this.buf.b += String.fromCodePoint(b64[b1 << 4 & 63]);
+				}
+				break;
+			default:
+				if(this.useCache) {
+					this.cache.pop();
+				}
+				if(v.hxSerialize != null) {
+					this.buf.b += "C";
+					this.serializeString(c.__name__);
+					if(this.useCache) {
+						this.cache.push(v);
+					}
+					v.hxSerialize(this);
+					this.buf.b += "g";
+				} else {
+					this.buf.b += "c";
+					this.serializeString(c.__name__);
+					if(this.useCache) {
+						this.cache.push(v);
+					}
+					this.serializeFields(v);
+				}
+			}
+			break;
+		case 7:
+			var e = _g.e;
+			if(this.useCache) {
+				if(this.serializeRef(v)) {
+					return;
+				}
+				this.cache.pop();
+			}
+			this.buf.b += Std.string(this.useEnumIndex ? "j" : "w");
+			this.serializeString(e.__ename__);
+			if(this.useEnumIndex) {
+				this.buf.b += ":";
+				this.buf.b += Std.string(v._hx_index);
+			} else {
+				var e = v;
+				this.serializeString($hxEnums[e.__enum__].__constructs__[e._hx_index]._hx_name);
+			}
+			this.buf.b += ":";
+			var params = Type.enumParameters(v);
+			this.buf.b += Std.string(params.length);
+			var _g = 0;
+			while(_g < params.length) this.serialize(params[_g++]);
+			if(this.useCache) {
+				this.cache.push(v);
+			}
+			break;
+		default:
+			throw haxe_Exception.thrown("Cannot serialize " + Std.string(v));
+		}
+	}
+	,__class__: haxe_Serializer
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -27739,7 +28130,7 @@ haxe_io_Bytes.prototype = {
 	}
 	,__class__: haxe_io_Bytes
 };
-var haxe_io_Encoding = $hxEnums["haxe.io.Encoding"] = { __ename__:true,__constructs__:null
+var haxe_io_Encoding = $hxEnums["haxe.io.Encoding"] = { __ename__:"haxe.io.Encoding",__constructs__:null
 	,UTF8: {_hx_name:"UTF8",_hx_index:0,__enum__:"haxe.io.Encoding",toString:$estr}
 	,RawNative: {_hx_name:"RawNative",_hx_index:1,__enum__:"haxe.io.Encoding",toString:$estr}
 };
@@ -28011,6 +28402,104 @@ haxe_crypto_Md5.prototype = {
 		return [a,b,c,d];
 	}
 	,__class__: haxe_crypto_Md5
+};
+var haxe_crypto_Sha1 = function() {
+};
+$hxClasses["haxe.crypto.Sha1"] = haxe_crypto_Sha1;
+haxe_crypto_Sha1.__name__ = "haxe.crypto.Sha1";
+haxe_crypto_Sha1.encode = function(s) {
+	var sh = new haxe_crypto_Sha1();
+	return sh.hex(sh.doEncode(haxe_crypto_Sha1.str2blks(s)));
+};
+haxe_crypto_Sha1.str2blks = function(s) {
+	var s1 = haxe_io_Bytes.ofString(s);
+	var nblk = (s1.length + 8 >> 6) + 1;
+	var blks = [];
+	var _g = 0;
+	var _g1 = nblk * 16;
+	while(_g < _g1) blks[_g++] = 0;
+	var _g = 0;
+	var _g1 = s1.length;
+	while(_g < _g1) {
+		var i = _g++;
+		blks[i >> 2] |= s1.b[i] << 24 - ((i & 3) << 3);
+	}
+	var i = s1.length;
+	blks[i >> 2] |= 128 << 24 - ((i & 3) << 3);
+	blks[nblk * 16 - 1] = s1.length * 8;
+	return blks;
+};
+haxe_crypto_Sha1.prototype = {
+	doEncode: function(x) {
+		var w = [];
+		var a = 1732584193;
+		var b = -271733879;
+		var c = -1732584194;
+		var d = 271733878;
+		var e = -1009589776;
+		var i = 0;
+		while(i < x.length) {
+			var olda = a;
+			var oldb = b;
+			var oldc = c;
+			var oldd = d;
+			var olde = e;
+			var j = 0;
+			while(j < 80) {
+				if(j < 16) {
+					w[j] = x[i + j];
+				} else {
+					var num = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
+					w[j] = num << 1 | num >>> 31;
+				}
+				var t = (a << 5 | a >>> 27) + this.ft(j,b,c,d) + e + w[j];
+				e = d;
+				d = c;
+				c = b << 30 | b >>> 2;
+				b = a;
+				a = t + this.kt(j);
+				++j;
+			}
+			a += olda;
+			b += oldb;
+			c += oldc;
+			d += oldd;
+			e += olde;
+			i += 16;
+		}
+		return [a,b,c,d,e];
+	}
+	,ft: function(t,b,c,d) {
+		if(t < 20) {
+			return b & c | ~b & d;
+		}
+		if(t < 40) {
+			return b ^ c ^ d;
+		}
+		if(t < 60) {
+			return b & c | b & d | c & d;
+		}
+		return b ^ c ^ d;
+	}
+	,kt: function(t) {
+		if(t < 20) {
+			return 1518500249;
+		}
+		if(t < 40) {
+			return 1859775393;
+		}
+		if(t < 60) {
+			return -1894007588;
+		}
+		return -899497514;
+	}
+	,hex: function(a) {
+		var str = "";
+		var _g = 0;
+		while(_g < a.length) str += StringTools.hex(a[_g++],8);
+		return str.toLowerCase();
+	}
+	,__class__: haxe_crypto_Sha1
 };
 var haxe_ds_ArraySort = function() { };
 $hxClasses["haxe.ds.ArraySort"] = haxe_ds_ArraySort;
@@ -28406,7 +28895,7 @@ haxe_ds_ObjectMap.prototype = {
 	}
 	,__class__: haxe_ds_ObjectMap
 };
-var haxe_ds_Option = $hxEnums["haxe.ds.Option"] = { __ename__:true,__constructs__:null
+var haxe_ds_Option = $hxEnums["haxe.ds.Option"] = { __ename__:"haxe.ds.Option",__constructs__:null
 	,Some: ($_=function(v) { return {_hx_index:0,v:v,__enum__:"haxe.ds.Option",toString:$estr}; },$_._hx_name="Some",$_.__params__ = ["v"],$_)
 	,None: {_hx_name:"None",_hx_index:1,__enum__:"haxe.ds.Option",toString:$estr}
 };
@@ -28773,7 +29262,7 @@ haxe_io_Eof.prototype = {
 	}
 	,__class__: haxe_io_Eof
 };
-var haxe_io_Error = $hxEnums["haxe.io.Error"] = { __ename__:true,__constructs__:null
+var haxe_io_Error = $hxEnums["haxe.io.Error"] = { __ename__:"haxe.io.Error",__constructs__:null
 	,Blocked: {_hx_name:"Blocked",_hx_index:0,__enum__:"haxe.io.Error",toString:$estr}
 	,Overflow: {_hx_name:"Overflow",_hx_index:1,__enum__:"haxe.io.Error",toString:$estr}
 	,OutsideBounds: {_hx_name:"OutsideBounds",_hx_index:2,__enum__:"haxe.io.Error",toString:$estr}
@@ -28968,7 +29457,7 @@ haxe_iterators_ArrayIterator.prototype = {
 	}
 	,__class__: haxe_iterators_ArrayIterator
 };
-var haxe_macro_Binop = $hxEnums["haxe.macro.Binop"] = { __ename__:true,__constructs__:null
+var haxe_macro_Binop = $hxEnums["haxe.macro.Binop"] = { __ename__:"haxe.macro.Binop",__constructs__:null
 	,OpAdd: {_hx_name:"OpAdd",_hx_index:0,__enum__:"haxe.macro.Binop",toString:$estr}
 	,OpMult: {_hx_name:"OpMult",_hx_index:1,__enum__:"haxe.macro.Binop",toString:$estr}
 	,OpDiv: {_hx_name:"OpDiv",_hx_index:2,__enum__:"haxe.macro.Binop",toString:$estr}
@@ -28996,7 +29485,7 @@ var haxe_macro_Binop = $hxEnums["haxe.macro.Binop"] = { __ename__:true,__constru
 };
 haxe_macro_Binop.__constructs__ = [haxe_macro_Binop.OpAdd,haxe_macro_Binop.OpMult,haxe_macro_Binop.OpDiv,haxe_macro_Binop.OpSub,haxe_macro_Binop.OpAssign,haxe_macro_Binop.OpEq,haxe_macro_Binop.OpNotEq,haxe_macro_Binop.OpGt,haxe_macro_Binop.OpGte,haxe_macro_Binop.OpLt,haxe_macro_Binop.OpLte,haxe_macro_Binop.OpAnd,haxe_macro_Binop.OpOr,haxe_macro_Binop.OpXor,haxe_macro_Binop.OpBoolAnd,haxe_macro_Binop.OpBoolOr,haxe_macro_Binop.OpShl,haxe_macro_Binop.OpShr,haxe_macro_Binop.OpUShr,haxe_macro_Binop.OpMod,haxe_macro_Binop.OpAssignOp,haxe_macro_Binop.OpInterval,haxe_macro_Binop.OpArrow,haxe_macro_Binop.OpIn];
 haxe_macro_Binop.__empty_constructs__ = [haxe_macro_Binop.OpAdd,haxe_macro_Binop.OpMult,haxe_macro_Binop.OpDiv,haxe_macro_Binop.OpSub,haxe_macro_Binop.OpAssign,haxe_macro_Binop.OpEq,haxe_macro_Binop.OpNotEq,haxe_macro_Binop.OpGt,haxe_macro_Binop.OpGte,haxe_macro_Binop.OpLt,haxe_macro_Binop.OpLte,haxe_macro_Binop.OpAnd,haxe_macro_Binop.OpOr,haxe_macro_Binop.OpXor,haxe_macro_Binop.OpBoolAnd,haxe_macro_Binop.OpBoolOr,haxe_macro_Binop.OpShl,haxe_macro_Binop.OpShr,haxe_macro_Binop.OpUShr,haxe_macro_Binop.OpMod,haxe_macro_Binop.OpInterval,haxe_macro_Binop.OpArrow,haxe_macro_Binop.OpIn];
-var haxe_macro_Unop = $hxEnums["haxe.macro.Unop"] = { __ename__:true,__constructs__:null
+var haxe_macro_Unop = $hxEnums["haxe.macro.Unop"] = { __ename__:"haxe.macro.Unop",__constructs__:null
 	,OpIncrement: {_hx_name:"OpIncrement",_hx_index:0,__enum__:"haxe.macro.Unop",toString:$estr}
 	,OpDecrement: {_hx_name:"OpDecrement",_hx_index:1,__enum__:"haxe.macro.Unop",toString:$estr}
 	,OpNot: {_hx_name:"OpNot",_hx_index:2,__enum__:"haxe.macro.Unop",toString:$estr}
@@ -29578,7 +30067,7 @@ haxe_xml_Printer.prototype = {
 	}
 	,__class__: haxe_xml_Printer
 };
-var haxe_zip_Huffman = $hxEnums["haxe.zip.Huffman"] = { __ename__:true,__constructs__:null
+var haxe_zip_Huffman = $hxEnums["haxe.zip.Huffman"] = { __ename__:"haxe.zip.Huffman",__constructs__:null
 	,Found: ($_=function(i) { return {_hx_index:0,i:i,__enum__:"haxe.zip.Huffman",toString:$estr}; },$_._hx_name="Found",$_.__params__ = ["i"],$_)
 	,NeedBit: ($_=function(left,right) { return {_hx_index:1,left:left,right:right,__enum__:"haxe.zip.Huffman",toString:$estr}; },$_._hx_name="NeedBit",$_.__params__ = ["left","right"],$_)
 	,NeedBits: ($_=function(n,table) { return {_hx_index:2,n:n,table:table,__enum__:"haxe.zip.Huffman",toString:$estr}; },$_._hx_name="NeedBits",$_.__params__ = ["n","table"],$_)
@@ -29741,7 +30230,7 @@ haxe_zip__$InflateImpl_Window.prototype = {
 	}
 	,__class__: haxe_zip__$InflateImpl_Window
 };
-var haxe_zip__$InflateImpl_State = $hxEnums["haxe.zip._InflateImpl.State"] = { __ename__:true,__constructs__:null
+var haxe_zip__$InflateImpl_State = $hxEnums["haxe.zip._InflateImpl.State"] = { __ename__:"haxe.zip._InflateImpl.State",__constructs__:null
 	,Head: {_hx_name:"Head",_hx_index:0,__enum__:"haxe.zip._InflateImpl.State",toString:$estr}
 	,Block: {_hx_name:"Block",_hx_index:1,__enum__:"haxe.zip._InflateImpl.State",toString:$estr}
 	,CData: {_hx_name:"CData",_hx_index:2,__enum__:"haxe.zip._InflateImpl.State",toString:$estr}
@@ -30198,7 +30687,7 @@ hxd_Charset.prototype = {
 	}
 	,__class__: hxd_Charset
 };
-var hxd_Cursor = $hxEnums["hxd.Cursor"] = { __ename__:true,__constructs__:null
+var hxd_Cursor = $hxEnums["hxd.Cursor"] = { __ename__:"hxd.Cursor",__constructs__:null
 	,Default: {_hx_name:"Default",_hx_index:0,__enum__:"hxd.Cursor",toString:$estr}
 	,Button: {_hx_name:"Button",_hx_index:1,__enum__:"hxd.Cursor",toString:$estr}
 	,Move: {_hx_name:"Move",_hx_index:2,__enum__:"hxd.Cursor",toString:$estr}
@@ -30245,7 +30734,7 @@ hxd_CustomCursor.prototype = {
 	}
 	,__class__: hxd_CustomCursor
 };
-var hxd_EventKind = $hxEnums["hxd.EventKind"] = { __ename__:true,__constructs__:null
+var hxd_EventKind = $hxEnums["hxd.EventKind"] = { __ename__:"hxd.EventKind",__constructs__:null
 	,EPush: {_hx_name:"EPush",_hx_index:0,__enum__:"hxd.EventKind",toString:$estr}
 	,ERelease: {_hx_name:"ERelease",_hx_index:1,__enum__:"hxd.EventKind",toString:$estr}
 	,EMove: {_hx_name:"EMove",_hx_index:2,__enum__:"hxd.EventKind",toString:$estr}
@@ -30331,7 +30820,7 @@ hxd_Key.onEvent = function(e) {
 	default:
 	}
 };
-var hxd_Flags = $hxEnums["hxd.Flags"] = { __ename__:true,__constructs__:null
+var hxd_Flags = $hxEnums["hxd.Flags"] = { __ename__:"hxd.Flags",__constructs__:null
 	,ReadOnly: {_hx_name:"ReadOnly",_hx_index:0,__enum__:"hxd.Flags",toString:$estr}
 	,AlphaPremultiplied: {_hx_name:"AlphaPremultiplied",_hx_index:1,__enum__:"hxd.Flags",toString:$estr}
 	,FlipY: {_hx_name:"FlipY",_hx_index:2,__enum__:"hxd.Flags",toString:$estr}
@@ -30784,6 +31273,82 @@ hxd_Res.get_loader = function() {
 hxd_Res.set_loader = function(l) {
 	return hxd_res_Loader.currentInstance = l;
 };
+var hxd_Save = function() { };
+$hxClasses["hxd.Save"] = hxd_Save;
+hxd_Save.__name__ = "hxd.Save";
+hxd_Save.makeCRC = function(data) {
+	return HxOverrides.substr(haxe_crypto_Sha1.encode(data + haxe_crypto_Sha1.encode(data + hxd_Save.SALT)),4,32);
+};
+hxd_Save.loadData = function(data,checkSum,defValue) {
+	if(checkSum) {
+		if(HxOverrides.cca(data,data.length - 33) != 35) {
+			throw haxe_Exception.thrown("Missing CRC");
+		}
+		var crc = HxOverrides.substr(data,data.length - 32,null);
+		data = HxOverrides.substr(data,0,-33);
+		if(hxd_Save.makeCRC(data) != crc) {
+			throw haxe_Exception.thrown("Invalid CRC");
+		}
+	}
+	var obj = haxe_Unserializer.run(data);
+	if(defValue != null && Reflect.isObject(obj) && Reflect.isObject(defValue)) {
+		var _g = 0;
+		var _g1 = Reflect.fields(defValue);
+		while(_g < _g1.length) {
+			var f = _g1[_g];
+			++_g;
+			if(Object.prototype.hasOwnProperty.call(obj,f)) {
+				continue;
+			}
+			obj[f] = Reflect.field(defValue,f);
+		}
+	}
+	return obj;
+};
+hxd_Save.saveData = function(value,checkSum) {
+	var data = haxe_Serializer.run(value);
+	if(checkSum) {
+		return data + "#" + hxd_Save.makeCRC(data);
+	} else {
+		return data;
+	}
+};
+hxd_Save.load = function(defValue,name,checkSum) {
+	if(checkSum == null) {
+		checkSum = false;
+	}
+	if(name == null) {
+		name = "save";
+	}
+	try {
+		return hxd_Save.loadData(hxd_Save.readSaveData(name),checkSum,defValue);
+	} catch( _g ) {
+		return defValue;
+	}
+};
+hxd_Save.readSaveData = function(name) {
+	return window.localStorage.getItem(name);
+};
+hxd_Save.writeSaveData = function(name,data) {
+	window.localStorage.setItem(name,data);
+};
+hxd_Save.save = function(val,name,checkSum) {
+	if(checkSum == null) {
+		checkSum = false;
+	}
+	if(name == null) {
+		name = "save";
+	}
+	var data = hxd_Save.saveData(val,checkSum);
+	try {
+		if(hxd_Save.readSaveData(name) == data) {
+			return false;
+		}
+	} catch( _g ) {
+	}
+	hxd_Save.writeSaveData(name,data);
+	return true;
+};
 var hxd_SceneEvents = function($window) {
 	this.defaultCursor = hxd_Cursor.Default;
 	this.mouseCheckMove = true;
@@ -31182,7 +31747,7 @@ hxd_SceneEvents.prototype = {
 	}
 	,__class__: hxd_SceneEvents
 };
-var hxd_Platform = $hxEnums["hxd.Platform"] = { __ename__:true,__constructs__:null
+var hxd_Platform = $hxEnums["hxd.Platform"] = { __ename__:"hxd.Platform",__constructs__:null
 	,IOS: {_hx_name:"IOS",_hx_index:0,__enum__:"hxd.Platform",toString:$estr}
 	,Android: {_hx_name:"Android",_hx_index:1,__enum__:"hxd.Platform",toString:$estr}
 	,WebGL: {_hx_name:"WebGL",_hx_index:2,__enum__:"hxd.Platform",toString:$estr}
@@ -31192,7 +31757,7 @@ var hxd_Platform = $hxEnums["hxd.Platform"] = { __ename__:true,__constructs__:nu
 };
 hxd_Platform.__constructs__ = [hxd_Platform.IOS,hxd_Platform.Android,hxd_Platform.WebGL,hxd_Platform.PC,hxd_Platform.Console,hxd_Platform.FlashPlayer];
 hxd_Platform.__empty_constructs__ = [hxd_Platform.IOS,hxd_Platform.Android,hxd_Platform.WebGL,hxd_Platform.PC,hxd_Platform.Console,hxd_Platform.FlashPlayer];
-var hxd_SystemValue = $hxEnums["hxd.SystemValue"] = { __ename__:true,__constructs__:null
+var hxd_SystemValue = $hxEnums["hxd.SystemValue"] = { __ename__:"hxd.SystemValue",__constructs__:null
 	,IsTouch: {_hx_name:"IsTouch",_hx_index:0,__enum__:"hxd.SystemValue",toString:$estr}
 	,IsWindowed: {_hx_name:"IsWindowed",_hx_index:1,__enum__:"hxd.SystemValue",toString:$estr}
 	,IsMobile: {_hx_name:"IsMobile",_hx_index:2,__enum__:"hxd.SystemValue",toString:$estr}
@@ -31785,7 +32350,7 @@ hxd_System.get_platform = function() {
 		return hxd_Platform.PC;
 	}
 };
-var hxd_DisplayMode = $hxEnums["hxd.DisplayMode"] = { __ename__:true,__constructs__:null
+var hxd_DisplayMode = $hxEnums["hxd.DisplayMode"] = { __ename__:"hxd.DisplayMode",__constructs__:null
 	,Windowed: {_hx_name:"Windowed",_hx_index:0,__enum__:"hxd.DisplayMode",toString:$estr}
 	,Borderless: {_hx_name:"Borderless",_hx_index:1,__enum__:"hxd.DisplayMode",toString:$estr}
 	,Fullscreen: {_hx_name:"Fullscreen",_hx_index:2,__enum__:"hxd.DisplayMode",toString:$estr}
@@ -33219,7 +33784,7 @@ hxd_fmt_pak_Data.__name__ = "hxd.fmt.pak.Data";
 hxd_fmt_pak_Data.prototype = {
 	__class__: hxd_fmt_pak_Data
 };
-var hxd_fmt_pak_FileSeekMode = $hxEnums["hxd.fmt.pak.FileSeekMode"] = { __ename__:true,__constructs__:null
+var hxd_fmt_pak_FileSeekMode = $hxEnums["hxd.fmt.pak.FileSeekMode"] = { __ename__:"hxd.fmt.pak.FileSeekMode",__constructs__:null
 	,SeekBegin: {_hx_name:"SeekBegin",_hx_index:0,__enum__:"hxd.fmt.pak.FileSeekMode",toString:$estr}
 	,SeekEnd: {_hx_name:"SeekEnd",_hx_index:1,__enum__:"hxd.fmt.pak.FileSeekMode",toString:$estr}
 	,SeedCurrent: {_hx_name:"SeedCurrent",_hx_index:2,__enum__:"hxd.fmt.pak.FileSeekMode",toString:$estr}
@@ -33812,7 +34377,7 @@ hxd_impl_AsyncLoader.__isInterface__ = true;
 hxd_impl_AsyncLoader.prototype = {
 	__class__: hxd_impl_AsyncLoader
 };
-var hxd_impl_MouseMode = $hxEnums["hxd.impl.MouseMode"] = { __ename__:true,__constructs__:null
+var hxd_impl_MouseMode = $hxEnums["hxd.impl.MouseMode"] = { __ename__:"hxd.impl.MouseMode",__constructs__:null
 	,Absolute: {_hx_name:"Absolute",_hx_index:0,__enum__:"hxd.impl.MouseMode",toString:$estr}
 	,Relative: ($_=function(callback,restorePos) { return {_hx_index:1,callback:callback,restorePos:restorePos,__enum__:"hxd.impl.MouseMode",toString:$estr}; },$_._hx_name="Relative",$_.__params__ = ["callback","restorePos"],$_)
 	,AbsoluteUnbound: ($_=function(restorePos) { return {_hx_index:2,restorePos:restorePos,__enum__:"hxd.impl.MouseMode",toString:$estr}; },$_._hx_name="AbsoluteUnbound",$_.__params__ = ["restorePos"],$_)
@@ -33969,7 +34534,7 @@ hxd_res_ImageFormat.getName = function(this1) {
 		return "HDR";
 	}
 };
-var hxd_res_ImageInfoFlag = $hxEnums["hxd.res.ImageInfoFlag"] = { __ename__:true,__constructs__:null
+var hxd_res_ImageInfoFlag = $hxEnums["hxd.res.ImageInfoFlag"] = { __ename__:"hxd.res.ImageInfoFlag",__constructs__:null
 	,IsCube: {_hx_name:"IsCube",_hx_index:0,__enum__:"hxd.res.ImageInfoFlag",toString:$estr}
 	,Dxt10Header: {_hx_name:"Dxt10Header",_hx_index:1,__enum__:"hxd.res.ImageInfoFlag",toString:$estr}
 };
@@ -34843,7 +35408,7 @@ hxd_res_Loader.prototype = {
 	}
 	,__class__: hxd_res_Loader
 };
-var hxd_res_Filter = $hxEnums["hxd.res.Filter"] = { __ename__:true,__constructs__:null
+var hxd_res_Filter = $hxEnums["hxd.res.Filter"] = { __ename__:"hxd.res.Filter",__constructs__:null
 	,Fast: {_hx_name:"Fast",_hx_index:0,__enum__:"hxd.res.Filter",toString:$estr}
 	,Chromatic: {_hx_name:"Chromatic",_hx_index:1,__enum__:"hxd.res.Filter",toString:$estr}
 };
@@ -36711,7 +37276,7 @@ hxd_snd_ChannelGroup.__super__ = hxd_snd_ChannelBase;
 hxd_snd_ChannelGroup.prototype = $extend(hxd_snd_ChannelBase.prototype,{
 	__class__: hxd_snd_ChannelGroup
 });
-var hxd_snd_SampleFormat = $hxEnums["hxd.snd.SampleFormat"] = { __ename__:true,__constructs__:null
+var hxd_snd_SampleFormat = $hxEnums["hxd.snd.SampleFormat"] = { __ename__:"hxd.snd.SampleFormat",__constructs__:null
 	,UI8: {_hx_name:"UI8",_hx_index:0,__enum__:"hxd.snd.SampleFormat",toString:$estr}
 	,I16: {_hx_name:"I16",_hx_index:1,__enum__:"hxd.snd.SampleFormat",toString:$estr}
 	,F32: {_hx_name:"F32",_hx_index:2,__enum__:"hxd.snd.SampleFormat",toString:$estr}
@@ -36941,7 +37506,7 @@ hxd_snd_EffectDriver.prototype = {
 	}
 	,__class__: hxd_snd_EffectDriver
 };
-var hxd_snd_DriverFeature = $hxEnums["hxd.snd.DriverFeature"] = { __ename__:true,__constructs__:null
+var hxd_snd_DriverFeature = $hxEnums["hxd.snd.DriverFeature"] = { __ename__:"hxd.snd.DriverFeature",__constructs__:null
 	,MasterVolume: {_hx_name:"MasterVolume",_hx_index:0,__enum__:"hxd.snd.DriverFeature",toString:$estr}
 };
 hxd_snd_DriverFeature.__constructs__ = [hxd_snd_DriverFeature.MasterVolume];
@@ -38598,7 +39163,7 @@ hxd_snd_webaudio_SpatializationDriver.prototype = $extend(hxd_snd_EffectDriver.p
 	}
 	,__class__: hxd_snd_webaudio_SpatializationDriver
 });
-var hxsl_Type = $hxEnums["hxsl.Type"] = { __ename__:true,__constructs__:null
+var hxsl_Type = $hxEnums["hxsl.Type"] = { __ename__:"hxsl.Type",__constructs__:null
 	,TVoid: {_hx_name:"TVoid",_hx_index:0,__enum__:"hxsl.Type",toString:$estr}
 	,TInt: {_hx_name:"TInt",_hx_index:1,__enum__:"hxsl.Type",toString:$estr}
 	,TBool: {_hx_name:"TBool",_hx_index:2,__enum__:"hxsl.Type",toString:$estr}
@@ -38621,14 +39186,14 @@ var hxsl_Type = $hxEnums["hxsl.Type"] = { __ename__:true,__constructs__:null
 };
 hxsl_Type.__constructs__ = [hxsl_Type.TVoid,hxsl_Type.TInt,hxsl_Type.TBool,hxsl_Type.TFloat,hxsl_Type.TString,hxsl_Type.TVec,hxsl_Type.TMat3,hxsl_Type.TMat4,hxsl_Type.TMat3x4,hxsl_Type.TBytes,hxsl_Type.TSampler2D,hxsl_Type.TSampler2DArray,hxsl_Type.TSamplerCube,hxsl_Type.TStruct,hxsl_Type.TFun,hxsl_Type.TArray,hxsl_Type.TBuffer,hxsl_Type.TChannel,hxsl_Type.TMat2];
 hxsl_Type.__empty_constructs__ = [hxsl_Type.TVoid,hxsl_Type.TInt,hxsl_Type.TBool,hxsl_Type.TFloat,hxsl_Type.TString,hxsl_Type.TMat3,hxsl_Type.TMat4,hxsl_Type.TMat3x4,hxsl_Type.TSampler2D,hxsl_Type.TSampler2DArray,hxsl_Type.TSamplerCube,hxsl_Type.TMat2];
-var hxsl_VecType = $hxEnums["hxsl.VecType"] = { __ename__:true,__constructs__:null
+var hxsl_VecType = $hxEnums["hxsl.VecType"] = { __ename__:"hxsl.VecType",__constructs__:null
 	,VInt: {_hx_name:"VInt",_hx_index:0,__enum__:"hxsl.VecType",toString:$estr}
 	,VFloat: {_hx_name:"VFloat",_hx_index:1,__enum__:"hxsl.VecType",toString:$estr}
 	,VBool: {_hx_name:"VBool",_hx_index:2,__enum__:"hxsl.VecType",toString:$estr}
 };
 hxsl_VecType.__constructs__ = [hxsl_VecType.VInt,hxsl_VecType.VFloat,hxsl_VecType.VBool];
 hxsl_VecType.__empty_constructs__ = [hxsl_VecType.VInt,hxsl_VecType.VFloat,hxsl_VecType.VBool];
-var hxsl_SizeDecl = $hxEnums["hxsl.SizeDecl"] = { __ename__:true,__constructs__:null
+var hxsl_SizeDecl = $hxEnums["hxsl.SizeDecl"] = { __ename__:"hxsl.SizeDecl",__constructs__:null
 	,SConst: ($_=function(v) { return {_hx_index:0,v:v,__enum__:"hxsl.SizeDecl",toString:$estr}; },$_._hx_name="SConst",$_.__params__ = ["v"],$_)
 	,SVar: ($_=function(v) { return {_hx_index:1,v:v,__enum__:"hxsl.SizeDecl",toString:$estr}; },$_._hx_name="SVar",$_.__params__ = ["v"],$_)
 };
@@ -38649,7 +39214,7 @@ hxsl_Error.prototype = {
 	}
 	,__class__: hxsl_Error
 };
-var hxsl_VarKind = $hxEnums["hxsl.VarKind"] = { __ename__:true,__constructs__:null
+var hxsl_VarKind = $hxEnums["hxsl.VarKind"] = { __ename__:"hxsl.VarKind",__constructs__:null
 	,Global: {_hx_name:"Global",_hx_index:0,__enum__:"hxsl.VarKind",toString:$estr}
 	,Input: {_hx_name:"Input",_hx_index:1,__enum__:"hxsl.VarKind",toString:$estr}
 	,Param: {_hx_name:"Param",_hx_index:2,__enum__:"hxsl.VarKind",toString:$estr}
@@ -38660,7 +39225,7 @@ var hxsl_VarKind = $hxEnums["hxsl.VarKind"] = { __ename__:true,__constructs__:nu
 };
 hxsl_VarKind.__constructs__ = [hxsl_VarKind.Global,hxsl_VarKind.Input,hxsl_VarKind.Param,hxsl_VarKind.Var,hxsl_VarKind.Local,hxsl_VarKind.Output,hxsl_VarKind.Function];
 hxsl_VarKind.__empty_constructs__ = [hxsl_VarKind.Global,hxsl_VarKind.Input,hxsl_VarKind.Param,hxsl_VarKind.Var,hxsl_VarKind.Local,hxsl_VarKind.Output,hxsl_VarKind.Function];
-var hxsl_VarQualifier = $hxEnums["hxsl.VarQualifier"] = { __ename__:true,__constructs__:null
+var hxsl_VarQualifier = $hxEnums["hxsl.VarQualifier"] = { __ename__:"hxsl.VarQualifier",__constructs__:null
 	,Const: ($_=function(max) { return {_hx_index:0,max:max,__enum__:"hxsl.VarQualifier",toString:$estr}; },$_._hx_name="Const",$_.__params__ = ["max"],$_)
 	,Private: {_hx_name:"Private",_hx_index:1,__enum__:"hxsl.VarQualifier",toString:$estr}
 	,Nullable: {_hx_name:"Nullable",_hx_index:2,__enum__:"hxsl.VarQualifier",toString:$estr}
@@ -38677,14 +39242,14 @@ var hxsl_VarQualifier = $hxEnums["hxsl.VarQualifier"] = { __ename__:true,__const
 };
 hxsl_VarQualifier.__constructs__ = [hxsl_VarQualifier.Const,hxsl_VarQualifier.Private,hxsl_VarQualifier.Nullable,hxsl_VarQualifier.PerObject,hxsl_VarQualifier.Name,hxsl_VarQualifier.Shared,hxsl_VarQualifier.Precision,hxsl_VarQualifier.Range,hxsl_VarQualifier.Ignore,hxsl_VarQualifier.PerInstance,hxsl_VarQualifier.Doc,hxsl_VarQualifier.Borrow,hxsl_VarQualifier.Sampler];
 hxsl_VarQualifier.__empty_constructs__ = [hxsl_VarQualifier.Private,hxsl_VarQualifier.Nullable,hxsl_VarQualifier.PerObject,hxsl_VarQualifier.Shared,hxsl_VarQualifier.Ignore];
-var hxsl_Prec = $hxEnums["hxsl.Prec"] = { __ename__:true,__constructs__:null
+var hxsl_Prec = $hxEnums["hxsl.Prec"] = { __ename__:"hxsl.Prec",__constructs__:null
 	,Low: {_hx_name:"Low",_hx_index:0,__enum__:"hxsl.Prec",toString:$estr}
 	,Medium: {_hx_name:"Medium",_hx_index:1,__enum__:"hxsl.Prec",toString:$estr}
 	,High: {_hx_name:"High",_hx_index:2,__enum__:"hxsl.Prec",toString:$estr}
 };
 hxsl_Prec.__constructs__ = [hxsl_Prec.Low,hxsl_Prec.Medium,hxsl_Prec.High];
 hxsl_Prec.__empty_constructs__ = [hxsl_Prec.Low,hxsl_Prec.Medium,hxsl_Prec.High];
-var hxsl_Const = $hxEnums["hxsl.Const"] = { __ename__:true,__constructs__:null
+var hxsl_Const = $hxEnums["hxsl.Const"] = { __ename__:"hxsl.Const",__constructs__:null
 	,CNull: {_hx_name:"CNull",_hx_index:0,__enum__:"hxsl.Const",toString:$estr}
 	,CBool: ($_=function(b) { return {_hx_index:1,b:b,__enum__:"hxsl.Const",toString:$estr}; },$_._hx_name="CBool",$_.__params__ = ["b"],$_)
 	,CInt: ($_=function(v) { return {_hx_index:2,v:v,__enum__:"hxsl.Const",toString:$estr}; },$_._hx_name="CInt",$_.__params__ = ["v"],$_)
@@ -38693,7 +39258,7 @@ var hxsl_Const = $hxEnums["hxsl.Const"] = { __ename__:true,__constructs__:null
 };
 hxsl_Const.__constructs__ = [hxsl_Const.CNull,hxsl_Const.CBool,hxsl_Const.CInt,hxsl_Const.CFloat,hxsl_Const.CString];
 hxsl_Const.__empty_constructs__ = [hxsl_Const.CNull];
-var hxsl_FunctionKind = $hxEnums["hxsl.FunctionKind"] = { __ename__:true,__constructs__:null
+var hxsl_FunctionKind = $hxEnums["hxsl.FunctionKind"] = { __ename__:"hxsl.FunctionKind",__constructs__:null
 	,Vertex: {_hx_name:"Vertex",_hx_index:0,__enum__:"hxsl.FunctionKind",toString:$estr}
 	,Fragment: {_hx_name:"Fragment",_hx_index:1,__enum__:"hxsl.FunctionKind",toString:$estr}
 	,Init: {_hx_name:"Init",_hx_index:2,__enum__:"hxsl.FunctionKind",toString:$estr}
@@ -38701,7 +39266,7 @@ var hxsl_FunctionKind = $hxEnums["hxsl.FunctionKind"] = { __ename__:true,__const
 };
 hxsl_FunctionKind.__constructs__ = [hxsl_FunctionKind.Vertex,hxsl_FunctionKind.Fragment,hxsl_FunctionKind.Init,hxsl_FunctionKind.Helper];
 hxsl_FunctionKind.__empty_constructs__ = [hxsl_FunctionKind.Vertex,hxsl_FunctionKind.Fragment,hxsl_FunctionKind.Init,hxsl_FunctionKind.Helper];
-var hxsl_TGlobal = $hxEnums["hxsl.TGlobal"] = { __ename__:true,__constructs__:null
+var hxsl_TGlobal = $hxEnums["hxsl.TGlobal"] = { __ename__:"hxsl.TGlobal",__constructs__:null
 	,Radians: {_hx_name:"Radians",_hx_index:0,__enum__:"hxsl.TGlobal",toString:$estr}
 	,Degrees: {_hx_name:"Degrees",_hx_index:1,__enum__:"hxsl.TGlobal",toString:$estr}
 	,Sin: {_hx_name:"Sin",_hx_index:2,__enum__:"hxsl.TGlobal",toString:$estr}
@@ -38777,7 +39342,7 @@ var hxsl_TGlobal = $hxEnums["hxsl.TGlobal"] = { __ename__:true,__constructs__:nu
 };
 hxsl_TGlobal.__constructs__ = [hxsl_TGlobal.Radians,hxsl_TGlobal.Degrees,hxsl_TGlobal.Sin,hxsl_TGlobal.Cos,hxsl_TGlobal.Tan,hxsl_TGlobal.Asin,hxsl_TGlobal.Acos,hxsl_TGlobal.Atan,hxsl_TGlobal.Pow,hxsl_TGlobal.Exp,hxsl_TGlobal.Log,hxsl_TGlobal.Exp2,hxsl_TGlobal.Log2,hxsl_TGlobal.Sqrt,hxsl_TGlobal.Inversesqrt,hxsl_TGlobal.Abs,hxsl_TGlobal.Sign,hxsl_TGlobal.Floor,hxsl_TGlobal.Ceil,hxsl_TGlobal.Fract,hxsl_TGlobal.Mod,hxsl_TGlobal.Min,hxsl_TGlobal.Max,hxsl_TGlobal.Clamp,hxsl_TGlobal.Mix,hxsl_TGlobal.Step,hxsl_TGlobal.Smoothstep,hxsl_TGlobal.Length,hxsl_TGlobal.Distance,hxsl_TGlobal.Dot,hxsl_TGlobal.Cross,hxsl_TGlobal.Normalize,hxsl_TGlobal.LReflect,hxsl_TGlobal.Texture,hxsl_TGlobal.TextureLod,hxsl_TGlobal.Texel,hxsl_TGlobal.TextureSize,hxsl_TGlobal.ToInt,hxsl_TGlobal.ToFloat,hxsl_TGlobal.ToBool,hxsl_TGlobal.Vec2,hxsl_TGlobal.Vec3,hxsl_TGlobal.Vec4,hxsl_TGlobal.IVec2,hxsl_TGlobal.IVec3,hxsl_TGlobal.IVec4,hxsl_TGlobal.BVec2,hxsl_TGlobal.BVec3,hxsl_TGlobal.BVec4,hxsl_TGlobal.Mat2,hxsl_TGlobal.Mat3,hxsl_TGlobal.Mat4,hxsl_TGlobal.Mat3x4,hxsl_TGlobal.Saturate,hxsl_TGlobal.Pack,hxsl_TGlobal.Unpack,hxsl_TGlobal.PackNormal,hxsl_TGlobal.UnpackNormal,hxsl_TGlobal.ScreenToUv,hxsl_TGlobal.UvToScreen,hxsl_TGlobal.DFdx,hxsl_TGlobal.DFdy,hxsl_TGlobal.Fwidth,hxsl_TGlobal.ChannelRead,hxsl_TGlobal.ChannelReadLod,hxsl_TGlobal.ChannelFetch,hxsl_TGlobal.ChannelTextureSize,hxsl_TGlobal.Trace,hxsl_TGlobal.VertexID,hxsl_TGlobal.InstanceID,hxsl_TGlobal.FragCoord,hxsl_TGlobal.FrontFacing];
 hxsl_TGlobal.__empty_constructs__ = [hxsl_TGlobal.Radians,hxsl_TGlobal.Degrees,hxsl_TGlobal.Sin,hxsl_TGlobal.Cos,hxsl_TGlobal.Tan,hxsl_TGlobal.Asin,hxsl_TGlobal.Acos,hxsl_TGlobal.Atan,hxsl_TGlobal.Pow,hxsl_TGlobal.Exp,hxsl_TGlobal.Log,hxsl_TGlobal.Exp2,hxsl_TGlobal.Log2,hxsl_TGlobal.Sqrt,hxsl_TGlobal.Inversesqrt,hxsl_TGlobal.Abs,hxsl_TGlobal.Sign,hxsl_TGlobal.Floor,hxsl_TGlobal.Ceil,hxsl_TGlobal.Fract,hxsl_TGlobal.Mod,hxsl_TGlobal.Min,hxsl_TGlobal.Max,hxsl_TGlobal.Clamp,hxsl_TGlobal.Mix,hxsl_TGlobal.Step,hxsl_TGlobal.Smoothstep,hxsl_TGlobal.Length,hxsl_TGlobal.Distance,hxsl_TGlobal.Dot,hxsl_TGlobal.Cross,hxsl_TGlobal.Normalize,hxsl_TGlobal.LReflect,hxsl_TGlobal.Texture,hxsl_TGlobal.TextureLod,hxsl_TGlobal.Texel,hxsl_TGlobal.TextureSize,hxsl_TGlobal.ToInt,hxsl_TGlobal.ToFloat,hxsl_TGlobal.ToBool,hxsl_TGlobal.Vec2,hxsl_TGlobal.Vec3,hxsl_TGlobal.Vec4,hxsl_TGlobal.IVec2,hxsl_TGlobal.IVec3,hxsl_TGlobal.IVec4,hxsl_TGlobal.BVec2,hxsl_TGlobal.BVec3,hxsl_TGlobal.BVec4,hxsl_TGlobal.Mat2,hxsl_TGlobal.Mat3,hxsl_TGlobal.Mat4,hxsl_TGlobal.Mat3x4,hxsl_TGlobal.Saturate,hxsl_TGlobal.Pack,hxsl_TGlobal.Unpack,hxsl_TGlobal.PackNormal,hxsl_TGlobal.UnpackNormal,hxsl_TGlobal.ScreenToUv,hxsl_TGlobal.UvToScreen,hxsl_TGlobal.DFdx,hxsl_TGlobal.DFdy,hxsl_TGlobal.Fwidth,hxsl_TGlobal.ChannelRead,hxsl_TGlobal.ChannelReadLod,hxsl_TGlobal.ChannelFetch,hxsl_TGlobal.ChannelTextureSize,hxsl_TGlobal.Trace,hxsl_TGlobal.VertexID,hxsl_TGlobal.InstanceID,hxsl_TGlobal.FragCoord,hxsl_TGlobal.FrontFacing];
-var hxsl_Component = $hxEnums["hxsl.Component"] = { __ename__:true,__constructs__:null
+var hxsl_Component = $hxEnums["hxsl.Component"] = { __ename__:"hxsl.Component",__constructs__:null
 	,X: {_hx_name:"X",_hx_index:0,__enum__:"hxsl.Component",toString:$estr}
 	,Y: {_hx_name:"Y",_hx_index:1,__enum__:"hxsl.Component",toString:$estr}
 	,Z: {_hx_name:"Z",_hx_index:2,__enum__:"hxsl.Component",toString:$estr}
@@ -38785,7 +39350,7 @@ var hxsl_Component = $hxEnums["hxsl.Component"] = { __ename__:true,__constructs_
 };
 hxsl_Component.__constructs__ = [hxsl_Component.X,hxsl_Component.Y,hxsl_Component.Z,hxsl_Component.W];
 hxsl_Component.__empty_constructs__ = [hxsl_Component.X,hxsl_Component.Y,hxsl_Component.Z,hxsl_Component.W];
-var hxsl_TExprDef = $hxEnums["hxsl.TExprDef"] = { __ename__:true,__constructs__:null
+var hxsl_TExprDef = $hxEnums["hxsl.TExprDef"] = { __ename__:"hxsl.TExprDef",__constructs__:null
 	,TConst: ($_=function(c) { return {_hx_index:0,c:c,__enum__:"hxsl.TExprDef",toString:$estr}; },$_._hx_name="TConst",$_.__params__ = ["c"],$_)
 	,TVar: ($_=function(v) { return {_hx_index:1,v:v,__enum__:"hxsl.TExprDef",toString:$estr}; },$_._hx_name="TVar",$_.__params__ = ["v"],$_)
 	,TGlobal: ($_=function(g) { return {_hx_index:2,g:g,__enum__:"hxsl.TExprDef",toString:$estr}; },$_._hx_name="TGlobal",$_.__params__ = ["g"],$_)
@@ -39886,7 +40451,7 @@ hxsl_Cache.prototype = {
 	}
 	,__class__: hxsl_Cache
 };
-var hxsl_Channel = $hxEnums["hxsl.Channel"] = { __ename__:true,__constructs__:null
+var hxsl_Channel = $hxEnums["hxsl.Channel"] = { __ename__:"hxsl.Channel",__constructs__:null
 	,Unknown: {_hx_name:"Unknown",_hx_index:0,__enum__:"hxsl.Channel",toString:$estr}
 	,R: {_hx_name:"R",_hx_index:1,__enum__:"hxsl.Channel",toString:$estr}
 	,G: {_hx_name:"G",_hx_index:2,__enum__:"hxsl.Channel",toString:$estr}
@@ -42397,7 +42962,7 @@ hxsl__$Flatten_Alloc.__name__ = "hxsl._Flatten.Alloc";
 hxsl__$Flatten_Alloc.prototype = {
 	__class__: hxsl__$Flatten_Alloc
 };
-var hxsl_ARead = $hxEnums["hxsl.ARead"] = { __ename__:true,__constructs__:null
+var hxsl_ARead = $hxEnums["hxsl.ARead"] = { __ename__:"hxsl.ARead",__constructs__:null
 	,AIndex: ($_=function(a) { return {_hx_index:0,a:a,__enum__:"hxsl.ARead",toString:$estr}; },$_._hx_name="AIndex",$_.__params__ = ["a"],$_)
 	,AOffset: ($_=function(a,stride,delta) { return {_hx_index:1,a:a,stride:stride,delta:delta,__enum__:"hxsl.ARead",toString:$estr}; },$_._hx_name="AOffset",$_.__params__ = ["a","stride","delta"],$_)
 };
@@ -45499,7 +46064,7 @@ hxsl_Linker.prototype = {
 	}
 	,__class__: hxsl_Linker
 };
-var hxsl_Output = $hxEnums["hxsl.Output"] = { __ename__:true,__constructs__:null
+var hxsl_Output = $hxEnums["hxsl.Output"] = { __ename__:"hxsl.Output",__constructs__:null
 	,Const: ($_=function(v) { return {_hx_index:0,v:v,__enum__:"hxsl.Output",toString:$estr}; },$_._hx_name="Const",$_.__params__ = ["v"],$_)
 	,Value: ($_=function(v,size) { return {_hx_index:1,v:v,size:size,__enum__:"hxsl.Output",toString:$estr}; },$_._hx_name="Value",$_.__params__ = ["v","size"],$_)
 	,PackNormal: ($_=function(v) { return {_hx_index:2,v:v,__enum__:"hxsl.Output",toString:$estr}; },$_._hx_name="PackNormal",$_.__params__ = ["v"],$_)
@@ -46967,7 +47532,7 @@ js_html__$CanvasElement_CanvasUtil.getContextWebGL = function(canvas,attribs) {
 	return null;
 };
 Math.__name__ = "Math";
-var ldtk_WorldLayout = $hxEnums["ldtk.WorldLayout"] = { __ename__:true,__constructs__:null
+var ldtk_WorldLayout = $hxEnums["ldtk.WorldLayout"] = { __ename__:"ldtk.WorldLayout",__constructs__:null
 	,Free: {_hx_name:"Free",_hx_index:0,__enum__:"ldtk.WorldLayout",toString:$estr}
 	,GridVania: {_hx_name:"GridVania",_hx_index:1,__enum__:"ldtk.WorldLayout",toString:$estr}
 	,LinearHorizontal: {_hx_name:"LinearHorizontal",_hx_index:2,__enum__:"ldtk.WorldLayout",toString:$estr}
@@ -46975,7 +47540,7 @@ var ldtk_WorldLayout = $hxEnums["ldtk.WorldLayout"] = { __ename__:true,__constru
 };
 ldtk_WorldLayout.__constructs__ = [ldtk_WorldLayout.Free,ldtk_WorldLayout.GridVania,ldtk_WorldLayout.LinearHorizontal,ldtk_WorldLayout.LinearVertical];
 ldtk_WorldLayout.__empty_constructs__ = [ldtk_WorldLayout.Free,ldtk_WorldLayout.GridVania,ldtk_WorldLayout.LinearHorizontal,ldtk_WorldLayout.LinearVertical];
-var ldtk_LayerType = $hxEnums["ldtk.LayerType"] = { __ename__:true,__constructs__:null
+var ldtk_LayerType = $hxEnums["ldtk.LayerType"] = { __ename__:"ldtk.LayerType",__constructs__:null
 	,IntGrid: {_hx_name:"IntGrid",_hx_index:0,__enum__:"ldtk.LayerType",toString:$estr}
 	,Entities: {_hx_name:"Entities",_hx_index:1,__enum__:"ldtk.LayerType",toString:$estr}
 	,Tiles: {_hx_name:"Tiles",_hx_index:2,__enum__:"ldtk.LayerType",toString:$estr}
@@ -47001,7 +47566,7 @@ ldtk_Layer_$AutoLayer.__super__ = ldtk_Layer;
 ldtk_Layer_$AutoLayer.prototype = $extend(ldtk_Layer.prototype,{
 	__class__: ldtk_Layer_$AutoLayer
 });
-var ldtk_NeighbourDir = $hxEnums["ldtk.NeighbourDir"] = { __ename__:true,__constructs__:null
+var ldtk_NeighbourDir = $hxEnums["ldtk.NeighbourDir"] = { __ename__:"ldtk.NeighbourDir",__constructs__:null
 	,North: {_hx_name:"North",_hx_index:0,__enum__:"ldtk.NeighbourDir",toString:$estr}
 	,South: {_hx_name:"South",_hx_index:1,__enum__:"ldtk.NeighbourDir",toString:$estr}
 	,West: {_hx_name:"West",_hx_index:2,__enum__:"ldtk.NeighbourDir",toString:$estr}
@@ -47956,6 +48521,17 @@ motion_easing__$Sine_SineEaseIn.prototype = {
 	}
 	,__class__: motion_easing__$Sine_SineEaseIn
 };
+var motion_easing__$Sine_SineEaseInOut = function() {
+};
+$hxClasses["motion.easing._Sine.SineEaseInOut"] = motion_easing__$Sine_SineEaseInOut;
+motion_easing__$Sine_SineEaseInOut.__name__ = "motion.easing._Sine.SineEaseInOut";
+motion_easing__$Sine_SineEaseInOut.__interfaces__ = [motion_easing_IEasing];
+motion_easing__$Sine_SineEaseInOut.prototype = {
+	calculate: function(k) {
+		return -(Math.cos(Math.PI * k) - 1) / 2;
+	}
+	,__class__: motion_easing__$Sine_SineEaseInOut
+};
 var motion_easing_Sine = function() { };
 $hxClasses["motion.easing.Sine"] = motion_easing_Sine;
 motion_easing_Sine.__name__ = "motion.easing.Sine";
@@ -48108,6 +48684,9 @@ haxe_EntryPoint.threadCount = 0;
 haxe_Int32._mul = Math.imul != null ? Math.imul : function(a,b) {
 	return a * (b & 65535) + (a * (b >>> 16) << 16 | 0) | 0;
 };
+haxe_Serializer.USE_CACHE = false;
+haxe_Serializer.USE_ENUM_INDEX = false;
+haxe_Serializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe_Unserializer.DEFAULT_RESOLVER = new haxe__$Unserializer_DefaultResolver();
 haxe_Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe_crypto_Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -48143,6 +48722,7 @@ hxd_Charset.complementChars = (function($this) {
 hxd_Key.initDone = false;
 hxd_Key.keyPressed = [];
 hxd_Key.ALLOW_KEY_REPEAT = false;
+hxd_Save.SALT = "s*al!t";
 hxd_Timer.wantedFPS = 60.;
 hxd_Timer.maxDeltaTime = 0.5;
 hxd_Timer.smoothFactor = 0.95;
@@ -48254,6 +48834,7 @@ motion_Actuate.defaultActuator = motion_actuators_SimpleActuator;
 motion_Actuate.defaultEase = motion_easing_Expo.easeOut;
 motion_Actuate.targetLibraries = new haxe_ds_ObjectMap();
 motion_easing_Sine.easeIn = new motion_easing__$Sine_SineEaseIn();
+motion_easing_Sine.easeInOut = new motion_easing__$Sine_SineEaseInOut();
 {
 	App.main();
 	haxe_EntryPoint.run();
