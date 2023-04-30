@@ -4909,6 +4909,7 @@ var FlyingRes = function(x,y,vel,res,parent) {
 	this.x = x;
 	this.y = y;
 	this.vel = vel;
+	this.res = res;
 	Tiles.spriteBatch.add(this);
 };
 $hxClasses["FlyingRes"] = FlyingRes;
@@ -4954,6 +4955,7 @@ BlackHole.prototype = $extend(h2d_Object.prototype,{
 	__class__: BlackHole
 });
 var Planet = function(x,y,res,parent) {
+	this.deliveryProgress = 0.0;
 	h2d_Bitmap.call(this,Tiles.TILE_PLANET,parent);
 	this.posChanged = true;
 	this.x = x;
@@ -5139,6 +5141,16 @@ PlayView.prototype = $extend(GameState.prototype,{
 			App.instance.switchState(new MenuView());
 		};
 		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Back");
+		var f = new h2d_Flow(this);
+		f.posChanged = true;
+		f.x = 50;
+		f.set_padding(5);
+		f.set_paddingTop(1);
+		f.set_backgroundTile(h2d_Tile.fromColor(3359280));
+		f.set_verticalAlign(h2d_FlowAlign.Middle);
+		f.set_horizontalAlign(h2d_FlowAlign.Middle);
+		f.set_enableInteractive(true);
+		this.progressText = new h2d_Text(hxd_res_DefaultFont.get(),f);
 		var letterBox = new h2d_Graphics(this);
 		letterBox.beginFill(0);
 		letterBox.drawRect(0,-100,PlayView.GAME_WIDTH,100);
@@ -5154,6 +5166,20 @@ PlayView.prototype = $extend(GameState.prototype,{
 		this.updateFlyingRes(dt);
 		this.updateNebula(dt);
 		this.starsShader.time__ = HxOverrides.now() / 1000;
+		var totalProgress = 0.0;
+		var _g = 0;
+		var _g1 = this.planets;
+		while(_g < _g1.length) {
+			var planet = _g1[_g];
+			++_g;
+			var f = planet.deliveryProgress - dt * 0.1;
+			planet.deliveryProgress = f < 0.0 ? 0.0 : f > 1.1 ? 1.1 : f;
+			var f1 = planet.deliveryProgress;
+			var min = 0;
+			var max = 1;
+			totalProgress += (f1 < min ? min : f1 > max ? max : f1) / this.planets.length;
+		}
+		this.progressText.set_text("Delivery progress: " + Math.floor(totalProgress * 100) + "%");
 	}
 	,updateCannons: function(dt) {
 		var _g = 0;
@@ -5280,11 +5306,16 @@ PlayView.prototype = $extend(GameState.prototype,{
 		var _g = 0;
 		var _g1 = this.planets;
 		while(_g < _g1.length) {
-			var _this = Utils.toPoint(_g1[_g++]);
+			var planet = _g1[_g];
+			++_g;
+			var _this = Utils.toPoint(planet);
 			var p = Utils.toPoint(res);
 			var dx = _this.x - p.x;
 			var dy = _this.y - p.y;
 			if(Math.sqrt(dx * dx + dy * dy) < 10) {
+				if(planet.res == res.res) {
+					planet.deliveryProgress += 0.05;
+				}
 				return true;
 			}
 		}
