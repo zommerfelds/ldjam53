@@ -1,12 +1,12 @@
-import motion.easing.Cubic;
-import h2d.Tile;
+import LdtkProject.Ldtk;
 import h2d.Flow;
 import h2d.Interactive;
-import hxd.Rand;
-import h2d.Text;
-import LdtkProject.Ldtk;
-import hxd.Res;
 import h2d.SpriteBatch;
+import h2d.Text;
+import h2d.Tile;
+import hxd.Rand;
+import hxd.Res;
+import motion.easing.Cubic;
 
 class MapView extends GameState {
 	override function init() {

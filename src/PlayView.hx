@@ -1,23 +1,20 @@
-import hxd.Key;
-import h2d.Flow;
-import h2d.Text;
-import motion.easing.Sine;
-import hxd.Rand;
-import haxe.Timer;
-import h2d.filter.Shader;
-import h2d.filter.Glow;
 import LdtkProject.Ldtk;
-import h2d.Graphics;
-import h2d.TileGroup;
-import h2d.SpriteBatch;
-import h2d.col.Point;
-import h2d.Interactive;
-import h2d.Scene;
-import h2d.Object;
 import h2d.Anim;
-import h2d.Tile;
-import hxd.Res;
 import h2d.Bitmap;
+import h2d.Flow;
+import h2d.Graphics;
+import h2d.Interactive;
+import h2d.Object;
+import h2d.SpriteBatch;
+import h2d.Text;
+import h2d.Tile;
+import h2d.col.Point;
+import h2d.filter.Glow;
+import h2d.filter.Shader;
+import haxe.Timer;
+import hxd.Rand;
+import hxd.Res;
+import motion.easing.Sine;
 
 enum ResType {
 	Res1;
@@ -281,7 +278,7 @@ class PlayView extends GameState {
 			gr.moveTo(350, 140);
 			gr.lineTo(348, 175);
 
-			Utils.tween(tut, 2.0, {alpha:1.0}).delay(4);
+			Utils.tween(tut, 2.0, {alpha: 1.0}).delay(4);
 
 			final initialPos = Utils.toPoint(blackHoles[0]);
 
