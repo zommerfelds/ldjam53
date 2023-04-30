@@ -20,10 +20,13 @@ class Text extends h2d.HtmlText {
 	public static final SPACE = "<b> </b>";
 
 	public function new(text, ?parent, size = 1.0, addDefaultShadow = false) {
-		final fontRes = hxd.Res.Catamaran_Light_sdf;
-		final font = fontRes.toSdfFont(Std.int(size * Gui.scale(60)), Alpha);
+		// final fontRes = hxd.Res.Catamaran_Light_sdf;
+		// final font = fontRes.toSdfFont(Std.int(size * Gui.scale(60)), Alpha);
+
+		final font = hxd.res.DefaultFont.get();
 		super(font, parent);
 		this.text = text;
+		this.scale(size * 4.0);
 		smooth = true;
 		textColor = 0xffffffff;
 

@@ -1,3 +1,5 @@
+import h2d.Graphics;
+import h2d.TileGroup;
 import h2d.SpriteBatch;
 import h2d.col.Point;
 import h2d.Interactive;
@@ -19,7 +21,7 @@ class Cannon extends Bitmap {
 	public var timeSinceLastFired:Float = 0.0;
 	public final res:ResType;
 
-	public function new(x:Float, y:Float, rotation:Float, res:ResType, ?parent) {
+	public function new(x:Float, y:Float, rotation:Float, res:ResType, ?parent:Object) {
 		super(Tiles.TILE_CANNON, parent);
 		this.x = x;
 		this.y = y;
@@ -32,14 +34,8 @@ class FlyingRes extends BatchElement {
 	public final vel:Point;
 	public var timeAlive:Float = 0.0;
 
-	public function new(x:Float, y:Float, vel:Point, res:ResType, ?parent) {
-		final tile = switch (res) {
-			case Res1: Tiles.TILE_RES1;
-			case Res2: Tiles.TILE_RES1;
-			case Res3: Tiles.TILE_RES1;
-			case Res4: Tiles.TILE_RES1;
-		}
-		super(tile);
+	public function new(x:Float, y:Float, vel:Point, res:ResType, ?parent:Object) {
+		super(Tiles.resTile(res));
 		this.x = x;
 		this.y = y;
 		this.vel = vel;
@@ -48,7 +44,7 @@ class FlyingRes extends BatchElement {
 }
 
 class BlackHole extends Object {
-	public function new(x:Float, y:Float, ?parent) {
+	public function new(x:Float, y:Float, ?parent:Object) {
 		super(parent);
 		final anim = new Anim([Tiles.TILE_HOLE_FRAME1, Tiles.TILE_HOLE_FRAME2, Tiles.TILE_HOLE_FRAME3], 15, this);
 		this.x = x;
@@ -63,10 +59,31 @@ class BlackHole extends Object {
 					getScene().stopCapture();
 					return;
 				}
+				if (e2.relX < 0 || e2.relX > PlayView.GAME_WIDTH || e2.relY < 0 || e2.relY > PlayView.GAME_HEIGHT)
+					return;
 				this.x = e2.relX;
 				this.y = e2.relY;
 			});
 		};
+	}
+}
+
+class Planet extends Bitmap {
+	public final res:ResType;
+
+	public function new(x:Float, y:Float, res:ResType, ?parent:Object) {
+		super(Tiles.TILE_PLANET, parent);
+		this.x = x;
+		this.y = y;
+		this.res = res;
+
+		final bubble = new Bitmap(Tiles.TILE_SPEECH_BUBBLE, this);
+		bubble.x = 16;
+		bubble.y = -16;
+
+		final res = new Bitmap(Tiles.resTile(res), bubble);
+		res.x = 1;
+		res.y = -1;
 	}
 }
 
@@ -76,6 +93,7 @@ class Tiles {
 	public static var TILE_RES3:Tile;
 	public static var TILE_RES4:Tile;
 	public static var TILE_PLANET:Tile;
+	public static var TILE_SPEECH_BUBBLE:Tile;
 	public static var TILE_CANNON:Tile;
 	public static var TILE_HOLE_FRAME1:Tile;
 	public static var TILE_HOLE_FRAME2:Tile;
@@ -91,20 +109,31 @@ class Tiles {
 		TILE_RES3 = tiles.sub(8, 0, 8, 8, -4, -4);
 		TILE_RES4 = tiles.sub(8, 8, 8, 8, -4, -4);
 		TILE_PLANET = tiles.sub(16, 0, 16, 16, -8, -8);
+		TILE_SPEECH_BUBBLE = tiles.sub(0, 16, 16, 16, -8, -8);
 		TILE_CANNON = tiles.sub(32, 0, 16, 16, -8, -8);
 		TILE_HOLE_FRAME1 = tiles.sub(48 + 32 * 0, 0, 32, 32, -16, -16);
 		TILE_HOLE_FRAME2 = tiles.sub(48 + 32 * 1, 0, 32, 32, -16, -16);
 		TILE_HOLE_FRAME3 = tiles.sub(48 + 32 * 2, 0, 32, 32, -16, -16);
 	}
+
+	public static function resTile(res:ResType):Tile {
+		return switch (res) {
+			case Res1: Tiles.TILE_RES1;
+			case Res2: Tiles.TILE_RES1;
+			case Res3: Tiles.TILE_RES1;
+			case Res4: Tiles.TILE_RES1;
+		};
+	}
 }
 
 class PlayView extends GameState {
-	static final GAME_WIDTH = 256;
-	static final GAME_HEIGHT = 256;
+	public static final GAME_WIDTH = 350;
+	public static final GAME_HEIGHT = 350;
 
 	final cannons:Array<Cannon> = [];
 	final blackHoles:Array<BlackHole> = [];
 	var flyingRes:Array<FlyingRes> = [];
+	final planets:Array<Planet> = [];
 
 	override function init() {
 		this.scaleMode = LetterBox(GAME_WIDTH, GAME_HEIGHT);
@@ -115,7 +144,16 @@ class PlayView extends GameState {
 		cannons.push(new Cannon(40, 30, 0.5, Res1, this));
 
 		blackHoles.push(new BlackHole(100, 100, this));
-		blackHoles.push(new BlackHole(90, 150, this));
+		blackHoles.push(new BlackHole(190, 150, this));
+
+		planets.push(new Planet(300, 250, Res1, this));
+
+		final letterBox = new Graphics(this);
+		letterBox.beginFill(0x000000);
+		letterBox.drawRect(0, -100, GAME_WIDTH, 100);
+		letterBox.drawRect(0, GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT + 100);
+		letterBox.drawRect(-100, 0, 100, GAME_HEIGHT);
+		letterBox.drawRect(GAME_WIDTH, 0, 100, GAME_HEIGHT);
 
 		addEventListener(onEvent);
 	}
@@ -142,14 +180,13 @@ class PlayView extends GameState {
 	}
 
 	function updateFlyingRes(dt:Float) {
-		final MARGIN = 20;
-		var removed = false;
+		var atLeastOneRemoved = false;
 		for (res in flyingRes) {
 			res.timeAlive += dt;
-			res.alpha = hxd.Math.clamp(5 - res.timeAlive * 0.5);
-			final pos = new Point(res.x, res.y);
+			res.alpha = hxd.Math.clamp(6 - res.timeAlive * 0.5);
+			final pos = Utils.toPoint(res);
 			for (blackHole in blackHoles) {
-				final b = new Point(blackHole.x, blackHole.y);
+				final b = Utils.toPoint(blackHole);
 				final d = b.sub(pos);
 				final g = d.normalized().multiply(10000.0 / d.length());
 				res.vel.x = res.vel.x + g.x * dt;
@@ -157,21 +194,45 @@ class PlayView extends GameState {
 			}
 			res.x += res.vel.x * dt;
 			res.y += res.vel.y * dt;
-			if (res.x < -MARGIN || res.x > GAME_WIDTH + MARGIN || res.y < -MARGIN || res.y > GAME_HEIGHT + MARGIN || res.alpha <= 0.0) {
+			if (checkCollisions(res) || res.alpha <= 0.0) {
 				res.remove();
-				removed = true;
+				atLeastOneRemoved = true;
+				continue;
 			}
 		}
-		if (removed) {
+		if (atLeastOneRemoved) {
 			flyingRes = flyingRes.filter(r -> r.batch != null);
 		}
+	}
+
+	function checkCollisions(res:FlyingRes) {
+		final MARGIN = 20;
+		if (res.x < -MARGIN || res.x > GAME_WIDTH + MARGIN || res.y < -MARGIN || res.y > GAME_HEIGHT + MARGIN) {
+			return true;
+		}
+		for (hole in blackHoles) {
+			if (Utils.toPoint(hole).distance(Utils.toPoint(res)) < 12) {
+				return true;
+			}
+		}
+		for (cannon in cannons) {
+			if (Utils.toPoint(cannon).distance(Utils.toPoint(res)) < 11) {
+				return true;
+			}
+		}
+		for (planet in planets) {
+			if (Utils.toPoint(planet).distance(Utils.toPoint(res)) < 10) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	function fire(cannon:Cannon) {
 		final START_VEL = 80.0;
 		cannon.timeSinceLastFired = 0;
 		final dir = Utils.direction(cannon.rotation);
-		final pos = new Point(cannon.x, cannon.y).add(dir.multiply(8));
+		final pos = new Point(cannon.x, cannon.y).add(dir.multiply(10));
 		flyingRes.push(new FlyingRes(pos.x, pos.y, dir.multiply(START_VEL), cannon.res, this));
 	}
 }
