@@ -42,12 +42,14 @@ class Cannon extends Bitmap {
 class FlyingRes extends BatchElement {
 	public final vel:Point;
 	public var timeAlive:Float = 0.0;
+	public final res:ResType;
 
 	public function new(x:Float, y:Float, vel:Point, res:ResType, ?parent:Object) {
 		super(Tiles.resTile(res));
 		this.x = x;
 		this.y = y;
 		this.vel = vel;
+		this.res = res;
 		Tiles.spriteBatch.add(this);
 	}
 }
@@ -80,6 +82,7 @@ class BlackHole extends Object {
 
 class Planet extends Bitmap {
 	public final res:ResType;
+	public var deliveryProgress = 0.0;
 
 	public function new(x:Float, y:Float, res:ResType, ?parent:Object) {
 		super(Tiles.TILE_PLANET, parent);
@@ -201,6 +204,7 @@ class PlayView extends GameState {
 	final starsShader = new StarsShader();
 
 	final level:Int;
+	var progressText:Text;
 
 	public function new(level:Int) {
 		super();
@@ -246,6 +250,17 @@ class PlayView extends GameState {
 			final t = new Text(hxd.res.DefaultFont.get(), f);
 			t.text = "Back";
 		}
+		{
+			final f = new Flow(this);
+			f.x = 50;
+			f.padding = 5;
+			f.paddingTop = 1;
+			f.backgroundTile = Tile.fromColor(0x334230);
+			f.verticalAlign = Middle;
+			f.horizontalAlign = Middle;
+			f.enableInteractive = true;
+			progressText = new Text(hxd.res.DefaultFont.get(), f);
+		}
 
 		// TODO: use Mask instead https://heaps.io/samples/mask.html
 		final letterBox = new Graphics(this);
@@ -270,6 +285,12 @@ class PlayView extends GameState {
 		updateFlyingRes(dt);
 		updateNebula(dt);
 		starsShader.time = Timer.stamp();
+		var totalProgress = 0.0;
+		for (planet in planets) {
+			planet.deliveryProgress = hxd.Math.clamp(planet.deliveryProgress - dt * 0.1, 0.0, 1.1);
+			totalProgress += hxd.Math.clamp(planet.deliveryProgress, 0, 1) / planets.length;
+		}
+		progressText.text = "Delivery progress: " + Math.floor(totalProgress * 100) + "%";
 	}
 
 	function updateCannons(dt:Float) {
@@ -329,6 +350,9 @@ class PlayView extends GameState {
 		}
 		for (planet in planets) {
 			if (Utils.toPoint(planet).distance(Utils.toPoint(res)) < 10) {
+				if (planet.res == res.res) {
+					planet.deliveryProgress += 0.05;
+				}
 				return true;
 			}
 		}
