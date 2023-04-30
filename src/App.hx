@@ -17,8 +17,6 @@ class App extends HerbalTeaApp {
 				new PlayView(levelIndex);
 			case "map" | null:
 				new MapView();
-			case "menu":
-				new MenuView();
 			case x: throw 'invavid "start" query param "$x"';
 		}
 
