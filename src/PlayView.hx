@@ -1,3 +1,6 @@
+import haxe.Timer;
+import h2d.filter.Shader;
+import h2d.filter.Glow;
 import LdtkProject.Ldtk;
 import h2d.Graphics;
 import h2d.TileGroup;
@@ -28,6 +31,7 @@ class Cannon extends Bitmap {
 		this.y = y;
 		this.rotation = rotation;
 		this.res = res;
+		filter = new Glow(0xffffff, 1, 5, 0.6, 1, true);
 	}
 }
 
@@ -66,6 +70,7 @@ class BlackHole extends Object {
 				this.y = e2.relY;
 			});
 		};
+		filter = new Glow(0xa5baec, 1, 5, 0.6, 1, true);
 	}
 }
 
@@ -85,6 +90,8 @@ class Planet extends Bitmap {
 		final res = new Bitmap(Tiles.resTile(res), bubble);
 		res.x = 1;
 		res.y = -1;
+
+		filter = new Glow(0x69ff96, 1, 5, 0.6, 1, true);
 	}
 }
 
@@ -126,6 +133,7 @@ class Tiles {
 		final tiles = Res.tiles.toTile();
 		spriteBatch = new SpriteBatch(tiles, parent);
 		spriteBatch.hasRotationScale = true;
+
 		TILE_RES1 = tiles.sub(0, 0, 8, 8, -4, -4);
 		TILE_RES2 = tiles.sub(0, 8, 8, 8, -4, -4);
 		TILE_RES3 = tiles.sub(8, 0, 8, 8, -4, -4);
@@ -165,6 +173,7 @@ class PlayView extends GameState {
 	final planets:Array<Planet> = [];
 	final nebulas:Array<Nebula> = [];
 	final ldtkLevel:LdtkProject.LdtkProject_Level;
+	final starsShader = new StarsShader();
 
 	final level:Int;
 
@@ -176,7 +185,9 @@ class PlayView extends GameState {
 
 	override function init() {
 		this.scaleMode = LetterBox(GAME_WIDTH, GAME_HEIGHT);
-		new Bitmap(Tile.fromColor(0x322b2b, GAME_WIDTH, GAME_HEIGHT), this);
+		final background = new Bitmap(Tile.fromColor(0x000000, GAME_WIDTH, GAME_HEIGHT), this);
+		// background.filter = new Noise
+		background.filter = new Shader(starsShader);
 
 		Tiles.init(this);
 
@@ -194,6 +205,7 @@ class PlayView extends GameState {
 			nebulas.push(new Nebula(nebula.renderX + 8, nebula.renderY + 8, this));
 		}
 
+		// TODO: use Mask instead https://heaps.io/samples/mask.html
 		final letterBox = new Graphics(this);
 		letterBox.beginFill(0x000000);
 		letterBox.drawRect(0, -100, GAME_WIDTH, 100);
@@ -215,6 +227,7 @@ class PlayView extends GameState {
 		updateCannons(dt);
 		updateFlyingRes(dt);
 		updateNebula(dt);
+		starsShader.time = Timer.stamp();
 	}
 
 	function updateCannons(dt:Float) {
