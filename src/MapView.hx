@@ -61,6 +61,22 @@ class MapView extends GameState {
 			final t = new Text(hxd.res.DefaultFont.get(), f);
 			t.text = "Toggle fullscreen";
 		}
+		{
+			final f = new Flow(this);
+			f.x = 120;
+			f.padding = 5;
+			f.paddingTop = 1;
+			f.backgroundTile = Tile.fromColor(0x494949);
+			f.verticalAlign = Middle;
+			f.horizontalAlign = Middle;
+			f.enableInteractive = true;
+			f.interactive.onClick = e -> {
+				App.music.volume = 1 - App.music.volume;
+			}
+			f.interactive.cursor = Button;
+			final t = new Text(hxd.res.DefaultFont.get(), f);
+			t.text = "Toggle music";
+		}
 
 		final sprites = new SpriteBatch(null, this);
 

@@ -204,10 +204,10 @@ class PlayView extends GameState {
 	public static final GAME_WIDTH = 512;
 	public static final GAME_HEIGHT = 512;
 
-	public static final cannons:Array<Cannon> = [];
+	public static var cannons:Array<Cannon>;
 	final blackHoles:Array<BlackHole> = [];
 	var flyingRes:Array<FlyingRes> = [];
-	public static final planets:Array<Planet> = [];
+	public static var planets:Array<Planet>;
 	final nebulas:Array<Nebula> = [];
 	final ldtkLevel:LdtkProject.LdtkProject_Level;
 	final starsShader = new StarsShader();
@@ -233,12 +233,14 @@ class PlayView extends GameState {
 
 		Tiles.init(this);
 
+		cannons = [];
 		for (cannon in ldtkLevel.l_Entities.all_Cannon) {
 			cannons.push(new Cannon(cannon.pixelX, cannon.pixelY, cannon.f_Angle, cannon.f_ResType, this));
 		}
 		for (blackHole in ldtkLevel.l_Entities.all_BlackHole) {
 			blackHoles.push(new BlackHole(blackHole.pixelX, blackHole.pixelY, this));
 		}
+		planets = [];
 		for (planet in ldtkLevel.l_Entities.all_Planet) {
 			planets.push(new Planet(planet.pixelX, planet.pixelY, planet.f_ResType, this));
 		}

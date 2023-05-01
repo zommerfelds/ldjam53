@@ -1,7 +1,11 @@
+import hxd.snd.Channel;
+import hxd.Res;
 import LdtkProject.Ldtk;
 
 class App extends HerbalTeaApp {
 	public static var instance:App;
+
+	public static var music:Channel;
 
 	static function main() {
 		instance = new App();
@@ -19,6 +23,8 @@ class App extends HerbalTeaApp {
 				new MapView();
 			case x: throw 'invavid "start" query param "$x"';
 		}
+
+		music = Res.song.play(true);
 
 		switchState(view);
 	}
