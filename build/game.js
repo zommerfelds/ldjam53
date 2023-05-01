@@ -416,6 +416,7 @@ App.prototype = $extend(HerbalTeaApp.prototype,{
 				throw haxe_Exception.thrown("invavid \"start\" query param \"" + _g + "\"");
 			}
 		}
+		App.music = hxd_Res.get_loader().loadCache("song.wav",hxd_res_Sound).play(true);
 		this.switchState(view);
 	}
 	,__class__: App
@@ -3115,6 +3116,20 @@ MapView.prototype = $extend(GameState.prototype,{
 		};
 		f.interactive.set_cursor(hxd_Cursor.Button);
 		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Toggle fullscreen");
+		var f = new h2d_Flow(this);
+		f.posChanged = true;
+		f.x = 120;
+		f.set_padding(5);
+		f.set_paddingTop(1);
+		f.set_backgroundTile(h2d_Tile.fromColor(4802889));
+		f.set_verticalAlign(h2d_FlowAlign.Middle);
+		f.set_horizontalAlign(h2d_FlowAlign.Middle);
+		f.set_enableInteractive(true);
+		f.interactive.onClick = function(e) {
+			App.music.set_volume(1 - App.music.volume);
+		};
+		f.interactive.set_cursor(hxd_Cursor.Button);
+		new h2d_Text(hxd_res_DefaultFont.get(),f).set_text("Toggle music");
 		var sprites = new h2d_SpriteBatch(null,this);
 		var x = 120;
 		var y = 200;
@@ -3537,6 +3552,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 		_this.w = 1.;
 		background.set_filter(new h2d_filter_Shader(this.starsShader));
 		Tiles.init(this);
+		PlayView.cannons = [];
 		var _g = 0;
 		var _this = this.ldtkLevel;
 		_this.load();
@@ -3555,6 +3571,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 			++_g;
 			this.blackHoles.push(new BlackHole(blackHole.pixelX,blackHole.pixelY,this));
 		}
+		PlayView.planets = [];
 		var _g = 0;
 		var _this = this.ldtkLevel;
 		_this.load();
@@ -37223,6 +37240,7 @@ hxd_res_NanoJpeg.prototype = {
 	,__class__: hxd_res_NanoJpeg
 };
 var hxd_res_Sound = function(entry) {
+	this.lastPlay = 0.;
 	hxd_res_Resource.call(this,entry);
 };
 $hxClasses["hxd.res.Sound"] = hxd_res_Sound;
@@ -37252,6 +37270,19 @@ hxd_res_Sound.prototype = $extend(hxd_res_Resource.prototype,{
 			this.watch($bind(this,this.watchCallb));
 		}
 		return this.data;
+	}
+	,play: function(loop,volume,channelGroup,soundGroup) {
+		if(volume == null) {
+			volume = 1.;
+		}
+		if(loop == null) {
+			loop = false;
+		}
+		this.lastPlay = HxOverrides.now() / 1000;
+		this.channel = hxd_snd_Manager.get().play(this,channelGroup,soundGroup);
+		this.channel.loop = loop;
+		this.channel.set_volume(volume);
+		return this.channel;
 	}
 	,watchCallb: function() {
 		var old = this.data;
@@ -37758,6 +37789,30 @@ hxd_snd_Manager.prototype = {
 			ch = ch.next;
 		}
 		return new hxd_impl_ArrayIterator_$hxd_$snd_$Channel(result);
+	}
+	,play: function(sound,channelGroup,soundGroup) {
+		if(soundGroup == null) {
+			soundGroup = this.masterSoundGroup;
+		}
+		if(channelGroup == null) {
+			channelGroup = this.masterChannelGroup;
+		}
+		var sdat = sound.getData();
+		if(sdat.samples == 0) {
+			throw haxe_Exception.thrown(Std.string(sound) + " has no samples");
+		}
+		var c = new hxd_snd_Channel();
+		c.sound = sound;
+		c.duration = sdat.get_duration();
+		c.manager = this;
+		c.soundGroup = soundGroup;
+		c.channelGroup = channelGroup;
+		c.next = this.channels;
+		c.isLoading = sdat.isLoading();
+		c.isVirtual = this.driver == null;
+		c.lastStamp = HxOverrides.now() / 1000;
+		this.channels = c;
+		return c;
 	}
 	,updateVirtualChannels: function(now) {
 		var c = this.channels;
@@ -48708,8 +48763,6 @@ Ldtk.proj = new LdtkProject();
 Ldtk.validated = Ldtk.validate();
 PlayView.GAME_WIDTH = 512;
 PlayView.GAME_HEIGHT = 512;
-PlayView.cannons = [];
-PlayView.planets = [];
 h3d_shader_ScreenShader.SRC = "HXSLF2gzZC5zaGFkZXIuU2NyZWVuU2hhZGVyBwEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACghfX2luaXRfXw4GAAALBnZlcnRleA4GAAACAgoAAAUCBgQCBwUMAggFDAUMBgQCCQUKAgMFCgUKAAALAAAFAQYEAgYFDAkDKg4ECgICBQoAAAMGAQoCAgUKBAADAgQDAwEDAAAAAAAAAAADAQMAAAAAAADwPwMFDAUMAA";
 StarsShader.SRC = "HXSLC1N0YXJzU2hhZGVyDwEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACgd0ZXh0dXJlCgIAAAsEdGltZQMCAAAMBWNvbG9yBQsCAAANCF9faW5pdF9fDgYAAA4GdmVydGV4DgYAAA8EcmFuZA4GAAAQAXAOBgAAEQNhdmcOBgAAEgVzdGFycw4GAAATCGZyYWdtZW50DgYAAAcCDQAABQIGBAIHBQwCCAUMBQwGBAIJBQoCAwUKBQoAAA4AAAUBBgQCBgUMCQMqDgQKAgIFCgAAAwYBCgICBQoEAAMCBAMDAQMAAAAAAAAAAAMBAwAAAAAAAPA/AwUMBQwAAw8BFAJzdAUKBAAAAwUCCBUBcgUKBAAACQMTDgEGAQkDAg4BAhQFCgUKAQPeEJmolB0GQAMFCgUKAA0JAxMOAQYABgEKAhUFCgQAAwEDLZW3IxxHcUADAwoCFQUKAAADAwMAAAMQARYCc3QFCgQAAAMFAggXAXIDBAAACQIPDgEJAxEOAQIWBQoFCgMADQYAAQN7FK5H4XqEPwMGAQkDGg4DAQPXo3A9CtfvPwMBAwAAAAAAAPA/AwIXAwMJAxYOAgEDAAAAAAAAAAADCQMCDgEGAAYBAhcDAQMAAAAAINDgQAMDAgsDAwMDAwMAAAMRAhgCc3QFCgQAABkBYQMEAAAFCwUCCBoBQQUKBAAACQMoDgIBAwAAAAAAAAAAAwIZAwUKAA0GAQIMBQsEBgAGAAYABgAJAhAOAQIYBQoDCQIQDgEGAAIYBQoCGgUKBQoDAwkCEA4BBgACGAUKCgIaBQoFAAUKBQoDAwkCEA4BBgMCGAUKAhoFCgUKAwMJAhAOAQYDAhgFCgoCGgUKBQAFCgUKAwMDBQsAAAMSARsCc3QFCgQAAAULBQQIHAFjBQsEAAAJAykOAQEDAAAAAAAAAAADBQsACB0BaQEEAAABAgUAAAABABQGBwIdAQECAAAAAAECBQIGgAIcBQsJAxgOAwIcBQsJAhEOAgIbBQoJAyYOAQIdAQMFCwEDAAAAAAAA+D8DBQsFCwaDAh0BAQIBAAAAAQAAAQANBgACHAULCQIQDgECGwUKAwULAAABEwAABQMIHgJzdAUKBAAACgIGBQwRAAUKAAaBAh4FCgYCAQMAAAAAAACAQAMBAwAAAAAAAABAAwMFCgYEAggFDAkDKg4CCQISDgECHgUKBQsBAwAAAAAAAPA/AwUMBQwA";
 Xml.Element = 0;
