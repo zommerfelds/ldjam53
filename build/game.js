@@ -3353,6 +3353,36 @@ var BlackHole = function(x,y,parent) {
 			if(e2.relX < 0 || e2.relX > PlayView.GAME_WIDTH || e2.relY < 0 || e2.relY > PlayView.GAME_HEIGHT) {
 				return;
 			}
+			var x = e2.relX;
+			var y = e2.relY;
+			if(y == null) {
+				y = 0.;
+			}
+			if(x == null) {
+				x = 0.;
+			}
+			var point_x = x;
+			var point_y = y;
+			var _g = 0;
+			var _g1 = PlayView.planets;
+			while(_g < _g1.length) {
+				var p = Utils.toPoint(_g1[_g++]);
+				var dx = point_x - p.x;
+				var dy = point_y - p.y;
+				if(Math.sqrt(dx * dx + dy * dy) < 20) {
+					return;
+				}
+			}
+			var _g = 0;
+			var _g1 = PlayView.cannons;
+			while(_g < _g1.length) {
+				var p = Utils.toPoint(_g1[_g++]);
+				var dx = point_x - p.x;
+				var dy = point_y - p.y;
+				if(Math.sqrt(dx * dx + dy * dy) < 20) {
+					return;
+				}
+			}
 			_gthis.posChanged = true;
 			_gthis.x = e2.relX;
 			_gthis.posChanged = true;
@@ -3467,10 +3497,8 @@ var PlayView = function(level) {
 	this.complete = false;
 	this.starsShader = new StarsShader();
 	this.nebulas = [];
-	this.planets = [];
 	this.flyingRes = [];
 	this.blackHoles = [];
-	this.cannons = [];
 	GameState.call(this);
 	this.level = level;
 	this.ldtkLevel = Ldtk.proj.levels[level];
@@ -3516,7 +3544,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 		while(_g < _g1.length) {
 			var cannon = _g1[_g];
 			++_g;
-			this.cannons.push(new Cannon(cannon.pixelX,cannon.pixelY,cannon.f_Angle,cannon.f_ResType,this));
+			PlayView.cannons.push(new Cannon(cannon.pixelX,cannon.pixelY,cannon.f_Angle,cannon.f_ResType,this));
 		}
 		var _g = 0;
 		var _this = this.ldtkLevel;
@@ -3534,7 +3562,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 		while(_g < _g1.length) {
 			var planet = _g1[_g];
 			++_g;
-			this.planets.push(new Planet(planet.pixelX,planet.pixelY,planet.f_ResType,this));
+			PlayView.planets.push(new Planet(planet.pixelX,planet.pixelY,planet.f_ResType,this));
 		}
 		var _g = 0;
 		var _this = this.ldtkLevel;
@@ -3624,7 +3652,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 		this.starsShader.time__ = HxOverrides.now() / 1000;
 		var totalProgress = 0.0;
 		var _g = 0;
-		var _g1 = this.planets;
+		var _g1 = PlayView.planets;
 		while(_g < _g1.length) {
 			var planet = _g1[_g];
 			++_g;
@@ -3633,7 +3661,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 			var f1 = planet.deliveryProgress;
 			var min = 0;
 			var max = 1;
-			totalProgress += (f1 < min ? min : f1 > max ? max : f1) / this.planets.length;
+			totalProgress += (f1 < min ? min : f1 > max ? max : f1) / PlayView.planets.length;
 		}
 		if(!this.complete) {
 			if(totalProgress > 0.999) {
@@ -3650,7 +3678,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 	}
 	,updateCannons: function(dt) {
 		var _g = 0;
-		var _g1 = this.cannons;
+		var _g1 = PlayView.cannons;
 		while(_g < _g1.length) {
 			var cannon = _g1[_g];
 			++_g;
@@ -3749,7 +3777,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 			}
 		}
 		var _g = 0;
-		var _g1 = this.cannons;
+		var _g1 = PlayView.cannons;
 		while(_g < _g1.length) {
 			var _this = Utils.toPoint(_g1[_g++]);
 			var p = Utils.toPoint(res);
@@ -3771,7 +3799,7 @@ PlayView.prototype = $extend(GameState.prototype,{
 			}
 		}
 		var _g = 0;
-		var _g1 = this.planets;
+		var _g1 = PlayView.planets;
 		while(_g < _g1.length) {
 			var planet = _g1[_g];
 			++_g;
@@ -48680,6 +48708,8 @@ Ldtk.proj = new LdtkProject();
 Ldtk.validated = Ldtk.validate();
 PlayView.GAME_WIDTH = 512;
 PlayView.GAME_HEIGHT = 512;
+PlayView.cannons = [];
+PlayView.planets = [];
 h3d_shader_ScreenShader.SRC = "HXSLF2gzZC5zaGFkZXIuU2NyZWVuU2hhZGVyBwEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACghfX2luaXRfXw4GAAALBnZlcnRleA4GAAACAgoAAAUCBgQCBwUMAggFDAUMBgQCCQUKAgMFCgUKAAALAAAFAQYEAgYFDAkDKg4ECgICBQoAAAMGAQoCAgUKBAADAgQDAwEDAAAAAAAAAAADAQMAAAAAAADwPwMFDAUMAA";
 StarsShader.SRC = "HXSLC1N0YXJzU2hhZGVyDwEFaW5wdXQNAQICCHBvc2l0aW9uBQoBAQADAnV2BQoBAQABAAAEBWZsaXBZAwIAAAUGb3V0cHV0DQICBghwb3NpdGlvbgUMBAUABwVjb2xvcgUMBAUABAAACApwaXhlbENvbG9yBQwEAAAJDGNhbGN1bGF0ZWRVVgUKBAAACgd0ZXh0dXJlCgIAAAsEdGltZQMCAAAMBWNvbG9yBQsCAAANCF9faW5pdF9fDgYAAA4GdmVydGV4DgYAAA8EcmFuZA4GAAAQAXAOBgAAEQNhdmcOBgAAEgVzdGFycw4GAAATCGZyYWdtZW50DgYAAAcCDQAABQIGBAIHBQwCCAUMBQwGBAIJBQoCAwUKBQoAAA4AAAUBBgQCBgUMCQMqDgQKAgIFCgAAAwYBCgICBQoEAAMCBAMDAQMAAAAAAAAAAAMBAwAAAAAAAPA/AwUMBQwAAw8BFAJzdAUKBAAAAwUCCBUBcgUKBAAACQMTDgEGAQkDAg4BAhQFCgUKAQPeEJmolB0GQAMFCgUKAA0JAxMOAQYABgEKAhUFCgQAAwEDLZW3IxxHcUADAwoCFQUKAAADAwMAAAMQARYCc3QFCgQAAAMFAggXAXIDBAAACQIPDgEJAxEOAQIWBQoFCgMADQYAAQN7FK5H4XqEPwMGAQkDGg4DAQPXo3A9CtfvPwMBAwAAAAAAAPA/AwIXAwMJAxYOAgEDAAAAAAAAAAADCQMCDgEGAAYBAhcDAQMAAAAAINDgQAMDAgsDAwMDAwMAAAMRAhgCc3QFCgQAABkBYQMEAAAFCwUCCBoBQQUKBAAACQMoDgIBAwAAAAAAAAAAAwIZAwUKAA0GAQIMBQsEBgAGAAYABgAJAhAOAQIYBQoDCQIQDgEGAAIYBQoCGgUKBQoDAwkCEA4BBgACGAUKCgIaBQoFAAUKBQoDAwkCEA4BBgMCGAUKAhoFCgUKAwMJAhAOAQYDAhgFCgoCGgUKBQAFCgUKAwMDBQsAAAMSARsCc3QFCgQAAAULBQQIHAFjBQsEAAAJAykOAQEDAAAAAAAAAAADBQsACB0BaQEEAAABAgUAAAABABQGBwIdAQECAAAAAAECBQIGgAIcBQsJAxgOAwIcBQsJAhEOAgIbBQoJAyYOAQIdAQMFCwEDAAAAAAAA+D8DBQsFCwaDAh0BAQIBAAAAAQAAAQANBgACHAULCQIQDgECGwUKAwULAAABEwAABQMIHgJzdAUKBAAACgIGBQwRAAUKAAaBAh4FCgYCAQMAAAAAAACAQAMBAwAAAAAAAABAAwMFCgYEAggFDAkDKg4CCQISDgECHgUKBQsBAwAAAAAAAPA/AwUMBQwA";
 Xml.Element = 0;
