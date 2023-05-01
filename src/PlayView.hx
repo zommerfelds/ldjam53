@@ -70,6 +70,17 @@ class BlackHole extends Object {
 				}
 				if (e2.relX < 0 || e2.relX > PlayView.GAME_WIDTH || e2.relY < 0 || e2.relY > PlayView.GAME_HEIGHT)
 					return;
+				final point = new Point(e2.relX, e2.relY);
+				for (p in PlayView.planets) {
+					if (point.distance(Utils.toPoint(p)) < 20) {
+						return;
+					}
+				}
+				for (c in PlayView.cannons) {
+					if (point.distance(Utils.toPoint(c)) < 20) {
+						return;
+					}
+				}
 				this.x = e2.relX;
 				this.y = e2.relY;
 			});
@@ -193,10 +204,10 @@ class PlayView extends GameState {
 	public static final GAME_WIDTH = 512;
 	public static final GAME_HEIGHT = 512;
 
-	final cannons:Array<Cannon> = [];
+	public static final cannons:Array<Cannon> = [];
 	final blackHoles:Array<BlackHole> = [];
 	var flyingRes:Array<FlyingRes> = [];
-	final planets:Array<Planet> = [];
+	public static final planets:Array<Planet> = [];
 	final nebulas:Array<Nebula> = [];
 	final ldtkLevel:LdtkProject.LdtkProject_Level;
 	final starsShader = new StarsShader();
